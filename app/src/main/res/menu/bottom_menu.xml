@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/events_menu"
+        android:icon="@drawable/event_icon"
+        android:title="Events" />
+
+    <item
+        android:id="@+id/pas_menu"
+        android:icon="@drawable/pas_icon"
+        android:title="Products" />
+
+</menu>
