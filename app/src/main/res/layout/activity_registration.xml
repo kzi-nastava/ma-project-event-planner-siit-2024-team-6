@@ -9,18 +9,18 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Общие поля для всех пользователей -->
+        <!-- Common fields for all users -->
         <EditText
             android:id="@+id/etName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Имя" />
+            android:hint="First Name" />
 
         <EditText
             android:id="@+id/etSurname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Фамилия" />
+            android:hint="Last Name" />
 
         <EditText
             android:id="@+id/etEmail"
@@ -32,35 +32,35 @@
             android:id="@+id/etPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Пароль"
+            android:hint="Password"
             android:inputType="textPassword" />
 
         <EditText
             android:id="@+id/etAddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Адрес" />
+            android:hint="Address" />
 
         <EditText
             android:id="@+id/etPhone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Телефон" />
+            android:hint="Phone Number" />
 
         <Button
             android:id="@+id/btnUploadPhoto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Загрузить фото" />
+            android:text="Upload Photo" />
 
-        <!-- Кнопка для переключения на Провайдера -->
+        <!-- Button to switch to Provider registration -->
         <Button
             android:id="@+id/btnSwitchToProvider"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Зарегистрироваться как Провайдер" />
+            android:text="Register as Provider" />
 
-        <!-- Дополнительные поля для Провайдера -->
+        <!-- Additional fields for Provider -->
         <LinearLayout
             android:id="@+id/providerFields"
             android:layout_width="match_parent"
@@ -72,49 +72,49 @@
                 android:id="@+id/etCompanyName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Название компании" />
+                android:hint="Company Name" />
 
             <EditText
                 android:id="@+id/etCompanyEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Email компании" />
+                android:hint="Company Email" />
 
             <EditText
                 android:id="@+id/etCompanyAddress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Адрес компании" />
+                android:hint="Company Address" />
 
             <EditText
                 android:id="@+id/etDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Описание" />
+                android:hint="Description" />
 
             <EditText
                 android:id="@+id/etOpeningTime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Время открытия" />
+                android:hint="Opening Time" />
 
             <EditText
                 android:id="@+id/etClosingTime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Время закрытия" />
+                android:hint="Closing Time" />
 
             <Button
                 android:id="@+id/btnUploadEventPhoto"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Загрузить фото мероприятия" />
+                android:text="Upload Event Photo" />
         </LinearLayout>
 
         <Button
             android:id="@+id/btnRegister"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Зарегистрироваться" />
+            android:text="Register" />
     </LinearLayout>
 </ScrollView>

@@ -19,6 +19,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 public class RegistrationActivity extends AppCompatActivity {
@@ -43,7 +45,7 @@ public class RegistrationActivity extends AppCompatActivity {
             public void onClick(View v) {
                 isProvider = !isProvider;
                 providerFields.setVisibility(isProvider ? View.VISIBLE : View.GONE);
-                btnSwitchToProvider.setText(isProvider ? "Зарегистрироваться как Организатор" : "Зарегистрироваться как Провайдер");
+                btnSwitchToProvider.setText(isProvider ? "Register like Organizer" : "Register like Provider");
             }
         });
 
@@ -63,19 +65,38 @@ public class RegistrationActivity extends AppCompatActivity {
     }
 
     private void registerOrganizer() {
-        String name = ((EditText) findViewById(R.id.etName)).getText().toString();
-        String surname = ((EditText) findViewById(R.id.etSurname)).getText().toString();
-        String email = ((EditText) findViewById(R.id.etEmail)).getText().toString();
-        // Соберите остальные данные организатора
-        Log.d("Registration", "Организатор зарегистрирован: " + name + " " + surname + ", " + email);
+        String name = ((EditText) findViewById(R.id.etName)).getText().toString().trim();
+        String surname = ((EditText) findViewById(R.id.etSurname)).getText().toString().trim();
+        String email = ((EditText) findViewById(R.id.etEmail)).getText().toString().trim();
+        String password = ((EditText) findViewById(R.id.etPassword)).getText().toString().trim();
+
+        if (name.isEmpty() || surname.isEmpty() || email.isEmpty() || password.isEmpty()) {
+            Toast.makeText(this, "Please fill in all required fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Log.d("Registration", "Organizer registered: " + name + " " + surname + ", " + email);
+        // Further logic for saving organizer data
     }
 
     private void registerProvider() {
-        String companyName = ((EditText) findViewById(R.id.etCompanyName)).getText().toString();
-        String companyEmail = ((EditText) findViewById(R.id.etCompanyEmail)).getText().toString();
-        String companyAddress = ((EditText) findViewById(R.id.etCompanyAddress)).getText().toString();
-        // Соберите остальные данные провайдера
-        Log.d("Registration", "Провайдер зарегистрирован: " + companyName + ", " + companyEmail + ", " + companyAddress);
+        String name = ((EditText) findViewById(R.id.etName)).getText().toString().trim();
+        String surname = ((EditText) findViewById(R.id.etSurname)).getText().toString().trim();
+        String email = ((EditText) findViewById(R.id.etEmail)).getText().toString().trim();
+        String password = ((EditText) findViewById(R.id.etPassword)).getText().toString().trim();
+        String companyName = ((EditText) findViewById(R.id.etCompanyName)).getText().toString().trim();
+        String companyEmail = ((EditText) findViewById(R.id.etCompanyEmail)).getText().toString().trim();
+        String companyAddress = ((EditText) findViewById(R.id.etCompanyAddress)).getText().toString().trim();
+
+        if (name.isEmpty() || surname.isEmpty() || email.isEmpty() || password.isEmpty() ||
+                companyName.isEmpty() || companyEmail.isEmpty() || companyAddress.isEmpty()) {
+            Toast.makeText(this, "Please fill in all required fields for Provider", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Log.d("Registration", "Provider registered: " + companyName + ", " + companyEmail + ", " + companyAddress);
+        // Further logic for saving provider data
     }
+
 
 }
