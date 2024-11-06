@@ -9,8 +9,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="16dp"
-        android:background="#FFFFFF"
-        android:margin="16dp">
+        android:background="#FFFFFF">
 
         <!-- Common fields for all users -->
         <EditText
@@ -20,7 +19,7 @@
             android:hint="First Name"
             android:backgroundTint="#758B58"
             android:textColor="#000000"
-            android:hintTextColor="#A9A9A9" />
+              />
 
         <EditText
             android:id="@+id/etSurname"
@@ -29,7 +28,7 @@
             android:hint="Last Name"
             android:backgroundTint="#758B58"
             android:textColor="#000000"
-            android:hintTextColor="#A9A9A9" />
+              />
 
         <EditText
             android:id="@+id/etEmail"
@@ -38,7 +37,7 @@
             android:hint="Email"
             android:backgroundTint="#758B58"
             android:textColor="#000000"
-            android:hintTextColor="#A9A9A9" />
+              />
 
         <EditText
             android:id="@+id/etPassword"
@@ -48,7 +47,7 @@
             android:inputType="textPassword"
             android:backgroundTint="#758B58"
             android:textColor="#000000"
-            android:hintTextColor="#A9A9A9" />
+              />
 
         <EditText
             android:id="@+id/etAddress"
@@ -57,7 +56,7 @@
             android:hint="Address"
             android:backgroundTint="#758B58"
             android:textColor="#000000"
-            android:hintTextColor="#A9A9A9" />
+              />
 
         <EditText
             android:id="@+id/etPhone"
@@ -66,7 +65,7 @@
             android:hint="Phone Number"
             android:backgroundTint="#758B58"
             android:textColor="#000000"
-            android:hintTextColor="#A9A9A9" />
+              />
 
         <Button
             android:id="@+id/btnUploadPhoto"
@@ -100,7 +99,7 @@
                 android:hint="Company Name"
                 android:backgroundTint="#758B58"
                 android:textColor="#000000"
-                android:hintTextColor="#A9A9A9" />
+                  />
 
             <EditText
                 android:id="@+id/etCompanyEmail"
@@ -109,7 +108,7 @@
                 android:hint="Company Email"
                 android:backgroundTint="#758B58"
                 android:textColor="#000000"
-                android:hintTextColor="#A9A9A9" />
+                  />
 
             <EditText
                 android:id="@+id/etCompanyAddress"
@@ -118,7 +117,7 @@
                 android:hint="Company Address"
                 android:backgroundTint="#758B58"
                 android:textColor="#000000"
-                android:hintTextColor="#A9A9A9" />
+                  />
 
             <EditText
                 android:id="@+id/etDescription"
@@ -127,7 +126,7 @@
                 android:hint="Description"
                 android:backgroundTint="#758B58"
                 android:textColor="#000000"
-                android:hintTextColor="#A9A9A9" />
+                  />
 
             <EditText
                 android:id="@+id/etOpeningTime"
@@ -136,7 +135,7 @@
                 android:hint="Opening Time"
                 android:backgroundTint="#758B58"
                 android:textColor="#000000"
-                android:hintTextColor="#A9A9A9" />
+                  />
 
             <EditText
                 android:id="@+id/etClosingTime"
@@ -145,7 +144,7 @@
                 android:hint="Closing Time"
                 android:backgroundTint="#758B58"
                 android:textColor="#000000"
-                android:hintTextColor="#A9A9A9" />
+                  />
 
             <Button
                 android:id="@+id/btnUploadEventPhoto"
