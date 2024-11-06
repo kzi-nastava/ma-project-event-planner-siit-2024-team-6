@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="ToolbarTitleStyle">
+        <item name="android:textSize">40sp</item>  <!-- Adjust text size here -->
+        <item name="android:textColor">#333333</item>  <!-- Adjust text color if needed -->
+    </style>
+    <style name="ToolbarTitleTextStyle" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">30sp</item> <!-- Optional: Set the text size -->
+    </style>
+</resources>
