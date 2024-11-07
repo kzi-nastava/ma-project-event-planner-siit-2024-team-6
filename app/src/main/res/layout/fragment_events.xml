@@ -25,20 +25,37 @@
             android:scaleType="centerCrop"
             android:contentDescription="Header Image" />
 
-            <!-- Title TextView -->
-            <TextView
-                android:id="@+id/events_title"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Events"
-                android:textSize="30sp"
-                android:textStyle="bold"
-                android:layout_marginTop="35dp"
-                android:layout_marginBottom="16dp"
-                android:textColor="@android:color/black"
-                android:gravity="start"
                 android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"/>
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="35dp"
+                android:layout_marginBottom="16dp">
+
+                <!-- Title TextView -->
+                <TextView
+                    android:id="@+id/events_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Events"
+                    android:textSize="30sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/black"
+                    android:layout_alignParentStart="true" />
+
+                <!-- Filter Icon ImageView -->
+                <ImageView
+                    android:id="@+id/filter_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/event_icon"
+                android:contentDescription="Filter"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:padding="8dp" />
+            </RelativeLayout>
+
 
             <!-- Repeating card layout -->
             <include
