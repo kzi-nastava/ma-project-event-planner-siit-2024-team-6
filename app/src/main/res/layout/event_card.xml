@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="16dp"
-    app:cardElevation="8dp">
+    android:layout_margin="20dp"
+    app:cardElevation="8dp"
+    app:cardCornerRadius="8dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,22 +20,37 @@
             android:scaleType="centerCrop"
             android:src="@drawable/concert" />
 
-        <!-- Content Container for Title, Location, Date -->
+        <!-- Content Container for Title, Location, Date, and Rating -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Event Title -->
-            <TextView
-                android:id="@+id/event_title"
-                android:layout_width="wrap_content"
+            <!-- Title and Heart Icon for Favorites -->
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Ed Sheeran Concert"
-                android:textSize="22sp"
-                android:textStyle="bold"
-                android:textColor="?android:textColorPrimary" />
+                android:paddingBottom="10dp">
+
+                <TextView
+                    android:id="@+id/event_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ed Sheeran Concert"
+                    android:textSize="25sp"
+                    android:textStyle="bold"
+                    android:textColor="?android:textColorPrimary" />
+
+                <ImageView
+                    android:id="@+id/favorite_icon"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/heart_icon"
+                    android:contentDescription="Favorite" />
+            </RelativeLayout>
 
             <!-- Event Location -->
             <TextView
@@ -45,17 +60,15 @@
                 android:text="Event Location"
                 android:textSize="14sp"
                 android:textColor="@color/black"
-                android:layout_marginTop="8dp" />
+                android:layout_marginTop="20dp" />
 
             <TextView
                 android:id="@+id/event_location"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Bulevar Oslobodjenja 16"
-                android:textSize="14sp"
-                android:textColor="@color/black" />
-
-            <!-- Event Date -->
+                android:textSize="18sp"
+                android:textColor="@color/black"/>
             <TextView
                 android:id="@+id/event_date_label"
                 android:layout_width="wrap_content"
@@ -64,14 +77,48 @@
                 android:textSize="14sp"
                 android:textColor="@color/black"
                 android:layout_marginTop="4dp" />
-
-            <TextView
-                android:id="@+id/event_date"
-                android:layout_width="wrap_content"
+            <!-- Date, Time, and Rating Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="10/10/2024 at 13h"
-                android:textSize="14sp"
-                android:textColor="@color/black" />
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical">
+
+                <!-- Event Date -->
+                <TextView
+                    android:id="@+id/event_date"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="10/10/2024 at 13h"
+                    android:textSize="17sp"
+                    android:textColor="@color/black" />
+
+                <!-- Rating Icon and Number -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="end">
+
+                    <ImageView
+                        android:id="@+id/rating_icon"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/star_icon"
+                        android:contentDescription="Rating Icon" />
+
+                    <TextView
+                        android:id="@+id/rating_number"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:text="4.5"
+                        android:textSize="17sp"
+                        android:textColor="@color/black" />
+                </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
 
         <!-- Full-Width "View More" Button -->
