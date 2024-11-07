@@ -7,8 +7,11 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.example.eventure.R;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -60,7 +63,42 @@ public class EventsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_events, container, false);
+
+        View rootView = inflater.inflate(R.layout.fragment_events, container, false);
+
+        // Find the filter icon
+        ImageView filterIcon = rootView.findViewById(R.id.filter_icon);
+
+        // Set an OnClickListener to open the BottomSheetDialog when the icon is clicked
+        filterIcon.setOnClickListener(v -> {
+            // Create a BottomSheetDialog
+            BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
+            // Inflate the filter layout
+            View dialogView = inflater.inflate(R.layout.filter_events, null);
+            bottomSheetDialog.setContentView(dialogView);
+
+            // Access the BottomSheetBehavior from the BottomSheetDialog
+            View bottomSheet = (View) dialogView.getParent();
+            BottomSheetBehavior<View> bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+
+            // Disable dragging to dismiss
+            bottomSheetBehavior.setDraggable(false);
+
+            // Optionally, set the initial state to expanded (or collapsed) if needed
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+
+
+            // Find the close icon in the filter layout
+            ImageView closeIcon = dialogView.findViewById(R.id.close_icon);
+
+            // Set an OnClickListener to dismiss the BottomSheetDialog when the close icon is clicked
+            closeIcon.setOnClickListener(v1 -> bottomSheetDialog.dismiss());
+
+            // Show the dialog
+            bottomSheetDialog.show();
+        });
+
+        return rootView;
     }
+
 }
