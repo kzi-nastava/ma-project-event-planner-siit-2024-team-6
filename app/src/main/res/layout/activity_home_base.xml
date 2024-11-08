@@ -23,13 +23,16 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             android:layout_marginTop="5dp"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="5dp"
             app:popupTheme="@style/AppTheme.PopupOverlay"
             app:menu="@menu/toolbar_menu"
-            app:navigationIcon="@drawable/app_icon"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintEnd_toEndOf="parent">
+
+
+        </androidx.appcompat.widget.Toolbar>
+
 
         <LinearLayout
             android:id="@+id/linear1"
@@ -45,8 +48,9 @@
 
             <androidx.appcompat.widget.SearchView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:background="@drawable/border_background"
+                android:backgroundTint="@color/white"
                 android:theme="@style/Theme.Eventure"
                 android:layout_marginBottom="8dp"
                 app:searchIcon="@drawable/search_icon"/>
@@ -71,8 +75,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:background="@color/green"
-        app:itemIconTint="@android:color/white"
-        app:itemTextColor="@android:color/white"
+        android:background="@color/blue"
+        app:itemIconTint="@color/white"
+        app:itemTextColor="@color/white"
         app:menu="@menu/bottom_menu"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

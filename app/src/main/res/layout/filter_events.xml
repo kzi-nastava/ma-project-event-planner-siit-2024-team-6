@@ -2,7 +2,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/cream"
+    android:background="@color/coolWhite"
     android:padding="16dp">
 
     <!-- Top Row with Filter Icon and Close Icon -->
@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_marginBottom="0dp"
-        android:background="@color/green">
+        android:background="@color/blue">
 
         <!-- Filter Icon -->
         <ImageView
@@ -154,7 +154,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:background="@color/green"/>
+                android:background="@color/blue"/>
 
             <!-- Time Picker Section -->
             <TextView
@@ -178,7 +178,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Apply Filter"
-                android:backgroundTint="@color/green"
+                android:backgroundTint="@color/blue"
                 android:textColor="@android:color/white"
                 android:textStyle="bold"
                 android:padding="12dp"

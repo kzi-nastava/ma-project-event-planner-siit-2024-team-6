@@ -121,16 +121,6 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Full-Width "View More" Button -->
-        <Button
-            android:id="@+id/button_view_more"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/lightGreen"
-            android:text="View More"
-            android:textColor="@android:color/white"
-            android:textStyle="bold"
-            android:padding="12dp"
-            android:gravity="center" />
+
     </LinearLayout>
 </androidx.cardview.widget.CardView>
