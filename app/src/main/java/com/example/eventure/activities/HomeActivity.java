@@ -1,16 +1,29 @@
 package com.example.eventure.activities;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 
+//import com.denzcoskun.imageslider.ImageSlider;
+//import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.eventure.R;
+import com.example.eventure.fragments.EventsFragment;
+import com.example.eventure.fragments.PasFragment;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class HomeActivity extends AppCompatActivity {
     /*
@@ -19,6 +32,8 @@ public class HomeActivity extends AppCompatActivity {
      * Moramo voditi racuna, ovde se ne sme nalaziti kod koji ce blokirati prelazak aktivnosti
      * u naredne metode! To znaci da izvrsavanje dugackih operacija treba izbegavati ovde.
      * */
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,46 +43,61 @@ public class HomeActivity extends AppCompatActivity {
          * R.layout.activity_home -> pristupamo preko naziva layout-a
          * */
         setContentView(R.layout.activity_home);
-        /*
-         * Log klasa se koristi za logovanje informacija, errora, warning-a unutar aplikacije.
-         * Logovi se ispisuju u logcat delu i moguce ih je filtrirati po zadatom tag-u
-         * (prvi parametar)
-         * */
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitleTextAppearance(this, R.style.ToolbarTitleTextStyle);
+        toolbar.setContentInsetStartWithNavigation(70);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("EVENTURE");
+        toolbar.setTitleTextColor(getResources().getColor(R.color.white));
+
+        // Display application icon in the toolbar
+//        getSupportActionBar().setDisplayShowHomeEnabled(true);
+//        getSupportActionBar().setLogo(R.drawable.app_icon);
+//        getSupportActionBar().setDisplayUseLogoEnabled(true);
+
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+        bottomNav.setOnNavigationItemSelectedListener(navListener);
+
+
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new EventsFragment()).commit();
+
         Log.d("ShopApp", "HomeActivity onCreate()");
-        /*
-         * Toast klasa se koristi za prikazivanje obavestenja za odredjeni vremenski interval.
-         * Posle nekog vremena nestaje. Ne blokira interakciju korisnika
-         * */
         Toast.makeText(this, "onCreate()", Toast.LENGTH_SHORT).show();
-        /*
-         * Koristeci metodu findViewById, mozemo dobaviti tacnu komponentu interface-a preko
-         * njenog jedinstvenog id-a (vise o tome kasnije).
-         * Na komponente mozemo dodavati razne akcije listenere na slican nacin
-         * kako se to radi u drugi programskim jezicima.
-         */
-        /*Button btnExplicitIntent = findViewById(R.id.btnExplicitIntent);
-        btnExplicitIntent.setOnClickListener(new View.OnClickListener(){
 
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(HomeActivity.this, CartActivity.class);
-                startActivity(intent);
-
-            }
-        });*/
-
-        /*Button btnImplicitIntent = findViewById(R.id.btnImplicitIntent);
-        btnImplicitIntent.setOnClickListener(new View.OnClickListener(){
-
-            @Override
-            public void onClick(View v) {
-
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com"));
-                startActivity(intent);
-            }
-        });*/
-
+//       ImageSlider slider = findViewById(R.id.TopEventsSlider);
+//        List<SlideModel> slideModels = new ArrayList<>();
+//        slideModels.add(new SlideModel(R.drawable.concert));
+//        slideModels.add(new SlideModel(R.drawable.event));
+//        slideModels.add(new SlideModel(R.drawable.wedding));
+//        slider.setImageList(slideModels,true);
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.toolbar_menu, menu);
+        return true;
+    }
+    private final BottomNavigationView.OnNavigationItemSelectedListener navListener = item -> {
+        // By using switch we can easily get
+        // the selected fragment
+        // by using there id.
+        Fragment selectedFragment = null;
+        int itemId = item.getItemId();
+        if (itemId == R.id.events_menu) {
+            selectedFragment = new EventsFragment();
+        } else if (itemId == R.id.pas_menu) {
+            selectedFragment = new PasFragment();
+        }
+        if (selectedFragment != null) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
+        }
+        return true;
+    };
+
+
+
     /*
      * onStart se poziva kada se aktivnost prvi put startuje, posle onCreate metode ili
      * kada se vratimo klikom na back dugme ponovo na aktivnost

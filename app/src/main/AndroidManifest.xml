@@ -18,6 +18,15 @@
         <activity
             android:name=".activities.RegistrationActivity"
             android:exported="false" />
+
+<!--        <activity-->
+<!--            android:name=".activities.HomeActivity"-->
+<!--            android:label="Eventure"-->
+<!--            android:exported="false">-->
+<!--            <meta-data-->
+<!--                android:name="android.app.lib_name"-->
+<!--                android:value="" />-->
+<!--        </activity>-->
         <activity
             android:name=".activities.HomeActivity"
             android:exported="false"
