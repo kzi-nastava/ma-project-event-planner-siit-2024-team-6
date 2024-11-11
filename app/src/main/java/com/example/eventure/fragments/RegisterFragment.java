@@ -14,11 +14,7 @@ import android.widget.LinearLayout;
 
 import com.example.eventure.R;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link RegisterFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class RegisterFragment extends Fragment {
 
     private Button btnSwitchToProvider;
