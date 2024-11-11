@@ -13,11 +13,7 @@ import android.widget.Button;
 
 import com.example.eventure.R;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ProfileStartFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class ProfileStartFragment extends Fragment {
 
     @Nullable

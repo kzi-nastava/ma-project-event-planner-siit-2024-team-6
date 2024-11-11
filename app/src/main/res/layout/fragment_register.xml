@@ -4,163 +4,155 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".fragments.RegisterFragment">
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp"
-        android:background="#FFFFFF">
+        android:layout_height="match_parent">
 
-        <!-- Common fields for all users -->
-        <EditText
-            android:id="@+id/etName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="First Name"
-            android:backgroundTint="#758B58"
-            android:textColor="#000000"
-            />
-
-        <EditText
-            android:id="@+id/etSurname"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Last Name"
-            android:backgroundTint="#758B58"
-            android:textColor="#000000"
-            />
-
-        <EditText
-            android:id="@+id/etEmail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Email"
-            android:backgroundTint="#758B58"
-            android:textColor="#000000"
-            />
-
-        <EditText
-            android:id="@+id/etPassword"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Password"
-            android:inputType="textPassword"
-            android:backgroundTint="#758B58"
-            android:textColor="#000000"
-            />
-
-        <EditText
-            android:id="@+id/etAddress"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Address"
-            android:backgroundTint="#758B58"
-            android:textColor="#000000"
-            />
-
-        <EditText
-            android:id="@+id/etPhone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Phone Number"
-            android:backgroundTint="#758B58"
-            android:textColor="#000000"
-            />
-
-        <Button
-            android:id="@+id/btnUploadPhoto"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Upload Photo"
-            android:backgroundTint="#758B58"
-            android:textColor="#FFFFFF" />
-
-        <!-- Button to switch to Provider registration -->
-        <Button
-            android:id="@+id/btnSwitchToProvider"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Register as Provider"
-            android:backgroundTint="#758B58"
-            android:textColor="#FFFFFF" />
-
-        <!-- Additional fields for Provider -->
         <LinearLayout
-            android:id="@+id/providerFields"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:visibility="gone">
+            android:padding="16dp">
 
+            <!-- Common fields for all users -->
             <EditText
-                android:id="@+id/etCompanyName"
+                android:id="@+id/etName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Company Name"
-                android:backgroundTint="#758B58"
-                android:textColor="#000000"
-                />
+                android:hint="First Name"
+                
+                android:textColor="#000000" />
 
             <EditText
-                android:id="@+id/etCompanyEmail"
+                android:id="@+id/etSurname"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Company Email"
-                android:backgroundTint="#758B58"
-                android:textColor="#000000"
-                />
+                android:hint="Last Name"
+                
+                android:textColor="#000000" />
 
             <EditText
-                android:id="@+id/etCompanyAddress"
+                android:id="@+id/etEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Company Address"
-                android:backgroundTint="#758B58"
-                android:textColor="#000000"
-                />
+                android:hint="Email"
+                
+                android:textColor="#000000" />
 
             <EditText
-                android:id="@+id/etDescription"
+                android:id="@+id/etPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Description"
-                android:backgroundTint="#758B58"
-                android:textColor="#000000"
-                />
+                android:hint="Password"
+                android:inputType="textPassword"
+                
+                android:textColor="#000000" />
 
             <EditText
-                android:id="@+id/etOpeningTime"
+                android:id="@+id/etAddress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Opening Time"
-                android:backgroundTint="#758B58"
-                android:textColor="#000000"
-                />
+                android:hint="Address"
+                
+                android:textColor="#000000" />
 
             <EditText
-                android:id="@+id/etClosingTime"
+                android:id="@+id/etPhone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Closing Time"
-                android:backgroundTint="#758B58"
-                android:textColor="#000000"
-                />
+                android:hint="Phone Number"
+                
+                android:textColor="#000000" />
 
             <Button
-                android:id="@+id/btnUploadEventPhoto"
+                android:id="@+id/btnUploadPhoto"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Upload Event Photo"
-                android:backgroundTint="#758B58"
+                android:text="Upload Photo"
+                android:textColor="#FFFFFF" />
+
+            <!-- Button to switch to Provider registration -->
+            <Button
+                android:id="@+id/btnSwitchToProvider"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Register as Provider"
+                
+                android:textColor="#FFFFFF" />
+
+            <!-- Additional fields for Provider -->
+            <LinearLayout
+                android:id="@+id/providerFields"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <EditText
+                    android:id="@+id/etCompanyName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Company Name"
+                    
+                    android:textColor="#000000" />
+
+                <EditText
+                    android:id="@+id/etCompanyEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Company Email"
+                    
+                    android:textColor="#000000" />
+
+                <EditText
+                    android:id="@+id/etCompanyAddress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Company Address"
+                    
+                    android:textColor="#000000" />
+
+                <EditText
+                    android:id="@+id/etDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Description"
+                    
+                    android:textColor="#000000" />
+
+                <EditText
+                    android:id="@+id/etOpeningTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Opening Time"
+                    
+                    android:textColor="#000000" />
+
+                <EditText
+                    android:id="@+id/etClosingTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Closing Time"
+                    
+                    android:textColor="#000000" />
+
+                <Button
+                    android:id="@+id/btnUploadEventPhoto"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Upload Event Photo"
+                    
+                    android:textColor="#FFFFFF" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnRegister"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Register"
+                
                 android:textColor="#FFFFFF" />
         </LinearLayout>
+    </ScrollView>
 
-        <Button
-            android:id="@+id/btnRegister"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Register"
-            android:backgroundTint="#758B58"
-            android:textColor="#FFFFFF" />
-    </LinearLayout>
 </FrameLayout>

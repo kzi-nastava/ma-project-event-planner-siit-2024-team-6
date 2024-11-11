@@ -18,10 +18,13 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitleTextAppearance(this, R.style.ToolbarTitleTextStyle);
+        toolbar.setContentInsetStartWithNavigation(70);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("EVENTURE");
+        toolbar.setTitleTextColor(getResources().getColor(R.color.white));
 
-        // Загружаем ProfileStartFragment по умолчанию
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, new ProfileStartFragment())
