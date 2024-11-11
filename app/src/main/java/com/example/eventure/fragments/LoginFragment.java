@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,11 +15,7 @@ import android.widget.EditText;
 
 import com.example.eventure.R;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link LoginFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class LoginFragment extends Fragment {
 
     private EditText etEmail, etPassword;
@@ -37,7 +34,13 @@ public class LoginFragment extends Fragment {
         btnLogin.setOnClickListener(v -> {
             String email = etEmail.getText().toString();
             String password = etPassword.getText().toString();
-            // Логика логина
+            if (email.isEmpty() || password.isEmpty()) {
+                Log.d("Login", "Email or Password is empty");
+                // Показать сообщение об ошибке пользователю
+            } else {
+                Log.d("Login", "User logged in with email: " + email);
+                // Логика входа (например, аутентификация)
+            }
         });
 
         return view;
