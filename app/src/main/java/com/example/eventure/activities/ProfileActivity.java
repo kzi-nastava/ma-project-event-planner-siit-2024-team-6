@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 
 import com.example.eventure.R;
@@ -52,8 +53,28 @@ public class ProfileActivity extends AppCompatActivity {
 
         drawer = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
+        actionBar = getSupportActionBar();
+        if(actionBar != null){
+            // postavlja prikazivanje "strelice prema nazad" (back arrow)
+            // kao indikatora navigacije na lijevoj strani Toolbar-a.
+            actionBar.setDisplayHomeAsUpEnabled(false);
+            // postavlja ikonu koja se prikazuje umjesto strelice prema nazad.
+            // U ovom slučaju, postavljena je ikona hamburger iz drawable resursa (ic_hamburger).
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_humburger);
+            //ovo omogućuje da se klikom na 'home' na Toolbar-u
+            // aktivira povratak na prethodnu aktivnost.
+            actionBar.setHomeButtonEnabled(false);
+        }
 
+        actionBarDrawerToggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 
+        drawer.addDrawerListener(actionBarDrawerToggle);
+        actionBarDrawerToggle.syncState();
+        navController = Navigation.findNavController(this, R.id.fragment_nav_content_main);
+        navController.addOnDestinationChangedListener((navController, navDestination, bundle) -> {
+
+        }
     }
 
     private final BottomNavigationView.OnNavigationItemSelectedListener navListener = item -> {

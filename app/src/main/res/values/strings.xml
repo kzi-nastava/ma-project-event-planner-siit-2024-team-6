@@ -13,5 +13,7 @@
     <string name="favorite_events">Favorite events</string>
     <string name="my_calendar">My Calendar</string>
     <string name="favorite_services">Favorite services</string>
+    <string name="navigation_drawer_open" />
+    <string name="navigation_drawer_close" />
 
 </resources>
