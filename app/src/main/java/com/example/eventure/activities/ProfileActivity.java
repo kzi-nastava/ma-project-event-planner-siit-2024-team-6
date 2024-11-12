@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -22,6 +23,9 @@ import com.example.eventure.fragments.ProfileStartFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class ProfileActivity extends AppCompatActivity {
     private DrawerLayout drawer;
     private NavController navController;
@@ -29,6 +33,8 @@ public class ProfileActivity extends AppCompatActivity {
     private NavigationView navigationView;
     private ActionBar actionBar;
     private ActionBarDrawerToggle actionBarDrawerToggle;
+
+    private Set<Integer> topLevelDestinations = new HashSet<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,8 +79,35 @@ public class ProfileActivity extends AppCompatActivity {
         actionBarDrawerToggle.syncState();
         navController = Navigation.findNavController(this, R.id.fragment_nav_content_main);
         navController.addOnDestinationChangedListener((navController, navDestination, bundle) -> {
-
-        }
+            int id = navDestination.getId();
+            boolean isTopLevelDestination = topLevelDestinations.contains(id);
+            /* Logic to determine if the destination is top level */;
+            if (!isTopLevelDestination) {
+                if (id == R.id.nav_products) {
+                    Toast.makeText(ProfileActivity.this, "Products", Toast.LENGTH_SHORT).show();
+                    /* Do something when this item is selected,
+                     * such as navigating to a specific fragment
+                     * For example:
+                     * navController.navigate(R.id.nav_products);
+                     * Replace with your destination fragment ID
+                     */
+                } else if (id == R.id.nav_new) {
+                    Toast.makeText(HomeActivity.this, "New product", Toast.LENGTH_SHORT).show();
+                } else if (id == R.id.nav_profile) {
+                    Toast.makeText(HomeActivity.this, "Profile", Toast.LENGTH_SHORT).show();
+                } else if (id == R.id.nav_logout) {
+                    Toast.makeText(HomeActivity.this, "Logout", Toast.LENGTH_SHORT).show();
+                }
+                // Close the drawer if the destination is not a top-level destination
+                drawer.closeDrawers();
+            } else {
+                if (id == R.id.nav_settings) {
+                    Toast.makeText(HomeActivity.this, "Settings", Toast.LENGTH_SHORT).show();
+                } else if (id == R.id.nav_language) {
+                    Toast.makeText(HomeActivity.this, "Language", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     private final BottomNavigationView.OnNavigationItemSelectedListener navListener = item -> {
