@@ -82,7 +82,7 @@ public class HomeActivity extends AppCompatActivity {
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnNavigationItemSelectedListener(navListener);
 
-        drawer = findViewById(R.id.drawer_layout);
+        drawer = findViewById(R.id.drawer_home_layout);
         navigationView = findViewById(R.id.nav_view);
         navController = Navigation.findNavController(this, R.id.fragment_nav_content_main);
 
