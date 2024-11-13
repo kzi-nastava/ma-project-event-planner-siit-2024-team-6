@@ -49,6 +49,9 @@ public class ProfileActivity extends AppCompatActivity {
 
         }
 
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+        bottomNav.setOnNavigationItemSelectedListener(navListener);
+
         drawer = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
         navController = Navigation.findNavController(this, R.id.fragment_nav_content_main);
@@ -85,38 +88,32 @@ public class ProfileActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 
-        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
-        bottomNav.setOnNavigationItemSelectedListener(item -> {
-            Fragment selectedFragment = null;
-            int itemId = item.getItemId();
-            if (itemId == R.id.events_menu) {
-                selectedFragment = new EventsFragment();
-            } else if (itemId == R.id.pas_menu) {
-                selectedFragment = new PasFragment();
-            }
-            if (selectedFragment != null) {
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
-            }
-            return true;
-        });
+
     }
 
 
-//    private final BottomNavigationView.OnNavigationItemSelectedListener navListener = item -> {
-//        // By using switch we can easily get
-//        // the selected fragment
-//        // by using there id.
-//        Fragment selectedFragment = null;
-//        int itemId = item.getItemId();
-//        if (itemId == R.id.events_menu) {
-//            selectedFragment = new EventsFragment();
-//        } else if (itemId == R.id.pas_menu) {
-//            selectedFragment = new PasFragment();
-//        }
-//        if (selectedFragment != null) {
-//            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
-//        }
-//        return true;
-//    };
+    // In ProfileActivity.java
+    private final BottomNavigationView.OnNavigationItemSelectedListener navListener = item -> {
+        // Get the selected menu item ID
+        int itemId = item.getItemId();
+
+        if (itemId == R.id.events_menu) {
+            // Go to HomeActivity and show EventsFragment
+            Intent intent = new Intent(ProfileActivity.this, HomeActivity.class);
+            intent.putExtra("fragment_key", "events");  // Pass the fragment type
+            startActivity(intent);
+            finish();  // Finish ProfileActivity so the user can't go back
+            return true;
+        } else if (itemId == R.id.pas_menu) {
+            // Go to HomeActivity and show PasFragment
+            Intent intent = new Intent(ProfileActivity.this, HomeActivity.class);
+            intent.putExtra("fragment_key", "pas");  // Pass the fragment type
+            startActivity(intent);
+            finish();  // Finish ProfileActivity so the user can't go back
+            return true;
+        }
+        return false;
+    };
+
 
 }

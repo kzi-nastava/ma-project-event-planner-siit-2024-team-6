@@ -1,5 +1,6 @@
 package com.example.eventure.activities;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -67,6 +68,13 @@ public class HomeActivity extends AppCompatActivity {
         Log.d("ShopApp", "HomeActivity onCreate()");
         Toast.makeText(this, "onCreate()", Toast.LENGTH_SHORT).show();
 
+        // Find profile icon in toolbar
+        @SuppressLint("ResourceType") View profileIcon = toolbar.findViewById(R.id.nav_profile); // Replace with your profile icon ID
+        profileIcon.setOnClickListener(v -> {
+            // Create an Intent to start ProfileActivity
+            Intent intent = new Intent(HomeActivity.this, ProfileActivity.class);
+            startActivity(intent);
+        });
 //       ImageSlider slider = findViewById(R.id.TopEventsSlider);
 //        List<SlideModel> slideModels = new ArrayList<>();
 //        slideModels.add(new SlideModel(R.drawable.concert));
