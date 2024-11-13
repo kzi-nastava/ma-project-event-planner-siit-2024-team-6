@@ -4,6 +4,9 @@ import android.graphics.Paint;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.viewpager2.widget.CompositePageTransformer;
+import androidx.viewpager2.widget.MarginPageTransformer;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,8 +15,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.eventure.R;
+import com.example.eventure.adapters.PASCarouselAdapter;
+import com.example.eventure.model.PAS;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -66,6 +74,69 @@ public class PasFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_pas, container, false);
+
+        // Top 5 Products Carousel
+
+// Carousel for products and services
+        ViewPager2 pasCarousel = rootView.findViewById(R.id.pasCarousel);
+
+// List of top products and services
+        List<PAS> pasList = new ArrayList<>();
+
+// Product 1 - Live Music Band
+        PAS product1 = new PAS();
+        product1.setPhotoID(R.drawable.pas1);
+        product1.setTitle("Live Music Band");
+        product1.setDescription("Enhance your event with a live music band! From jazz to rock, enjoy a tailored musical experience that entertains all guests.");
+        product1.setPrice(500); // Example price per event
+        pasList.add(product1);
+
+// Product 2 - Custom Cakes
+        PAS product2 = new PAS();
+        product2.setPhotoID(R.drawable.pas2);
+        product2.setTitle("Custom Cakes");
+        product2.setDescription("Order beautifully crafted custom cakes for any occasion, made to match your theme and taste preferences.");
+        product2.setPrice(150); // Example price per cake
+        pasList.add(product2);
+
+// Product 3 - Portable Bluetooth Speakers
+        PAS product3 = new PAS();
+        product3.setPhotoID(R.drawable.pas3);
+        product3.setTitle("Portable Bluetooth Speakers");
+        product3.setDescription("Take the party anywhere with our high-quality portable Bluetooth speakers, delivering crisp sound and deep bass.");
+        product3.setPrice(120); // Example price per unit
+        pasList.add(product3);
+
+// Product 4 - Event Decorations
+        PAS product4 = new PAS();
+        product4.setPhotoID(R.drawable.pas4);
+        product4.setTitle("Event Decorations");
+        product4.setDescription("Transform your venue with customized event decorations, including floral arrangements, lighting, and themed setups.");
+        product4.setPrice(300); // Example price per setup
+        pasList.add(product4);
+
+// Product 5 - Photography Service
+        PAS product5 = new PAS();
+        product5.setPhotoID(R.drawable.pas5);
+        product5.setTitle("Photography Service");
+        product5.setDescription("Capture the best moments with a professional photography service, perfect for weddings, parties, and corporate events.");
+        product5.setPrice(400); // Example price per session
+        pasList.add(product5);
+
+// Adapter for ViewPager2
+        PASCarouselAdapter adapter = new PASCarouselAdapter(pasList);
+        pasCarousel.setAdapter(adapter);
+
+        pasCarousel.setOffscreenPageLimit(3);
+        CompositePageTransformer transformer = new CompositePageTransformer();
+        transformer.addTransformer(new MarginPageTransformer(40));
+        transformer.addTransformer((page, position) -> {
+            float r = 1 - Math.abs(position);
+            page.setScaleY(0.85f + r * 0.15f);
+        });
+        pasCarousel.setPageTransformer(transformer);
+
+
 
         // Find the filter icon
         ImageView filterIcon = rootView.findViewById(R.id.products_filter_icon);

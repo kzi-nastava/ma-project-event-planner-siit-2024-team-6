@@ -16,36 +16,31 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.viewpager2.widget.CompositePageTransformer;
+import androidx.viewpager2.widget.MarginPageTransformer;
+import androidx.viewpager2.widget.ViewPager2;
 
 //import com.denzcoskun.imageslider.ImageSlider;
 //import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.eventure.R;
+import com.example.eventure.adapters.EventCarouselAdapter;
 import com.example.eventure.fragments.EventsFragment;
 import com.example.eventure.fragments.PasFragment;
+import com.example.eventure.model.Event;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
 
+//onCreate, onStart, onRestart, onResume, onPause, onStop, onDestroy.
 public class HomeActivity extends AppCompatActivity {
-    /*
-     * Unutar onCreate metode, postavljamo izgled nase aktivnosti koristeci setContentView
-     * U ovoj metodi mozemo dobaviti sve view-e (widget-e, komponente interface-a).
-     * Moramo voditi racuna, ovde se ne sme nalaziti kod koji ce blokirati prelazak aktivnosti
-     * u naredne metode! To znaci da izvrsavanje dugackih operacija treba izbegavati ovde.
-     * */
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        /*
-         * Metoda setContentview() veze aktivnost sa layout-om
-         * R -> referenca na resources folder tj. na resurse
-         * R.layout.activity_home -> pristupamo preko naziva layout-a
-         * */
         setContentView(R.layout.activity_home);
 
+        //Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitleTextAppearance(this, R.style.ToolbarTitleTextStyle);
         toolbar.setContentInsetStartWithNavigation(70);
@@ -53,27 +48,16 @@ public class HomeActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("EVENTURE");
         toolbar.setTitleTextColor(getResources().getColor(R.color.white));
 
-        // Display application icon in the toolbar
-//        getSupportActionBar().setDisplayShowHomeEnabled(true);
-//        getSupportActionBar().setLogo(R.drawable.app_icon);
-//        getSupportActionBar().setDisplayUseLogoEnabled(true);
-
+        //Bottombar
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnNavigationItemSelectedListener(navListener);
 
-
+        //Fragments (content) section
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new EventsFragment()).commit();
 
-        Log.d("ShopApp", "HomeActivity onCreate()");
-       // Toast.makeText(this, "onCreate()", Toast.LENGTH_SHORT).show();
 
-//       ImageSlider slider = findViewById(R.id.TopEventsSlider);
-//        List<SlideModel> slideModels = new ArrayList<>();
-//        slideModels.add(new SlideModel(R.drawable.concert));
-//        slideModels.add(new SlideModel(R.drawable.event));
-//        slideModels.add(new SlideModel(R.drawable.wedding));
-//        slider.setImageList(slideModels,true);
     }
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
@@ -109,47 +93,31 @@ public class HomeActivity extends AppCompatActivity {
     };
 
 
-
-    /*
-     * onStart se poziva kada se aktivnost prvi put startuje, posle onCreate metode ili
-     * kada se vratimo klikom na back dugme ponovo na aktivnost
-     * */
     @Override
     protected void onStart() {
         super.onStart();
         Log.d("ShopApp", "HomeActivity onStart()");
     }
-    /*
-     * onResume se poziva kada je aktivnost u fokusu i korisnik
-     * je u interakciji sa aktivnosti.
-     * */
+
+
     @Override
     protected void onResume(){
         super.onResume();
         Log.d("ShopApp", "HomeActivity onResume()");
     }
 
-    /*
-     * onPause se poziva kada je aktivnost delimicno prekrivena.
-     * */
     @Override
     protected void onPause() {
         super.onPause();
         Log.d("ShopApp", "HomeActivity onPause()");
     }
-    /*
-     * onStop se poziva kada je aktivnost u potpunosti prekrivena nekom drugom aktivnošću
-     * */
+
     @Override
     protected void onStop() {
         super.onStop();
         Log.d("ShopApp", "HomeActivity onStop()");
     }
-    /*
-     * onDestory se poziva kada je aktivnost u potpunosti unistena,
-     * ondosno kada je aplikacija zatvorena
-     * Izbrisana je iz background-a.
-     */
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
