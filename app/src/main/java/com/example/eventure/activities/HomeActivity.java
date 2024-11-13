@@ -58,8 +58,13 @@ public class HomeActivity extends AppCompatActivity {
          * R.layout.activity_home -> pristupamo preko naziva layout-a
          * */
         setContentView(R.layout.activity_home);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
+//        if (getSupportActionBar() != null) {
+//            getSupportActionBar().setTitle("EVENTURE");
+//
+//        }
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitleTextAppearance(this, R.style.ToolbarTitleTextStyle);
         toolbar.setContentInsetStartWithNavigation(70);
         setSupportActionBar(toolbar);
