@@ -54,7 +54,7 @@
         android:id="@+id/nav_favorite_services"
         android:name="com.example.eventure.fragments.FavoriteServicesFragment"
         android:label="F-T Services"
-        tools:layout="@layout/fragment_ft_services"
+        tools:layout="@layout/fragment_favorite_services"
         app:popUpTo="@+id/nav_profile"
         app:popUpToInclusive="true" />
 
