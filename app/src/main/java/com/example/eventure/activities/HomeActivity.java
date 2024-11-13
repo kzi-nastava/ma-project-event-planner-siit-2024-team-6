@@ -55,6 +55,7 @@ public class HomeActivity extends AppCompatActivity {
         //Fragments (content) section
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new EventsFragment()).commit();
 
+
     }
 
     @Override
