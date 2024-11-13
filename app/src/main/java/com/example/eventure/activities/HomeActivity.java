@@ -23,6 +23,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 
 //import com.denzcoskun.imageslider.ImageSlider;
 //import com.denzcoskun.imageslider.models.SlideModel;
@@ -103,7 +104,24 @@ public class HomeActivity extends AppCompatActivity {
             actionBar.setHomeButtonEnabled(false);
         }
 
+        actionBarDrawerToggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        // dodajemo navigation drawer-u listener za događaje koji se dese.
+        // actionBarDrawerToggle prati promene stanja drawera i reaguje na njih.
+        drawer.addDrawerListener(actionBarDrawerToggle);
+        // syncState() se koristi kako bi se uskladile ikone (npr. "hamburger" ikona)
+        // i stanja između ActionBar-a (ili Toolbar-a) i drawer-a. Ova metoda osigurava
+        // da se ikona na ActionBar-u (ili Toolbar-u) pravilno menja u zavisnosti
+        // od stanja drawer-a (otvoreno ili zatvoreno).
+        actionBarDrawerToggle.syncState();
 
+        appBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.nav_notifications, R.id.nav_messages, R.id.nav_favorite_products,
+                R.id.nav_favorite_services, R.id.nav_favorite_events, R.id.nav_my_calendar
+        ).setOpenableLayout(drawer).build();
+
+        NavigationUI.setupWithNavController(navigationView, navController);
+        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 
 
 
