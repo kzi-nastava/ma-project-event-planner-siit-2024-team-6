@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class Event {
 
-    private int photoID;  // Changed from String to int
+    private int photoID;
     private String title;
     private String location;
     private Date date;
