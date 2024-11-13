@@ -65,7 +65,7 @@ public class HomeActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new EventsFragment()).commit();
 
         Log.d("ShopApp", "HomeActivity onCreate()");
-        Toast.makeText(this, "onCreate()", Toast.LENGTH_SHORT).show();
+       // Toast.makeText(this, "onCreate()", Toast.LENGTH_SHORT).show();
 
 //       ImageSlider slider = findViewById(R.id.TopEventsSlider);
 //        List<SlideModel> slideModels = new ArrayList<>();
