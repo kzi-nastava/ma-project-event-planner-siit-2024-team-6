@@ -46,7 +46,8 @@
         app:layout_constraintTop_toBottomOf="@id/app_bar"
         app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        />
 
     <include layout="@layout/activity_profile_content" />
 
@@ -61,4 +62,5 @@
         app:itemIconTint="@color/white"
         app:itemTextColor="@color/white"
         app:menu="@menu/bottom_menu"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

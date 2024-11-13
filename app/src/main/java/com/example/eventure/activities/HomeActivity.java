@@ -13,10 +13,15 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.ui.AppBarConfiguration;
 
 //import com.denzcoskun.imageslider.ImageSlider;
 //import com.denzcoskun.imageslider.models.SlideModel;
@@ -24,6 +29,7 @@ import com.example.eventure.R;
 import com.example.eventure.fragments.EventsFragment;
 import com.example.eventure.fragments.PasFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +42,12 @@ public class HomeActivity extends AppCompatActivity {
      * u naredne metode! To znaci da izvrsavanje dugackih operacija treba izbegavati ovde.
      * */
 
+    private DrawerLayout drawer;
+    private NavController navController;
+    private AppBarConfiguration appBarConfiguration;
+    private NavigationView navigationView;
+    private ActionBar actionBar;
+    private ActionBarDrawerToggle actionBarDrawerToggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
