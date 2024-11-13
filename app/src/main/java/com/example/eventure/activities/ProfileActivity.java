@@ -32,8 +32,8 @@ public class ProfileActivity extends AppCompatActivity {
     private NavController navController;
     private AppBarConfiguration appBarConfiguration;
     private NavigationView navigationView;
-//    private ActionBar actionBar;
-//    private ActionBarDrawerToggle actionBarDrawerToggle;
+    private ActionBar actionBar;
+    private ActionBarDrawerToggle actionBarDrawerToggle;
 
 //    private Set<Integer> topLevelDestinations = new HashSet<>();
 
@@ -46,12 +46,36 @@ public class ProfileActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle("EVENTURE");
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         }
 
         drawer = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
         navController = Navigation.findNavController(this, R.id.fragment_nav_content_main);
+
+        actionBar = getSupportActionBar();
+        if(actionBar != null){
+            // postavlja prikazivanje "strelice prema nazad" (back arrow)
+            // kao indikatora navigacije na lijevoj strani Toolbar-a.
+            actionBar.setDisplayHomeAsUpEnabled(false);
+            // postavlja ikonu koja se prikazuje umjesto strelice prema nazad.
+            // U ovom slučaju, postavljena je ikona hamburger iz drawable resursa (ic_hamburger).
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_humburger);
+            //ovo omogućuje da se klikom na 'home' na Toolbar-u
+            // aktivira povratak na prethodnu aktivnost.
+            actionBar.setHomeButtonEnabled(false);
+        }
+
+        actionBarDrawerToggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        // dodajemo navigation drawer-u listener za događaje koji se dese.
+        // actionBarDrawerToggle prati promene stanja drawera i reaguje na njih.
+        drawer.addDrawerListener(actionBarDrawerToggle);
+        // syncState() se koristi kako bi se uskladile ikone (npr. "hamburger" ikona)
+        // i stanja između ActionBar-a (ili Toolbar-a) i drawer-a. Ova metoda osigurava
+        // da se ikona na ActionBar-u (ili Toolbar-u) pravilno menja u zavisnosti
+        // od stanja drawer-a (otvoreno ili zatvoreno).
+        actionBarDrawerToggle.syncState();
 
         appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_notifications, R.id.nav_messages, R.id.nav_favorite_products,
