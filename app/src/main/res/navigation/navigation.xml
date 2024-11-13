@@ -31,7 +31,7 @@
 
     <fragment
         android:id="@+id/registerFragment"
-        android:name="com.example.eventure.fragments.LoginFragment"
+        android:name="com.example.eventure.fragments.RegisterFragment"
         android:label="Login"
         tools:layout="@layout/fragment_register" />
     <!-- Уведомления -->
