@@ -10,6 +10,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.eventure.R;
+import com.example.eventure.fragments.LoginFragment;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -29,7 +30,7 @@ public class SplashScreenActivity extends AppCompatActivity {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                Intent intent = new Intent(SplashScreenActivity.this, LoginActivity.class);
+                Intent intent = new Intent(SplashScreenActivity.this, ProfileActivity.class);
                 startActivity(intent);
                 finish();
             }
