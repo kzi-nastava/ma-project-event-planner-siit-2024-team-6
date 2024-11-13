@@ -67,4 +67,20 @@
         app:popUpTo="@+id/nav_profile"
         app:popUpToInclusive="true" />
 
+    <fragment
+        android:id="@+id/events_menu"
+        android:name="com.example.eventure.fragments.EventsFragment"
+        android:label="events"
+        tools:layout="@layout/fragment_events"
+        app:popUpTo="@+id/nav_profile"
+        app:popUpToInclusive="true" />
+
+    <fragment
+    android:id="@+id/pas_menu"
+    android:name="com.example.eventure.fragments.PasFragment"
+    android:label="products"
+    tools:layout="@layout/fragment_pas"
+    app:popUpTo="@+id/nav_profile"
+    app:popUpToInclusive="true" />
+
 </navigation>
