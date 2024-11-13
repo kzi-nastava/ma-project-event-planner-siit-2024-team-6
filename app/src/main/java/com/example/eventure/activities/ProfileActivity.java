@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 
 import com.example.eventure.R;
 import com.example.eventure.fragments.EventsFragment;
@@ -48,15 +49,15 @@ public class ProfileActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("EVENTURE");
         toolbar.setTitleTextColor(getResources().getColor(R.color.white));
 
-        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
-        bottomNav.setOnNavigationItemSelectedListener(navListener);
-
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, new ProfileStartFragment())
-                    .commit();
-        }
-
+//        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+//        NavigationUI.setupWithNavController(bottomNav, navController);
+//
+//        if (savedInstanceState == null) {
+//            getSupportFragmentManager().beginTransaction()
+//                    .replace(R.id.fragment_container, new ProfileStartFragment())
+//                    .commit();
+//        }
+//
         drawer = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
         actionBar = getSupportActionBar();
@@ -83,31 +84,57 @@ public class ProfileActivity extends AppCompatActivity {
             boolean isTopLevelDestination = topLevelDestinations.contains(id);
             /* Logic to determine if the destination is top level */;
             if (!isTopLevelDestination) {
-                if (id == R.id.nav_products) {
-                    Toast.makeText(ProfileActivity.this, "Products", Toast.LENGTH_SHORT).show();
+                if (id == R.id.nav_notifications) {
+                    Toast.makeText(ProfileActivity.this, "notifications", Toast.LENGTH_SHORT).show();
                     /* Do something when this item is selected,
                      * such as navigating to a specific fragment
                      * For example:
                      * navController.navigate(R.id.nav_products);
                      * Replace with your destination fragment ID
                      */
-                } else if (id == R.id.nav_new) {
-                    Toast.makeText(HomeActivity.this, "New product", Toast.LENGTH_SHORT).show();
-                } else if (id == R.id.nav_profile) {
-                    Toast.makeText(HomeActivity.this, "Profile", Toast.LENGTH_SHORT).show();
-                } else if (id == R.id.nav_logout) {
-                    Toast.makeText(HomeActivity.this, "Logout", Toast.LENGTH_SHORT).show();
+                } else if (id == R.id.nav_messages) {
+                    Toast.makeText(ProfileActivity.this, "messages", Toast.LENGTH_SHORT).show();
+                } else if (id == R.id.nav_favorite_events) {
+                    Toast.makeText(ProfileActivity.this, "favorite events", Toast.LENGTH_SHORT).show();
+                } else if (id == R.id.nav_favorite_products) {
+                    Toast.makeText(ProfileActivity.this, "favorite products", Toast.LENGTH_SHORT).show();
+                } else if (id == R.id.nav_favorite_services) {
+                    Toast.makeText(ProfileActivity.this, "favorite services", Toast.LENGTH_SHORT).show();
+                } else if (id == R.id.nav_my_calendar) {
+                    Toast.makeText(ProfileActivity.this, "my calendar", Toast.LENGTH_SHORT).show();
                 }
                 // Close the drawer if the destination is not a top-level destination
                 drawer.closeDrawers();
-            } else {
-                if (id == R.id.nav_settings) {
-                    Toast.makeText(HomeActivity.this, "Settings", Toast.LENGTH_SHORT).show();
-                } else if (id == R.id.nav_language) {
-                    Toast.makeText(HomeActivity.this, "Language", Toast.LENGTH_SHORT).show();
-                }
             }
+//            } else {
+//                if (id == R.id.nav_settings) {
+//                    Toast.makeText(HomeActivity.this, "Settings", Toast.LENGTH_SHORT).show();
+//                } else if (id == R.id.nav_language) {
+//                    Toast.makeText(HomeActivity.this, "Language", Toast.LENGTH_SHORT).show();
+//                }
+//            }
         });
+
+        appBarConfiguration = new AppBarConfiguration
+                .Builder(R.id.nav_notifications, R.id.nav_messages, R.id.nav_favorite_products, R.id.nav_favorite_services, R.id.nav_favorite_events, R.id.nav_my_calendar)
+                .setOpenableLayout(drawer)
+                .build();
+
+        NavigationUI.setupWithNavController(navigationView, navController);
+
+        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+
+        navController = Navigation.findNavController(this, R.id.fragment_nav_content_main);
+        appBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.nav_profile)
+                .build();
+
+        // Связь BottomNavigationView с NavController
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+        NavigationUI.setupWithNavController(bottomNav, navController);
+
+        // Связываем Toolbar с NavController для отображения кнопки назад
+        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
     }
 
     private final BottomNavigationView.OnNavigationItemSelectedListener navListener = item -> {
