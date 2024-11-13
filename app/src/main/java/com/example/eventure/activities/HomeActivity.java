@@ -84,24 +84,24 @@ public class HomeActivity extends AppCompatActivity {
 
         drawer = findViewById(R.id.drawer_home_layout);
         navigationView = findViewById(R.id.nav_view);
-        navController = Navigation.findNavController(this, R.id.fragment_nav_content_main);
+        navController = Navigation.findNavController(this, R.id.fragment_nav_content_main_home);
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new EventsFragment()).commit();
+        //getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new EventsFragment()).commit();
 
         Log.d("ShopApp", "HomeActivity onCreate()");
         Toast.makeText(this, "onCreate()", Toast.LENGTH_SHORT).show();
 
         actionBar = getSupportActionBar();
-        if(actionBar != null){
-            // postavlja prikazivanje "strelice prema nazad" (back arrow)
-            // kao indikatora navigacije na lijevoj strani Toolbar-a.
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_humburger);
+        if (actionBar != null) {
+            // Убедитесь, что стрелка назад отключена
             actionBar.setDisplayHomeAsUpEnabled(false);
-            // postavlja ikonu koja se prikazuje umjesto strelice prema nazad.
-            // U ovom slučaju, postavljena je ikona hamburger iz drawable resursa (ic_hamburger).
+
+            // Устанавливаем иконку "гамбургера" вместо стрелки назад
             actionBar.setHomeAsUpIndicator(R.drawable.ic_humburger);
-            //ovo omogućuje da se klikom na 'home' na Toolbar-u
-            // aktivira povratak na prethodnu aktivnost.
-            actionBar.setHomeButtonEnabled(false);
+
+            // Отключаем функционал кнопки возврата
+            actionBar.setHomeButtonEnabled(true);
         }
 
         actionBarDrawerToggle = new ActionBarDrawerToggle(
@@ -133,6 +133,13 @@ public class HomeActivity extends AppCompatActivity {
             // Create an Intent to start ProfileActivity
             Intent intent = new Intent(HomeActivity.this, ProfileActivity.class);
             startActivity(intent);
+        });
+
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            if (getSupportActionBar() != null) {
+                // Устанавливаем нужный заголовок
+                getSupportActionBar().setTitle("EVENTURE");
+            }
         });
 //       ImageSlider slider = findViewById(R.id.TopEventsSlider);
 //        List<SlideModel> slideModels = new ArrayList<>();

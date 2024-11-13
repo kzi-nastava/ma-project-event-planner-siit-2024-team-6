@@ -10,7 +10,7 @@
     <fragment
         android:id="@+id/nav_profile"
         android:name="com.example.eventure.fragments.ProfileStartFragment"
-        android:label="profile"
+        
         tools:layout="@layout/fragment_profile_start">
         <!-- Action to navigate to LoginFragment -->
         <action
@@ -26,19 +26,16 @@
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.example.eventure.fragments.LoginFragment"
-        android:label="Login"
         tools:layout="@layout/fragment_login" />
 
     <fragment
         android:id="@+id/registerFragment"
         android:name="com.example.eventure.fragments.RegisterFragment"
-        android:label="Login"
         tools:layout="@layout/fragment_register" />
     <!-- Уведомления -->
     <fragment
         android:id="@+id/nav_notifications"
         android:name="com.example.eventure.fragments.NotificationsFragment"
-        android:label="notifications"
         tools:layout="@layout/fragment_notifications"
         app:popUpTo="@+id/nav_profile"
         app:popUpToInclusive="true" />
@@ -47,7 +44,6 @@
     <fragment
         android:id="@+id/nav_messages"
         android:name="com.example.eventure.fragments.MessagesFragment"
-        android:label="Messages"
         tools:layout="@layout/fragment_messages"
         app:popUpTo="@+id/nav_profile"
         app:popUpToInclusive="true" />
@@ -56,7 +52,6 @@
     <fragment
         android:id="@+id/nav_favorite_events"
         android:name="com.example.eventure.fragments.FavoriteEventsFragment"
-        android:label="favorite events"
         tools:layout="@layout/fragment_favorite_events"
         app:popUpTo="@+id/nav_profile"
         app:popUpToInclusive="true" />
@@ -65,7 +60,6 @@
     <fragment
         android:id="@+id/nav_favorite_products"
         android:name="com.example.eventure.fragments.FavoriteProductsFragment"
-        android:label="favorite products"
         tools:layout="@layout/fragment_favorite_products"
         app:popUpTo="@+id/nav_profile"
         app:popUpToInclusive="true" />
@@ -74,7 +68,6 @@
     <fragment
         android:id="@+id/nav_favorite_services"
         android:name="com.example.eventure.fragments.FavoriteServicesFragment"
-        android:label="favorite services"
         tools:layout="@layout/fragment_favorite_services"
         app:popUpTo="@+id/nav_profile"
         app:popUpToInclusive="true" />
@@ -83,7 +76,6 @@
     <fragment
         android:id="@+id/nav_my_calendar"
         android:name="com.example.eventure.fragments.MyCalendarFragment"
-        android:label="my calendar"
         tools:layout="@layout/fragment_my_calendar"
         app:popUpTo="@+id/nav_profile"
         app:popUpToInclusive="true" />
@@ -91,7 +83,6 @@
     <fragment
         android:id="@+id/events_menu"
         android:name="com.example.eventure.fragments.EventsFragment"
-        android:label="events"
         tools:layout="@layout/fragment_events"
         app:popUpTo="@+id/nav_profile"
         app:popUpToInclusive="true" />
@@ -99,7 +90,6 @@
     <fragment
     android:id="@+id/pas_menu"
     android:name="com.example.eventure.fragments.PasFragment"
-    android:label="products"
     tools:layout="@layout/fragment_pas"
     app:popUpTo="@+id/nav_profile"
     app:popUpToInclusive="true" />
