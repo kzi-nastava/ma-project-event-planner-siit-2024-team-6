@@ -21,6 +21,7 @@ import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 
 //import com.denzcoskun.imageslider.ImageSlider;
@@ -71,6 +72,7 @@ public class HomeActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("EVENTURE");
         toolbar.setTitleTextColor(getResources().getColor(R.color.white));
 
+
         // Display application icon in the toolbar
 //        getSupportActionBar().setDisplayShowHomeEnabled(true);
 //        getSupportActionBar().setLogo(R.drawable.app_icon);
@@ -79,11 +81,33 @@ public class HomeActivity extends AppCompatActivity {
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnNavigationItemSelectedListener(navListener);
 
+        drawer = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.nav_view);
+        navController = Navigation.findNavController(this, R.id.fragment_nav_content_main);
 
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new EventsFragment()).commit();
 
         Log.d("ShopApp", "HomeActivity onCreate()");
         Toast.makeText(this, "onCreate()", Toast.LENGTH_SHORT).show();
+
+        actionBar = getSupportActionBar();
+        if(actionBar != null){
+            // postavlja prikazivanje "strelice prema nazad" (back arrow)
+            // kao indikatora navigacije na lijevoj strani Toolbar-a.
+            actionBar.setDisplayHomeAsUpEnabled(false);
+            // postavlja ikonu koja se prikazuje umjesto strelice prema nazad.
+            // U ovom slučaju, postavljena je ikona hamburger iz drawable resursa (ic_hamburger).
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_humburger);
+            //ovo omogućuje da se klikom na 'home' na Toolbar-u
+            // aktivira povratak na prethodnu aktivnost.
+            actionBar.setHomeButtonEnabled(false);
+        }
+
+
+
+
+
+
 
         // Find profile icon in toolbar
         @SuppressLint("ResourceType") View profileIcon = toolbar.findViewById(R.id.nav_profile); // Replace with your profile icon ID
