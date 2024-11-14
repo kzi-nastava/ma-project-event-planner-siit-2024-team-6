@@ -79,8 +79,8 @@ public class HomeActivity extends AppCompatActivity {
 //        getSupportActionBar().setLogo(R.drawable.app_icon);
 //        getSupportActionBar().setDisplayUseLogoEnabled(true);
 
-        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
-        bottomNav.setOnNavigationItemSelectedListener(navListener);
+//        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+//        bottomNav.setOnNavigationItemSelectedListener(navListener);
 
         drawer = findViewById(R.id.drawer_home_layout);
         navigationView = findViewById(R.id.nav_view);
@@ -91,8 +91,10 @@ public class HomeActivity extends AppCompatActivity {
         Log.d("ShopApp", "HomeActivity onCreate()");
         Toast.makeText(this, "onCreate()", Toast.LENGTH_SHORT).show();
 
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+//        navController = Navigation.findNavController(this, R.id.fragment_container);
+
         actionBar = getSupportActionBar();
-        actionBar.setHomeAsUpIndicator(R.drawable.ic_humburger);
         if (actionBar != null) {
             // Убедитесь, что стрелка назад отключена
             actionBar.setDisplayHomeAsUpEnabled(false);
@@ -117,13 +119,26 @@ public class HomeActivity extends AppCompatActivity {
 
         appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_notifications, R.id.nav_messages, R.id.nav_favorite_products,
-                R.id.nav_favorite_services, R.id.nav_favorite_events, R.id.nav_my_calendar
+                R.id.nav_favorite_services, R.id.nav_favorite_events, R.id.nav_my_calendar,
+                R.id.pas_menu, R.id.events_menu
         ).setOpenableLayout(drawer).build();
+
+
+        NavigationUI.setupWithNavController(bottomNav, navController);
+
+// Связываем ActionBar с NavController и AppBarConfiguration для поддержки заголовков и кнопки "гамбургера"
+//        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 
         NavigationUI.setupWithNavController(navigationView, navController);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 
 
+
+//// Связываем BottomNavigationView с NavController
+//        NavigationUI.setupWithNavController(bottomNav, navController);
+//
+//// Связываем ActionBar с NavController и AppBarConfiguration для поддержки заголовков и кнопки "гамбургера"
+//        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 
 
 
@@ -165,22 +180,22 @@ public class HomeActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.toolbar_menu, menu);
         return true;
     }
-    private final BottomNavigationView.OnNavigationItemSelectedListener navListener = item -> {
-        // By using switch we can easily get
-        // the selected fragment
-        // by using there id.
-        Fragment selectedFragment = null;
-        int itemId = item.getItemId();
-        if (itemId == R.id.events_menu) {
-            selectedFragment = new EventsFragment();
-        } else if (itemId == R.id.pas_menu) {
-            selectedFragment = new PasFragment();
-        }
-        if (selectedFragment != null) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
-        }
-        return true;
-    };
+//    private final BottomNavigationView.OnNavigationItemSelectedListener navListener = item -> {
+//        // By using switch we can easily get
+//        // the selected fragment
+//        // by using there id.
+//        Fragment selectedFragment = null;
+//        int itemId = item.getItemId();
+//        if (itemId == R.id.events_menu) {
+//            selectedFragment = new EventsFragment();
+//        } else if (itemId == R.id.pas_menu) {
+//            selectedFragment = new PasFragment();
+//        }
+//        if (selectedFragment != null) {
+//            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
+//        }
+//        return true;
+//    };
 
 
 
