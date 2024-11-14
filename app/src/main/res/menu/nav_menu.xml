@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+    <group android:checkableBehavior="single">
+        <!-- Уведомления -->
+        <item
+            android:id="@+id/nav_notifications"
+            android:title="@string/notifications"
+            android:icon="@drawable/ic_notifications" />
+
+        <!-- Сообщения -->
+        <item
+            android:id="@+id/nav_messages"
+            android:title="@string/messages"
+            android:icon="@drawable/ic_messages"
+            />
+
+        <item
+            android:title=""
+            android:enabled="false"
+            android:icon="@null" />
+
+        <!-- Избранные события -->
+        <item
+            android:id="@+id/nav_favorite_events"
+            android:title="@string/favorite_events"
+            />
+
+<!--        android:background="@drawable/nav_item_background"-->
+
+        <!-- Продукты F-T -->
+        <item
+            android:id="@+id/nav_favorite_products"
+            android:title="@string/favorite_products"/>
+
+        <!-- Услуги F-T -->
+        <item
+            android:id="@+id/nav_favorite_services"
+            android:title="@string/favorite_services"/>
+
+        <item
+            android:title=""
+            android:enabled="false"
+            android:icon="@null" />
+
+        <!-- Мой календарь -->
+        <item
+            android:id="@+id/nav_my_calendar"
+            android:title="@string/my_calendar"
+            android:icon="@drawable/ic_calendar" />
+    </group>
+<!--    <group android:checkableBehavior="single">-->
+<!--        <item android:id="@+id/nav_products"-->
+<!--            android:title="@string/products"-->
+<!--            android:icon="@drawable/ic_product"-->
+<!--            android:orderInCategory="100" />-->
+
+<!--        <item android:id="@+id/nav_new"-->
+<!--            android:title="@string/new_product"-->
+<!--            android:icon="@drawable/ic_new"-->
+<!--            android:orderInCategory="200"/>-->
+
+<!--        <item android:id="@+id/nav_profile"-->
+<!--            android:title="@string/profile"-->
+<!--            android:icon="@drawable/ic_face"-->
+<!--            android:orderInCategory="300" />-->
+
+<!--        <item android:id="@+id/nav_logout"-->
+<!--            android:title="@string/logout"-->
+<!--            android:icon="@drawable/ic_logout"-->
+<!--            android:orderInCategory="300" />-->
+<!--    </group>-->
+
+</menu>

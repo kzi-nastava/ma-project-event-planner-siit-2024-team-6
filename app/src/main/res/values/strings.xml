@@ -7,5 +7,13 @@
     <string name="profile">Profile</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="messages">messages</string>
+    <string name="notifications">notifications</string>
+    <string name="favorite_products">favorite products</string>
+    <string name="favorite_events">favorite events</string>
+    <string name="my_calendar">my calendar</string>
+    <string name="favorite_services">favorite services</string>
+    <string name="navigation_drawer_open" />
+    <string name="navigation_drawer_close" />
 
 </resources>

@@ -1,0 +1,8 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/pink" android:state_checked="true" />
+    <item android:drawable="@color/pink" />
+</selector>
+
+<!--<shape xmlns:android="http://schemas.android.com/apk/res/android">-->
+<!--<solid android:color="@color/pink" /> &lt;!&ndash; Розовый цвет &ndash;&gt;-->
+<!--</shape>-->
