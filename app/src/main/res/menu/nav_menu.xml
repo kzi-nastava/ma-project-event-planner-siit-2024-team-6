@@ -6,7 +6,6 @@
         <!-- Уведомления -->
         <item
             android:id="@+id/nav_notifications"
-
             android:title="@string/notifications"
             android:icon="@drawable/ic_notifications" />
 
@@ -17,13 +16,18 @@
             android:icon="@drawable/ic_messages"
             />
 
-        <!-- Отступ -->
-        <item android:title="" />
+        <item
+            android:title=""
+            android:enabled="false"
+            android:icon="@null" />
 
         <!-- Избранные события -->
         <item
             android:id="@+id/nav_favorite_events"
-            android:title="@string/favorite_events"/>
+            android:title="@string/favorite_events"
+            />
+
+<!--        android:background="@drawable/nav_item_background"-->
 
         <!-- Продукты F-T -->
         <item
@@ -35,8 +39,10 @@
             android:id="@+id/nav_favorite_services"
             android:title="@string/favorite_services"/>
 
-        <!-- Отступ -->
-        <item android:title="" />
+        <item
+            android:title=""
+            android:enabled="false"
+            android:icon="@null" />
 
         <!-- Мой календарь -->
         <item
