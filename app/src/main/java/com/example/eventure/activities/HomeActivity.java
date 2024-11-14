@@ -15,11 +15,15 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.viewpager2.widget.CompositePageTransformer;
+import androidx.viewpager2.widget.MarginPageTransformer;
+import androidx.viewpager2.widget.ViewPager2;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -28,14 +32,17 @@ import androidx.navigation.ui.NavigationUI;
 //import com.denzcoskun.imageslider.ImageSlider;
 //import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.eventure.R;
+import com.example.eventure.adapters.EventCarouselAdapter;
 import com.example.eventure.fragments.EventsFragment;
 import com.example.eventure.fragments.PasFragment;
+import com.example.eventure.model.Event;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
 
+//onCreate, onStart, onRestart, onResume, onPause, onStop, onDestroy.
 public class HomeActivity extends AppCompatActivity {
     /*
      * Unutar onCreate metode, postavljamo izgled nase aktivnosti koristeci setContentView
@@ -198,47 +205,31 @@ public class HomeActivity extends AppCompatActivity {
 //    };
 
 
-
-    /*
-     * onStart se poziva kada se aktivnost prvi put startuje, posle onCreate metode ili
-     * kada se vratimo klikom na back dugme ponovo na aktivnost
-     * */
     @Override
     protected void onStart() {
         super.onStart();
         Log.d("ShopApp", "HomeActivity onStart()");
     }
-    /*
-     * onResume se poziva kada je aktivnost u fokusu i korisnik
-     * je u interakciji sa aktivnosti.
-     * */
+
+
     @Override
     protected void onResume(){
         super.onResume();
         Log.d("ShopApp", "HomeActivity onResume()");
     }
 
-    /*
-     * onPause se poziva kada je aktivnost delimicno prekrivena.
-     * */
     @Override
     protected void onPause() {
         super.onPause();
         Log.d("ShopApp", "HomeActivity onPause()");
     }
-    /*
-     * onStop se poziva kada je aktivnost u potpunosti prekrivena nekom drugom aktivnošću
-     * */
+
     @Override
     protected void onStop() {
         super.onStop();
         Log.d("ShopApp", "HomeActivity onStop()");
     }
-    /*
-     * onDestory se poziva kada je aktivnost u potpunosti unistena,
-     * ondosno kada je aplikacija zatvorena
-     * Izbrisana je iz background-a.
-     */
+
     @Override
     protected void onDestroy() {
         super.onDestroy();

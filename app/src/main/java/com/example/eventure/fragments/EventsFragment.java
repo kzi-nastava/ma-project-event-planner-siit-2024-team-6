@@ -3,15 +3,24 @@ package com.example.eventure.fragments;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.viewpager2.widget.CompositePageTransformer;
+import androidx.viewpager2.widget.MarginPageTransformer;
+import androidx.viewpager2.widget.ViewPager2;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.example.eventure.R;
+import com.example.eventure.adapters.EventCarouselAdapter;
+import com.example.eventure.model.Event;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -66,6 +75,79 @@ public class EventsFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_events, container, false);
 
+        //TOP 5 EVENTS CAROUSEL
+
+        //Top 5 carousel
+        ViewPager2 eventCarousel = rootView.findViewById(R.id.eventCarousel);
+
+        //List of top events
+        List<Event> eventList = new ArrayList<>();
+
+        Event event1 = new Event();
+        event1.setPhotoID(R.drawable.event1);
+        event1.setTitle("Ed Sheeran Concert");
+        event1.setLocation("Bulevar Oslobodjenja 16");
+        event1.setDescription("Join us for an unforgettable night of music with the famous singer-songwriter, Ed Sheeran. Enjoy his biggest hits live in concert!");
+        event1.setDate(new java.util.Date(2024, 10, 10)); // Example date
+        event1.setTime("19h");
+        event1.setRating(4.5f);
+        eventList.add(event1);
+
+        Event event2 = new Event();
+        event2.setPhotoID(R.drawable.event2);
+        event2.setTitle("Rock Festival");
+        event2.setLocation("Central Park, New York");
+        event2.setDescription("Get ready for a rock extravaganza! Featuring top bands and artists, this festival promises an amazing atmosphere and great music.");
+        event2.setDate(new java.util.Date(2024, 10, 15));
+        event2.setTime("16h");
+        event2.setRating(4.7f);
+        eventList.add(event2);
+
+        Event event3 = new Event();
+        event3.setPhotoID(R.drawable.event3);
+        event3.setTitle("Yoga Retreat");
+        event3.setLocation("Sandy Beach Resort");
+        event3.setDescription("Escape the hustle and bustle of city life with a rejuvenating yoga retreat by the beach. Relax, stretch, and meditate in a serene environment.");
+        event3.setDate(new java.util.Date(2024, 11, 1));
+        event3.setTime("8h");
+        event3.setRating(4.2f);
+        eventList.add(event3);
+
+        Event event4 = new Event();
+        event4.setPhotoID(R.drawable.event4);
+        event4.setTitle("Food Festival");
+        event4.setLocation("City Square");
+        event4.setDescription("Taste the best local and international dishes at this exciting food festival! From savory to sweet, there’s something for everyone.");
+        event4.setDate(new java.util.Date(2024, 10, 25));
+        event4.setTime("10h");
+        event4.setRating(4.0f);
+        eventList.add(event4);
+
+        Event event5 = new Event();
+        event5.setPhotoID(R.drawable.event5);
+        event5.setTitle("Art Exhibition");
+        event5.setLocation("Modern Art Gallery");
+        event5.setDescription("Explore a stunning collection of modern art at the prestigious Modern Art Gallery. Discover new perspectives and creativity from emerging artists.");
+        event5.setDate(new java.util.Date(2024, 11, 5));
+        event5.setTime("14h");
+        event5.setRating(4.8f);
+        eventList.add(event5);
+
+        //Adapter for viewPager2
+        EventCarouselAdapter adapter = new EventCarouselAdapter(eventList);
+        eventCarousel.setAdapter(adapter);
+
+        eventCarousel.setOffscreenPageLimit(3);
+        CompositePageTransformer transformer = new CompositePageTransformer();
+        transformer.addTransformer(new MarginPageTransformer(40));
+        transformer.addTransformer((page, position) -> {
+            float r = 1 - Math.abs(position);
+            page.setScaleY(0.85f + r * 0.15f);
+        });
+        eventCarousel.setPageTransformer(transformer);
+
+        //ALL EVENTS
+
         // Find the filter icon
         ImageView filterIcon = rootView.findViewById(R.id.filter_icon);
 
@@ -100,5 +182,6 @@ public class EventsFragment extends Fragment {
 
         return rootView;
     }
+
 
 }

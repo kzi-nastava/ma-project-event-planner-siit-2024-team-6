@@ -17,12 +17,11 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <ImageView
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/pasCarousel"
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
-                android:src="@drawable/wedding"
-                android:scaleType="centerCrop"
-                android:contentDescription="Header Image" />
+                android:orientation="horizontal" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
