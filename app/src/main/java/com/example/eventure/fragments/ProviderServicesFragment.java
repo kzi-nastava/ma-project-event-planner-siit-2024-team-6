@@ -4,21 +4,15 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import androidx.fragment.app.Fragment;
-import androidx.viewpager2.widget.CompositePageTransformer;
-import androidx.viewpager2.widget.MarginPageTransformer;
-import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.eventure.R;
-import com.example.eventure.adapters.EventCarouselAdapter;
-import com.example.eventure.model.Event;
+import com.example.eventure.dialogs.EditServiceDialog;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ProviderServicesFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
@@ -56,6 +50,7 @@ public class ProviderServicesFragment extends Fragment {
 
         // Find the filter icon
         ImageView filterIcon = rootView.findViewById(R.id.filter_icon);
+        Button editBtn = rootView.findViewById(R.id.edit_button);
 
         // Set an OnClickListener to open the BottomSheetDialog when the icon is clicked
         filterIcon.setOnClickListener(v -> {
@@ -85,7 +80,17 @@ public class ProviderServicesFragment extends Fragment {
             // Show the dialog
             bottomSheetDialog.show();
         });
+        editBtn.setOnClickListener(v ->{
+            EditServiceDialog dialog = EditServiceDialog.newInstance(
+                    "Decoration Luna",           // Example service name
+                    "Best decour",    // Example description
+                    100.0,                    // Example price
+                    10.0                      // Example discount
+            );
+            // Show the dialog
+            dialog.show(getChildFragmentManager(), "EditServiceDialog");
 
+        });
         return rootView;
     }
 }
