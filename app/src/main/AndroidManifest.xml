@@ -36,6 +36,8 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+        <activity android:name=".activities.OffersActivity"
+            android:exported="false"/>
         <activity
             android:name=".activities.SplashScreenActivity"
             android:exported="true"
