@@ -6,16 +6,18 @@ public class PAS {
     private String title;
     private String description;
     private int price;
+    private int sale; // New sale field
 
     // Default constructor
     public PAS() {}
 
     // Parameterized constructor
-    public PAS(int photoID, String title, String description, int price) {
+    public PAS(int photoID, String title, String description, int price, int sale) {
         this.photoID = photoID;
         this.title = title;
         this.description = description;
         this.price = price;
+        this.sale = sale; // Initialize sale
     }
 
     // Getter and setter for photoID
@@ -54,6 +56,15 @@ public class PAS {
         this.price = price;
     }
 
+    // Getter and setter for sale
+    public int getSale() {
+        return sale;
+    }
+
+    public void setSale(int sale) {
+        this.sale = sale;
+    }
+
     @Override
     public String toString() {
         return "PAS{" +
@@ -61,6 +72,7 @@ public class PAS {
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", price=" + price +
+                ", sale=" + sale +
                 '}';
     }
 }

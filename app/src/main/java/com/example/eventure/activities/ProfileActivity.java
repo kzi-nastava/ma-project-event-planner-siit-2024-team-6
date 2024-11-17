@@ -50,7 +50,8 @@ public class ProfileActivity extends AppCompatActivity {
         }
         toolbar.setTitleTextAppearance(this, R.style.ToolbarTitleTextStyle);
         toolbar.setContentInsetStartWithNavigation(70);
-        toolbar.setTitleTextColor(getResources().getColor(R.color.white));
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
 //        drawer = findViewById(R.id.drawer_layout);
 //        navigationView = findViewById(R.id.nav_view);

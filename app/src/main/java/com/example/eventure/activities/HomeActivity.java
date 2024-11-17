@@ -68,14 +68,13 @@ public class HomeActivity extends AppCompatActivity {
         toolbar.setTitleTextAppearance(this, R.style.ToolbarTitleTextStyle);
         toolbar.setContentInsetStartWithNavigation(70);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("EVENTURE");
-        toolbar.setTitleTextColor(getResources().getColor(R.color.white));
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         drawer = findViewById(R.id.drawer_home_layout);
         navigationView = findViewById(R.id.nav_view);
         navController = Navigation.findNavController(this, R.id.fragment_nav_content_main_home);
 
-        // Check if a fragment name is passed via Intent
+
         String fragmentName = getIntent().getStringExtra("FRAGMENT_NAME");
         if (fragmentName != null) {
             switch (fragmentName) {
