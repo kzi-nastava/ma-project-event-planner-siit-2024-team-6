@@ -77,9 +77,7 @@ public class HomeActivity extends AppCompatActivity {
         toolbar.setTitleTextAppearance(this, R.style.ToolbarTitleTextStyle);
         toolbar.setContentInsetStartWithNavigation(70);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("EVENTURE");
-        toolbar.setTitleTextColor(getResources().getColor(R.color.white));
-
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         // Display application icon in the toolbar
 //        getSupportActionBar().setDisplayShowHomeEnabled(true);
