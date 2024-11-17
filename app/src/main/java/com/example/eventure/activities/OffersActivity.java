@@ -2,8 +2,10 @@ package com.example.eventure.activities;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.widget.Toast;
 
@@ -44,35 +46,42 @@ public class OffersActivity extends AppCompatActivity {
 
         drawer = findViewById(R.id.drawer_offers_layout);
         navigationView = findViewById(R.id.sidebar_view);
-
         navController = Navigation.findNavController(this, R.id.fragment_nav_content_main_home);
 
-        BottomNavigationView bottomNav = findViewById(R.id.offers_bottom_navigation);
+        navigationView.setNavigationItemSelectedListener(item -> {
+            int id = item.getItemId();
+            String fragment = null;
+            if (id == R.id.nav_messages) {
+                fragment = "MESSAGES";
+            } else if (id == R.id.nav_notifications) {
+                fragment = "NOTIFICATIONS";
+            } else if (id == R.id.nav_favorite_events) {
+                fragment = "FAVOURITE_EVENTS";
+            } else if (id == R.id.nav_favorite_services){
+                fragment = "FAVOURITE_SERVICES";
+            } else if (id == R.id.nav_favorite_products){
+                fragment = "FAVOURITE_PRODUCTS";
+            } else if (id == R.id.nav_my_calendar){
+                fragment = "CALENDAR";
+            }
+            if(fragment != null){
+                Intent intent = new Intent(this, HomeActivity.class);
+                intent.putExtra("FRAGMENT_NAME", fragment);
+                startActivity(intent);
+                drawer.closeDrawer(GravityCompat.START);
+                return true;
+            }
+            drawer.closeDrawer(GravityCompat.START);
+            return true;
+        });
 
-        actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(false);
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_humburger);
-            actionBar.setHomeButtonEnabled(true);
-        }
+        BottomNavigationView bottomNav = findViewById(R.id.offers_bottom_navigation);
+        NavigationUI.setupWithNavController(bottomNav, navController);
 
         actionBarDrawerToggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-
         drawer.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
-
-        appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_notifications, R.id.nav_messages, R.id.nav_favorite_products,
-                R.id.nav_favorite_services, R.id.nav_favorite_events, R.id.nav_my_calendar,
-                R.id.pas_menu, R.id.events_menu
-        ).setOpenableLayout(drawer).build();
-
-
-        NavigationUI.setupWithNavController(bottomNav, navController);
-
-        NavigationUI.setupWithNavController(navigationView, navController);
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 
 
         // Find profile icon in toolbar
@@ -91,13 +100,11 @@ public class OffersActivity extends AppCompatActivity {
             //startActivity(intent);
         });
 
-        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
-            if (getSupportActionBar() != null) {
-                getSupportActionBar().setTitle("EVENTURE");
-            }
-        });
-
-
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar_menu, menu);
+        return true;
     }
 
 }
