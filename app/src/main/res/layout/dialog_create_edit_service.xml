@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Title -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginBottom="0dp"
+                android:background="@color/blue">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/blue"
+                    android:gravity="center"
+                    android:text="New Service"
+                    android:textColor="@color/white"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+                <!-- Close Icon -->
+                <ImageView
+                    android:id="@+id/close_icon"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:src="@drawable/close_icon"
+                    android:contentDescription="Close Filter"
+                    android:layout_alignParentEnd="true"/>
+            </RelativeLayout>
+
+            <!-- Event Types -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Event Types"
+                android:textSize="20sp"
+                android:layout_marginTop="16dp" />
+            <EditText
+                android:id="@+id/event_types_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter event types (comma-separated)" />
+
+            <TextView
+                android:id="@+id/category_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Category"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                android:layout_marginBottom="8dp" />
+            <Spinner
+                android:id="@+id/service_category_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbarSize="16dp"/>
+            <EditText
+                android:id="@+id/proposed_category_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Propose a new category (optional)"
+                android:layout_marginTop="8dp" />
+
+            <!-- Service Name -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Service Name"
+                android:textSize="20sp"
+                android:layout_marginTop="16dp" />
+            <EditText
+                android:id="@+id/service_name_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter service name" />
+
+            <!-- Service Description -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Description"
+                android:textSize="20sp"
+                android:layout_marginTop="16dp" />
+            <EditText
+                android:id="@+id/service_description_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter description"
+                android:lines="4"
+                android:gravity="top"
+                android:inputType="textMultiLine" />
+
+            <!-- Service Specifics -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Specifics"
+                android:textSize="20sp"
+                android:layout_marginTop="16dp" />
+
+            <!-- Price and Discount -->
+            <EditText
+                android:id="@+id/service_specifics_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter specifics" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Price"
+                android:textSize="20sp"
+                android:layout_marginTop="16dp" />
+            <EditText
+                android:id="@+id/service_price_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter price"
+                android:inputType="numberDecimal" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Discount percentage"
+                android:textSize="20sp"
+                android:layout_marginTop="8dp" />
+            <EditText
+                android:id="@+id/service_discount_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter discount"
+                android:inputType="numberDecimal" />
+
+            <!-- Add Pictures -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Add Pictures"
+                android:textSize="20sp"
+                android:layout_marginTop="16dp" />
+            <Button
+                android:id="@+id/add_pictures_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add"
+                android:textSize="12sp"
+                android:drawableLeft="@drawable/attach_file_icon"
+                android:drawablePadding="2dp"
+                android:padding="8dp"
+                android:layout_marginTop="8dp"
+                android:textColor="@android:color/white" />
+
+            <!-- Visibility and Availability -->
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Booking and Cancellation"
+                android:textSize="20sp"
+                android:layout_marginTop="16dp" />
+            <EditText
+                android:id="@+id/booking_deadline_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Booking deadline (e.g., 24h before)" />
+            <EditText
+                android:id="@+id/cancellation_deadline_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Cancellation deadline (e.g., 24h before)" />
+            <!-- Duration and Booking -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Duration"
+                android:textSize="20sp"
+                android:layout_marginTop="8dp" />
+            <RadioGroup
+                android:id="@+id/duration_radio_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp">
+                <RadioButton
+                    android:id="@+id/fixed_duration_radio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Fixed" />
+                <RadioButton
+                    android:id="@+id/min_max_duration_radio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Varied (Min+Max)"
+                    android:layout_marginStart="16dp" />
+            </RadioGroup>
+            <EditText
+                android:id="@+id/fixed_duration_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter fixed duration (e.g., 1h)"
+                android:visibility="gone" />
+            <EditText
+                android:id="@+id/min_max_duration_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter min and max duration (e.g., 1h - 5h)"
+                android:visibility="gone" />
+            <TextView
+                android:id="@+id/booking_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Booking confirmation"
+                android:textSize="20sp"
+                android:layout_marginTop="8dp"
+                android:visibility="gone"/>
+            <RadioGroup
+                android:id="@+id/booking_confirmation_radio_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp"
+                android:visibility="gone">
+                <RadioButton
+                    android:id="@+id/auto"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Automatically" />
+                <RadioButton
+                    android:id="@+id/manual"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Manually"
+                    android:layout_marginStart="16dp" />
+            </RadioGroup>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="start"
+                android:layout_marginTop="8dp">
+
+                <CheckBox
+                    android:id="@+id/visibility_checkbox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Visible" />
+
+                <CheckBox
+                    android:id="@+id/availability_checkbox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Available for booking"
+                    android:layout_marginStart="16dp" /> <!-- Adds space between the checkboxes -->
+            </LinearLayout>
+            <!-- Submit Button -->
+            <Button
+                android:id="@+id/submit_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Submit"
+                android:layout_marginTop="24dp" />
+        </LinearLayout>
+    </ScrollView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
