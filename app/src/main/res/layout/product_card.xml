@@ -13,7 +13,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Sale Tag - Positioned at the top left corner -->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -39,9 +38,21 @@
                 android:padding="8dp"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentStart="true"
-                android:layout_marginTop="16dp" /> <!-- Adjust this for vertical positioning -->
+                android:layout_marginTop="16dp" />
+
+            <!-- Heart Icon in Top Right Corner -->
+            <ImageView
+                android:id="@+id/pas_favorite_icon"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/heart_icon"
+                android:contentDescription="Favorite"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:layout_margin="16dp" />
 
         </RelativeLayout>
+
         <!-- Content Container for Title, Location, Date, and Rating -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -64,43 +75,31 @@
                     android:textStyle="bold"
                     android:textColor="?android:textColorPrimary" />
 
-                <ImageView
-                    android:id="@+id/favorite_icon"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/heart_icon"
-                    android:contentDescription="Favorite" />
             </RelativeLayout>
 
-            <!-- product Location -->
-            <TextView
-                android:id="@+id/product_category_label"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Category"
-                android:textSize="14sp"
-                android:textColor="@color/black"
-                android:layout_marginTop="20dp" />
+                android:orientation="horizontal"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="center_vertical">
 
-            <TextView
-                android:id="@+id/product_category"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Decoration"
-                android:textSize="17sp"
-                android:textColor="@color/black"/>
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/category_icon"
+                    android:contentDescription="Location Icon" />
 
-            <!-- Price and Rating Section -->
-            <TextView
-                android:id="@+id/product_price_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Price"
-                android:textSize="14sp"
-                android:textColor="@color/black"
-                android:layout_marginTop="4dp" />
+                <TextView
+                    android:id="@+id/product_category"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="Decoration"
+                    android:textSize="16sp"
+                    android:textColor="@color/black" />
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -110,30 +109,6 @@
                 android:gravity="center_vertical"
                 android:weightSum="1">
 
-                <!-- Product Price and Euro Icon aligned to the left -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_weight="0.25"
-                    android:gravity="start">
-
-                    <TextView
-                        android:id="@+id/product_price"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="100"
-                        android:textSize="17sp"
-                        android:textColor="@color/black"/>
-
-                    <ImageView
-                        android:id="@+id/euro_icon"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/euro_icon"
-                        android:contentDescription="Euro Icon" />
-                </LinearLayout>
-
 
                 <!-- Price Sale and Euro Icon aligned to the left -->
                 <LinearLayout
@@ -141,8 +116,30 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_weight="0.25"
+                    android:layout_weight="0.5"
                     android:gravity="start">
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/price_icon"
+                        android:layout_marginRight="10dp"
+                        android:contentDescription="Euro Icon" />
+
+                    <TextView
+                        android:id="@+id/product_price"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="100"
+                        android:textSize="17sp"
+                        android:textColor="@color/black" />
+
+                    <ImageView
+                        android:id="@+id/euro_icon"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginRight="10dp"
+                        android:src="@drawable/euro_icon"
+                        android:contentDescription="Euro Icon" />
 
                     <TextView
                         android:id="@+id/sale_price"
@@ -151,7 +148,7 @@
                         android:text="80"
                         android:textSize="17sp"
                         android:textStyle="bold"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/pink" />
 
                     <ImageView
                         android:id="@+id/sale_euro_icon"

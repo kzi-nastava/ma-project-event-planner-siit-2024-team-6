@@ -4,6 +4,8 @@ import android.graphics.Paint;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.CompositePageTransformer;
 import androidx.viewpager2.widget.MarginPageTransformer;
 import androidx.viewpager2.widget.ViewPager2;
@@ -15,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.eventure.R;
+import com.example.eventure.adapters.PASAdapter;
 import com.example.eventure.adapters.PASCarouselAdapter;
 import com.example.eventure.model.PAS;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -89,6 +92,7 @@ public class PasFragment extends Fragment {
         product1.setTitle("Live Music Band");
         product1.setDescription("Enhance your event with a live music band! From jazz to rock, enjoy a tailored musical experience that entertains all guests.");
         product1.setPrice(500); // Example price per event
+        product1.setSale(400);
         pasList.add(product1);
 
 // Product 2 - Custom Cakes
@@ -97,6 +101,7 @@ public class PasFragment extends Fragment {
         product2.setTitle("Custom Cakes");
         product2.setDescription("Order beautifully crafted custom cakes for any occasion, made to match your theme and taste preferences.");
         product2.setPrice(150); // Example price per cake
+        product2.setSale(0);
         pasList.add(product2);
 
 // Product 3 - Portable Bluetooth Speakers
@@ -105,6 +110,7 @@ public class PasFragment extends Fragment {
         product3.setTitle("Portable Bluetooth Speakers");
         product3.setDescription("Take the party anywhere with our high-quality portable Bluetooth speakers, delivering crisp sound and deep bass.");
         product3.setPrice(120); // Example price per unit
+        product3.setSale(50);
         pasList.add(product3);
 
 // Product 4 - Event Decorations
@@ -124,8 +130,8 @@ public class PasFragment extends Fragment {
         pasList.add(product5);
 
 // Adapter for ViewPager2
-        PASCarouselAdapter adapter = new PASCarouselAdapter(pasList);
-        pasCarousel.setAdapter(adapter);
+        PASCarouselAdapter carouselAdapter = new PASCarouselAdapter(pasList);
+        pasCarousel.setAdapter(carouselAdapter);
 
         pasCarousel.setOffscreenPageLimit(3);
         CompositePageTransformer transformer = new CompositePageTransformer();
@@ -140,6 +146,30 @@ public class PasFragment extends Fragment {
 
         // Find the filter icon
         ImageView filterIcon = rootView.findViewById(R.id.products_filter_icon);
+
+        // RecyclerView for listing all PAS items
+        RecyclerView pasRecyclerView = rootView.findViewById(R.id.productRecyclerView);
+        PASAdapter pasAdapter = new PASAdapter(pasList);
+        pasRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        pasRecyclerView.setAdapter(pasAdapter);
+
+
+        // Dynamically calculate RecyclerView height
+        pasRecyclerView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+            RecyclerView.Adapter adapter = pasRecyclerView.getAdapter();
+            if (adapter != null) {
+                int totalHeight = 0;
+                for (int i = 0; i < adapter.getItemCount(); i++) {
+                    View item = pasRecyclerView.getLayoutManager().findViewByPosition(i);
+                    if (item != null) {
+                        totalHeight += item.getMeasuredHeight();
+                    }
+                }
+                pasRecyclerView.getLayoutParams().height = totalHeight;
+                pasRecyclerView.requestLayout();
+            }
+        });
+
 
         // Set an OnClickListener to open the BottomSheetDialog when the icon is clicked
         filterIcon.setOnClickListener(v -> {
@@ -171,18 +201,18 @@ public class PasFragment extends Fragment {
         });
 
 
-        // Apply strikethrough to the old price
-        View productCard1 = rootView.findViewById(R.id.product1);
-        TextView oldPriceTextView = productCard1.findViewById(R.id.product_price);
-        oldPriceTextView.setPaintFlags(oldPriceTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-
-
-        //Remove sale tag and sale price
-        View productCard2 = rootView.findViewById(R.id.product2);
-        TextView saleTag = productCard2.findViewById(R.id.sale_tag);
-        saleTag.setVisibility(View.GONE);
-        View salePrice = productCard2.findViewById(R.id.sale_price_layout);
-        salePrice.setVisibility(View.GONE);
+//        // Apply strikethrough to the old price
+//        View productCard1 = rootView.findViewById(R.id.product1);
+//        TextView oldPriceTextView = productCard1.findViewById(R.id.product_price);
+//        oldPriceTextView.setPaintFlags(oldPriceTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+//
+//
+//        //Remove sale tag and sale price
+//        View productCard2 = rootView.findViewById(R.id.product2);
+//        TextView saleTag = productCard2.findViewById(R.id.sale_tag);
+//        saleTag.setVisibility(View.GONE);
+//        View salePrice = productCard2.findViewById(R.id.sale_price_layout);
+//        salePrice.setVisibility(View.GONE);
 
         return rootView;
     }
