@@ -1,5 +1,6 @@
 package com.example.eventure.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -14,6 +15,8 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.eventure.R;
+import com.example.eventure.activities.HomeActivity;
+import com.example.eventure.activities.ProfileActivity;
 
 
 public class LoginFragment extends Fragment {
@@ -41,6 +44,10 @@ public class LoginFragment extends Fragment {
                 Log.d("Login", "User logged in with email: " + email);
                 // Логика входа (например, аутентификация)
             }
+
+
+            Intent intent = new Intent(requireContext(), HomeActivity.class);
+            startActivity(intent);
         });
 
         return view;

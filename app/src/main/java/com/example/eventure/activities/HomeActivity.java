@@ -77,9 +77,7 @@ public class HomeActivity extends AppCompatActivity {
         toolbar.setTitleTextAppearance(this, R.style.ToolbarTitleTextStyle);
         toolbar.setContentInsetStartWithNavigation(70);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("EVENTURE");
-        toolbar.setTitleTextColor(getResources().getColor(R.color.white));
-
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         // Display application icon in the toolbar
 //        getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -94,9 +92,7 @@ public class HomeActivity extends AppCompatActivity {
         navController = Navigation.findNavController(this, R.id.fragment_nav_content_main_home);
 
         //getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new EventsFragment()).commit();
-
-        Log.d("ShopApp", "HomeActivity onCreate()");
-        Toast.makeText(this, "onCreate()", Toast.LENGTH_SHORT).show();
+        
 
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
 //        navController = Navigation.findNavController(this, R.id.fragment_container);

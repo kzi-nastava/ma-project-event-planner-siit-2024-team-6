@@ -3,6 +3,8 @@ package com.example.eventure.fragments;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.CompositePageTransformer;
 import androidx.viewpager2.widget.MarginPageTransformer;
 import androidx.viewpager2.widget.ViewPager2;
@@ -14,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.example.eventure.R;
+import com.example.eventure.adapters.EventAdapter;
 import com.example.eventure.adapters.EventCarouselAdapter;
 import com.example.eventure.model.Event;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -134,8 +137,8 @@ public class EventsFragment extends Fragment {
         eventList.add(event5);
 
         //Adapter for viewPager2
-        EventCarouselAdapter adapter = new EventCarouselAdapter(eventList);
-        eventCarousel.setAdapter(adapter);
+        EventCarouselAdapter carouselAdapter = new EventCarouselAdapter(eventList);
+        eventCarousel.setAdapter(carouselAdapter);
 
         eventCarousel.setOffscreenPageLimit(3);
         CompositePageTransformer transformer = new CompositePageTransformer();
@@ -150,6 +153,30 @@ public class EventsFragment extends Fragment {
 
         // Find the filter icon
         ImageView filterIcon = rootView.findViewById(R.id.filter_icon);
+
+
+        RecyclerView eventRecyclerView = rootView.findViewById(R.id.eventRecyclerView);
+
+        EventAdapter eventAdapter = new EventAdapter(eventList);
+        eventRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        eventRecyclerView.setAdapter(eventAdapter);
+
+        // Dynamically calculate RecyclerView height
+        eventRecyclerView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+            RecyclerView.Adapter adapter = eventRecyclerView.getAdapter();
+            if (adapter != null) {
+                int totalHeight = 0;
+                for (int i = 0; i < adapter.getItemCount(); i++) {
+                    View item = eventRecyclerView.getLayoutManager().findViewByPosition(i);
+                    if (item != null) {
+                        totalHeight += item.getMeasuredHeight();
+                    }
+                }
+                eventRecyclerView.getLayoutParams().height = totalHeight;
+                eventRecyclerView.requestLayout();
+            }
+        });
+
 
         // Set an OnClickListener to open the BottomSheetDialog when the icon is clicked
         filterIcon.setOnClickListener(v -> {
