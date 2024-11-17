@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/services_menu"
+        android:icon="@drawable/room_service_icon"
+        android:title="MY SERVICES" />
+
+    <item
+        android:id="@+id/products_menu"
+        android:icon="@drawable/conveyor_belt_icon"
+        android:title="MY PRODUCTS" />
+
+</menu>

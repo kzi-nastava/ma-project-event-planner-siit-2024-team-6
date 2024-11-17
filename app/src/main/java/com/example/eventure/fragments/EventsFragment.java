@@ -13,7 +13,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 
 import com.example.eventure.R;
 import com.example.eventure.adapters.EventAdapter;
@@ -161,19 +163,19 @@ public class EventsFragment extends Fragment {
         eventRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         eventRecyclerView.setAdapter(eventAdapter);
 
-        // Dynamically calculate RecyclerView height
-        eventRecyclerView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
-            RecyclerView.Adapter adapter = eventRecyclerView.getAdapter();
-            if (adapter != null) {
-                int totalHeight = 0;
-                for (int i = 0; i < adapter.getItemCount(); i++) {
-                    View item = eventRecyclerView.getLayoutManager().findViewByPosition(i);
-                    if (item != null) {
-                        totalHeight += item.getMeasuredHeight();
-                    }
+        ScrollView parentScrollView = rootView.findViewById(R.id.parentScrollView);
+        RecyclerView recyclerView = rootView.findViewById(R.id.eventRecyclerView);
+
+        // Listen for the first scroll event on the ScrollView
+        parentScrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+            boolean isHeightCalculated = false;
+
+            @Override
+            public void onScrollChanged() {
+                if (!isHeightCalculated) {
+                    calculateAndSetRecyclerViewHeight(recyclerView);
+                    isHeightCalculated = true;
                 }
-                eventRecyclerView.getLayoutParams().height = totalHeight;
-                eventRecyclerView.requestLayout();
             }
         });
 
@@ -208,6 +210,29 @@ public class EventsFragment extends Fragment {
         });
 
         return rootView;
+    }
+    // Calculate the height of all items in RecyclerView and set the height
+    private void calculateAndSetRecyclerViewHeight(RecyclerView recyclerView) {
+        RecyclerView.Adapter adapter = recyclerView.getAdapter();
+        if (adapter == null) return;
+
+        int totalHeight = 0;
+        for (int i = 0; i < adapter.getItemCount(); i++) {
+            View view = LayoutInflater.from(recyclerView.getContext())
+                    .inflate(R.layout.event_card, recyclerView, false);
+
+            view.measure(
+                    View.MeasureSpec.makeMeasureSpec(recyclerView.getWidth(), View.MeasureSpec.EXACTLY),
+                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+            );
+
+            totalHeight += view.getMeasuredHeight();
+        }
+
+        // Set the calculated height to the RecyclerView
+        ViewGroup.LayoutParams params = recyclerView.getLayoutParams();
+        params.height = totalHeight;
+        recyclerView.setLayoutParams(params);
     }
 
 

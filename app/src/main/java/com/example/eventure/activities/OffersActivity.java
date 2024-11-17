@@ -1,0 +1,113 @@
+package com.example.eventure.activities;
+
+import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.View;
+import android.widget.Toast;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
+
+import com.example.eventure.R;
+import com.example.eventure.dialogs.CreateServiceDialog;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
+
+public class OffersActivity extends AppCompatActivity {
+    private DrawerLayout drawer;
+    private NavController navController;
+    private AppBarConfiguration appBarConfiguration;
+    private NavigationView navigationView;
+    private ActionBar actionBar;
+    private ActionBarDrawerToggle actionBarDrawerToggle;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_offers);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitleTextAppearance(this, R.style.ToolbarTitleTextStyle);
+        toolbar.setContentInsetStartWithNavigation(70);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        drawer = findViewById(R.id.drawer_offers_layout);
+        navigationView = findViewById(R.id.sidebar_view);
+        navController = Navigation.findNavController(this, R.id.fragment_nav_content_main_home);
+
+        navigationView.setNavigationItemSelectedListener(item -> {
+            int id = item.getItemId();
+            String fragment = null;
+            if (id == R.id.nav_messages) {
+                fragment = "MESSAGES";
+            } else if (id == R.id.nav_notifications) {
+                fragment = "NOTIFICATIONS";
+            } else if (id == R.id.nav_favorite_events) {
+                fragment = "FAVOURITE_EVENTS";
+            } else if (id == R.id.nav_favorite_services){
+                fragment = "FAVOURITE_SERVICES";
+            } else if (id == R.id.nav_favorite_products){
+                fragment = "FAVOURITE_PRODUCTS";
+            } else if (id == R.id.nav_my_calendar){
+                fragment = "CALENDAR";
+            }
+            if(fragment != null){
+                Intent intent = new Intent(this, HomeActivity.class);
+                intent.putExtra("FRAGMENT_NAME", fragment);
+                startActivity(intent);
+                drawer.closeDrawer(GravityCompat.START);
+                return true;
+            }
+            drawer.closeDrawer(GravityCompat.START);
+            return true;
+        });
+
+        BottomNavigationView bottomNav = findViewById(R.id.offers_bottom_navigation);
+        NavigationUI.setupWithNavController(bottomNav, navController);
+
+        actionBarDrawerToggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(actionBarDrawerToggle);
+        actionBarDrawerToggle.syncState();
+
+
+        // Find profile icon in toolbar
+        @SuppressLint("ResourceType") View profileIcon = toolbar.findViewById(R.id.nav_profile);
+        profileIcon.setOnClickListener(v -> {
+            // Create an Intent to start ProfileActivity
+            Intent intent = new Intent(OffersActivity.this, ProfileActivity.class);
+            startActivity(intent);
+        });
+
+        // Action listener for creating new services/products
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(view -> {
+            int currentFragmentId = navController.getCurrentDestination().getId();
+            if (currentFragmentId == R.id.services_menu){
+                CreateServiceDialog dialog = new CreateServiceDialog();
+                dialog.show(getSupportFragmentManager(), "CreateServiceDialog");
+            }
+        });
+
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar_menu, menu);
+        return true;
+    }
+
+}
