@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="30dp"
+    android:layout_margin="15dp"
     app:cardElevation="8dp"
     app:cardCornerRadius="8dp">
 
@@ -22,8 +22,7 @@
                 android:id="@+id/event_image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:src="@drawable/event1" />
+                android:scaleType="centerCrop" />
 
             <!-- Heart Icon in Top Right Corner -->
             <ImageView
@@ -75,7 +74,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:text="Bulevar Oslobodjenja 16"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:textColor="@color/black" />
             </LinearLayout>
 
@@ -100,7 +99,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:text="10/10/2024 at 13h"
-                    android:textSize="17sp"
+                    android:textSize="16sp"
                     android:textColor="@color/black" />
             </LinearLayout>
 

@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -6,24 +5,25 @@
     android:layout_height="match_parent"
     tools:context=".fragments.EventsFragment">
 
-
-    <!-- ScrollView for vertical scrolling -->
     <ScrollView
+        android:id="@+id/parentScrollView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <!-- Carousel -->
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/eventCarousel"
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
                 android:orientation="horizontal" />
 
-
+            <!-- Header with Title and Filter -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -32,7 +32,6 @@
                 android:layout_marginTop="35dp"
                 android:layout_marginBottom="16dp">
 
-                <!-- Title TextView -->
                 <TextView
                     android:id="@+id/events_title"
                     android:layout_width="wrap_content"
@@ -43,7 +42,6 @@
                     android:textColor="@android:color/black"
                     android:layout_alignParentStart="true" />
 
-                <!-- Filter TextView -->
                 <TextView
                     android:id="@+id/filter_text"
                     android:layout_width="wrap_content"
@@ -56,7 +54,6 @@
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="4dp" />
 
-                <!-- Filter Icon ImageView -->
                 <ImageView
                     android:id="@+id/filter_icon"
                     android:layout_width="wrap_content"
@@ -68,52 +65,14 @@
                     android:padding="4dp" />
             </RelativeLayout>
 
-
-
-            <!-- Repeating card layout -->
-            <include
-                layout="@layout/event_card"
+            <!-- RecyclerView for Event Cards -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/eventRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:layout_margin="10dp"/>
-
-            <include
-                layout="@layout/event_card"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:layout_margin="10dp"/>
-
-            <include
-                layout="@layout/event_card"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:layout_margin="10dp"/>
-
-            <include
-                layout="@layout/event_card"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:layout_margin="10dp"/>
-
-            <include
-                layout="@layout/event_card"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:layout_margin="10dp"/>
-
-            <include
-                layout="@layout/event_card"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:layout_margin="10dp"/>
+                android:nestedScrollingEnabled="true"
+                android:scrollbars="none" />
 
         </LinearLayout>
     </ScrollView>
-
 </FrameLayout>
