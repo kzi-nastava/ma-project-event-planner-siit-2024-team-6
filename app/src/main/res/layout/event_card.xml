@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="20dp"
+    android:layout_margin="30dp"
     app:cardElevation="8dp"
     app:cardCornerRadius="8dp">
 
@@ -12,72 +12,74 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Event Image -->
-        <ImageView
-            android:id="@+id/event_image"
+        <!-- FrameLayout to Overlay Heart Icon on the Image -->
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/concert" />
+            android:layout_height="200dp">
+
+            <!-- Event Image -->
+            <ImageView
+                android:id="@+id/event_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/event1" />
+
+            <!-- Heart Icon in Top Right Corner -->
+            <ImageView
+                android:id="@+id/favorite_icon"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/heart_icon"
+                android:contentDescription="Favorite"
+                android:layout_gravity="top|end"
+                android:layout_margin="20dp" />
+        </FrameLayout>
 
         <!-- Content Container for Title, Location, Date, and Rating -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="20dp">
 
-            <!-- Title and Heart Icon for Favorites -->
-            <RelativeLayout
-                android:layout_width="match_parent"
+            <!-- Title -->
+            <TextView
+                android:id="@+id/event_title"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingBottom="10dp">
-
-                <TextView
-                    android:id="@+id/event_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Ed Sheeran Concert"
-                    android:textSize="25sp"
-                    android:textStyle="bold"
-                    android:textColor="?android:textColorPrimary" />
-
-                <ImageView
-                    android:id="@+id/favorite_icon"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/heart_icon"
-                    android:contentDescription="Favorite" />
-            </RelativeLayout>
+                android:text="Ed Sheeran Concert"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                android:textColor="?android:textColorPrimary" />
 
             <!-- Event Location -->
-            <TextView
-                android:id="@+id/event_location_label"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Event Location"
-                android:textSize="14sp"
-                android:textColor="@color/black"
-                android:layout_marginTop="20dp" />
+                android:orientation="horizontal"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="center_vertical">
 
-            <TextView
-                android:id="@+id/event_location"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Bulevar Oslobodjenja 16"
-                android:textSize="18sp"
-                android:textColor="@color/black"/>
-            <TextView
-                android:id="@+id/event_date_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Date and Time"
-                android:textSize="14sp"
-                android:textColor="@color/black"
-                android:layout_marginTop="4dp" />
-            <!-- Date, Time, and Rating Row -->
+                <ImageView
+                    android:id="@+id/location_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/location_icon"
+                    android:contentDescription="Location Icon" />
+
+                <TextView
+                    android:id="@+id/event_location"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="Bulevar Oslobodjenja 16"
+                    android:textSize="18sp"
+                    android:textColor="@color/black" />
+            </LinearLayout>
+
+            <!-- Event Date and Time -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -85,42 +87,47 @@
                 android:layout_marginTop="8dp"
                 android:gravity="center_vertical">
 
-                <!-- Event Date -->
+                <ImageView
+                    android:id="@+id/date_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/event_icon"
+                    android:contentDescription="Date Icon" />
+
                 <TextView
                     android:id="@+id/event_date"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
                     android:text="10/10/2024 at 13h"
                     android:textSize="17sp"
                     android:textColor="@color/black" />
+            </LinearLayout>
 
-                <!-- Rating Icon and Number -->
-                <LinearLayout
+            <!-- Rating Icon and Number -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="end"
+                android:layout_marginTop="8dp">
+
+                <ImageView
+                    android:id="@+id/rating_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/star_icon"
+                    android:contentDescription="Rating Icon" />
+
+                <TextView
+                    android:id="@+id/rating_number"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="end">
-
-                    <ImageView
-                        android:id="@+id/rating_icon"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/star_icon"
-                        android:contentDescription="Rating Icon" />
-
-                    <TextView
-                        android:id="@+id/rating_number"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:text="4.5"
-                        android:textSize="17sp"
-                        android:textColor="@color/black" />
-                </LinearLayout>
+                    android:layout_marginStart="4dp"
+                    android:text="4.5"
+                    android:textSize="17sp"
+                    android:textColor="@color/black" />
             </LinearLayout>
         </LinearLayout>
-
-
     </LinearLayout>
 </androidx.cardview.widget.CardView>

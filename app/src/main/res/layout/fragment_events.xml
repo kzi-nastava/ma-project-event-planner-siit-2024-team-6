@@ -43,17 +43,31 @@
                     android:textColor="@android:color/black"
                     android:layout_alignParentStart="true" />
 
+                <!-- Filter TextView -->
+                <TextView
+                    android:id="@+id/filter_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Filter"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/black"
+                    android:layout_toStartOf="@id/filter_icon"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="4dp" />
+
                 <!-- Filter Icon ImageView -->
                 <ImageView
                     android:id="@+id/filter_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/event_icon"
-                android:contentDescription="Filter"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:padding="8dp" />
+                    android:src="@drawable/filter_icon"
+                    android:contentDescription="Filter"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:padding="4dp" />
             </RelativeLayout>
+
 
 
             <!-- Repeating card layout -->

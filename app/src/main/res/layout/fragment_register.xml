@@ -4,16 +4,20 @@
     android:id="@+id/registration_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/pink"
     tools:context=".fragments.RegisterFragment">
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_margin="20dp"
+        android:background="@color/pink">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="16dp"
+            android:background="@color/coolWhite">
 
             <!-- Common fields for all users -->
             <EditText
@@ -67,19 +71,22 @@
 
             <Button
                 android:id="@+id/btnUploadPhoto"
-                android:layout_width="wrap_content"
+                android:layout_width="220dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:textSize="12dp"
                 android:text="Upload Photo"
                 android:textColor="#FFFFFF" />
 
             <!-- Button to switch to Provider registration -->
             <Button
                 android:id="@+id/btnSwitchToProvider"
-                android:layout_width="wrap_content"
+                android:layout_width="220dp"
                 android:layout_height="wrap_content"
                 android:text="Register as Provider"
-                
-                android:textColor="#FFFFFF" />
+                android:textSize="12dp"
+                android:textColor="#FFFFFF"
+                android:layout_marginBottom="20dp"/>
 
             <!-- Additional fields for Provider -->
             <LinearLayout
