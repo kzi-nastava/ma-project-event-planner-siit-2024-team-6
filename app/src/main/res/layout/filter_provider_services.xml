@@ -21,7 +21,8 @@
             android:layout_height="35dp"
             android:src="@drawable/filter_icon"
             android:contentDescription="Filter Icon"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentStart="true"
+            app:tint="@color/white" />
 
         <!-- Title -->
         <TextView
