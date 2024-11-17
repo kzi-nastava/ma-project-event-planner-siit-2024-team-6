@@ -54,42 +54,42 @@
 
             <!-- Repeating card layout -->
             <include
-                layout="@layout/product_card"
+                layout="@layout/provider_service_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 android:layout_margin="10dp" />
 
             <include
-                layout="@layout/product_card"
+                layout="@layout/provider_service_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 android:layout_margin="10dp" />
 
             <include
-                layout="@layout/product_card"
+                layout="@layout/provider_service_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 android:layout_margin="10dp" />
 
             <include
-                layout="@layout/product_card"
+                layout="@layout/provider_service_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 android:layout_margin="10dp" />
 
             <include
-                layout="@layout/product_card"
+                layout="@layout/provider_service_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 android:layout_margin="10dp" />
 
             <include
-                layout="@layout/product_card"
+                layout="@layout/provider_service_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
