@@ -49,6 +49,10 @@
             android:id="@+id/nav_my_calendar"
             android:title="@string/my_calendar"
             android:icon="@drawable/ic_calendar" />
+        <item
+            android:id="@+id/nav_my_offers"
+            android:title="my offers"
+            android:icon="@drawable/check_box_icon" />
     </group>
 <!--    <group android:checkableBehavior="single">-->
 <!--        <item android:id="@+id/nav_products"-->
