@@ -92,9 +92,7 @@ public class HomeActivity extends AppCompatActivity {
         navController = Navigation.findNavController(this, R.id.fragment_nav_content_main_home);
 
         //getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new EventsFragment()).commit();
-
-        Log.d("ShopApp", "HomeActivity onCreate()");
-        Toast.makeText(this, "onCreate()", Toast.LENGTH_SHORT).show();
+        
 
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
 //        navController = Navigation.findNavController(this, R.id.fragment_container);
