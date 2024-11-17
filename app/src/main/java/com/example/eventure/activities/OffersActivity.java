@@ -15,12 +15,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.eventure.R;
+import com.example.eventure.dialogs.CreateServiceDialog;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -41,8 +43,7 @@ public class OffersActivity extends AppCompatActivity {
         toolbar.setTitleTextAppearance(this, R.style.ToolbarTitleTextStyle);
         toolbar.setContentInsetStartWithNavigation(70);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("EVENTURE");
-        toolbar.setTitleTextColor(getResources().getColor(R.color.white));
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         drawer = findViewById(R.id.drawer_offers_layout);
         navigationView = findViewById(R.id.sidebar_view);
@@ -95,9 +96,11 @@ public class OffersActivity extends AppCompatActivity {
         // Action listener for creating new services/products
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(view -> {
-            // Navigate to TargetActivity
-            //Intent intent = new Intent(this, TargetActivity.class);
-            //startActivity(intent);
+            int currentFragmentId = navController.getCurrentDestination().getId();
+            if (currentFragmentId == R.id.services_menu){
+                CreateServiceDialog dialog = new CreateServiceDialog();
+                dialog.show(getSupportFragmentManager(), "CreateServiceDialog");
+            }
         });
 
     }
