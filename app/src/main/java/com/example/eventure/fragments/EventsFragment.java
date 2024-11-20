@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 
@@ -84,7 +85,8 @@ public class EventsFragment extends Fragment {
 
         //Top 5 carousel
         ViewPager2 eventCarousel = rootView.findViewById(R.id.eventCarousel);
-
+        ImageButton prevButton = rootView.findViewById(R.id.prevButton);
+        ImageButton nextButton = rootView.findViewById(R.id.nextButton);
         //List of top events
         List<Event> eventList = new ArrayList<>();
 
@@ -151,6 +153,20 @@ public class EventsFragment extends Fragment {
         });
         eventCarousel.setPageTransformer(transformer);
 
+        // Arrow Button Functionality
+        prevButton.setOnClickListener(v -> {
+            int currentItem = eventCarousel.getCurrentItem();
+            if (currentItem > 0) {
+                eventCarousel.setCurrentItem(currentItem - 1, true);
+            }
+        });
+
+        nextButton.setOnClickListener(v -> {
+            int currentItem = eventCarousel.getCurrentItem();
+            if (currentItem < carouselAdapter.getItemCount() - 1) {
+                eventCarousel.setCurrentItem(currentItem + 1, true);
+            }
+        });
         //ALL EVENTS
 
         // Find the filter icon
