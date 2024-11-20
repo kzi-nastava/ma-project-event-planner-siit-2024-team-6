@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -84,7 +85,8 @@ public class PasFragment extends Fragment {
 
 // Carousel for products and services
         ViewPager2 pasCarousel = rootView.findViewById(R.id.pasCarousel);
-
+        ImageButton pasPrevButton = rootView.findViewById(R.id.pasPrevButton);
+        ImageButton pasNextButton = rootView.findViewById(R.id.pasNextButton);
 // List of top products and services
         List<PAS> pasList = new ArrayList<>();
 
@@ -143,7 +145,20 @@ public class PasFragment extends Fragment {
             page.setScaleY(0.85f + r * 0.15f);
         });
         pasCarousel.setPageTransformer(transformer);
+// Arrow Button Functionality
+        pasPrevButton.setOnClickListener(v -> {
+            int currentItem = pasCarousel.getCurrentItem();
+            if (currentItem > 0) {
+                pasCarousel.setCurrentItem(currentItem - 1, true);
+            }
+        });
 
+        pasNextButton.setOnClickListener(v -> {
+            int currentItem = pasCarousel.getCurrentItem();
+            if (currentItem < carouselAdapter.getItemCount() - 1) {
+                pasCarousel.setCurrentItem(currentItem + 1, true);
+            }
+        });
 
 
         // Find the filter icon

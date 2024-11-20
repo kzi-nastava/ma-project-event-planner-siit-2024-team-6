@@ -17,11 +17,40 @@
             android:orientation="vertical">
 
             <!-- Carousel -->
-            <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/eventCarousel"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
-                android:orientation="horizontal" />
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp">
+
+                <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/eventCarousel"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal" />
+
+                <!-- Left Arrow -->
+                <ImageButton
+                    android:id="@+id/prevButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:background="@null"
+                    android:src="@drawable/arrow_left_icon"
+                    android:contentDescription="Previous Event" />
+
+                <!-- Right Arrow -->
+                <ImageButton
+                    android:id="@+id/nextButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:background="@null"
+                    android:src="@drawable/arrow_right_icon"
+                    android:contentDescription="Next Event" />
+            </RelativeLayout>
 
             <!-- Header with Title and Filter -->
             <RelativeLayout
