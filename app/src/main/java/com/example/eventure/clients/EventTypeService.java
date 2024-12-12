@@ -1,0 +1,20 @@
+package com.example.eventure.clients;
+
+import com.example.eventure.model.EventType;
+import com.example.eventure.model.Offer;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.http.GET;
+import retrofit2.http.Headers;
+import retrofit2.http.Path;
+
+public interface EventTypeService {
+    @Headers({
+            "User-Agent: Mobile-Android",
+            "Content-Type:application/json"
+    })
+    @GET("events/{name}/event-type")
+    Call<EventType> findEventType(@Path("name") String name);
+}
