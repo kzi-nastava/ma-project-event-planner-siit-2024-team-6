@@ -1,46 +1,40 @@
 package com.example.eventure.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.eventure.R;
+import com.example.eventure.adapters.ProviderOfferAdapter;
+import com.example.eventure.clients.ClientUtils;
 import com.example.eventure.dialogs.EditServiceDialog;
+import com.example.eventure.model.Offer;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class ProviderServicesFragment extends Fragment {
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    private String mParam1;
-    private String mParam2;
-
-    public ProviderServicesFragment() {
-        // Required empty public constructor
-    }
-    public static ProviderServicesFragment newInstance(String param1, String param2) {
-        ProviderServicesFragment fragment = new ProviderServicesFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
+    private RecyclerView recyclerView;
+    private ProviderOfferAdapter offerAdapter;
+    private List<Offer> offerList;
+    private ProgressBar progressBar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -48,49 +42,86 @@ public class ProviderServicesFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_proivder_services, container, false);
 
+        // Initialize RecyclerView
+        recyclerView = rootView.findViewById(R.id.services_recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        progressBar = rootView.findViewById(R.id.progress_bar);
+
+        // Initialize the offer list and adapter with an empty list
+        offerList = new ArrayList<>();
+        offerAdapter = new ProviderOfferAdapter(offerList, offer -> {
+
+            // Handle edit button click
+            EditServiceDialog dialog = EditServiceDialog.newInstance(offer);
+            dialog.setOnOfferUpdatedListener(() -> {
+                // Refresh the data in the fragment
+                fetchOffers();
+            });
+            dialog.show(getChildFragmentManager(), "EditServiceDialog");
+        });
+
+        recyclerView.setAdapter(offerAdapter);
+
+        // Fetch the data
+        fetchOffers();
+
         // Find the filter icon
         ImageView filterIcon = rootView.findViewById(R.id.filter_icon);
-        Button editBtn = rootView.findViewById(R.id.edit_button);
 
-        // Set an OnClickListener to open the BottomSheetDialog when the icon is clicked
+        // Filter Icon Click Listener
         filterIcon.setOnClickListener(v -> {
-            // Create a BottomSheetDialog
             BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
-            // Inflate the filter layout
             View dialogView = inflater.inflate(R.layout.filter_provider_services, null);
             bottomSheetDialog.setContentView(dialogView);
 
-            // Access the BottomSheetBehavior from the BottomSheetDialog
             View bottomSheet = (View) dialogView.getParent();
             BottomSheetBehavior<View> bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
-
-            // Disable dragging to dismiss
             bottomSheetBehavior.setDraggable(false);
-
-            // Optionally, set the initial state to expanded (or collapsed) if needed
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
 
-
-            // Find the close icon in the filter layout
             ImageView closeIcon = dialogView.findViewById(R.id.close_icon);
-
-            // Set an OnClickListener to dismiss the BottomSheetDialog when the close icon is clicked
             closeIcon.setOnClickListener(v1 -> bottomSheetDialog.dismiss());
 
-            // Show the dialog
             bottomSheetDialog.show();
         });
-        editBtn.setOnClickListener(v ->{
-            EditServiceDialog dialog = EditServiceDialog.newInstance(
-                    "Decoration Luna",           // Example service name
-                    "Best decour",    // Example description
-                    100.0,                    // Example price
-                    10.0                      // Example discount
-            );
-            // Show the dialog
-            dialog.show(getChildFragmentManager(), "EditServiceDialog");
 
-        });
         return rootView;
+    }
+
+    private void fetchOffers() {
+        progressBar.setVisibility(View.VISIBLE);
+        recyclerView.setVisibility(View.GONE);
+        Call<List<Offer>> call = ClientUtils.offerService.getProviderServices(1);
+
+        call.enqueue(new Callback<List<Offer>>() {
+            @Override
+            public void onResponse(@NonNull Call<List<Offer>> call, @NonNull Response<List<Offer>> response) {
+                progressBar.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.VISIBLE);
+                if (response.isSuccessful() && response.body() != null) {
+                    offerList.clear(); // Clear the existing data
+                    offerList.addAll(response.body()); // Add the new data
+
+                    // Check if offerAdapter is not null before calling notifyDataSetChanged
+                    if (offerAdapter != null) {
+                        offerAdapter.notifyDataSetChanged();
+                    } else {
+                        Log.e("AdapterError", "OfferAdapter is null");
+                    }
+                } else {
+                    Log.e("API_ERROR", "Response Code: " + response.code());
+                    Toast.makeText(getContext(), "Failed to fetch offers", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<Offer>> call, @NonNull Throwable t) {
+                progressBar.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.VISIBLE);
+                Log.e("Error", t.getMessage());
+                Toast.makeText(getContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

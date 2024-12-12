@@ -1,5 +1,24 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
+}
+
+fun getIpAddress(): String? {
+    val properties = Properties()
+    val localPropertiesFile = File("local.properties")
+
+    try {
+        FileInputStream(localPropertiesFile).use { inputStream ->
+            properties.load(inputStream)
+        }
+        return properties.getProperty("ip_addr") // Replace "ipAddress" with the key you want to retrieve
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+
+    return null
 }
 
 android {
@@ -12,7 +31,9 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-
+        val ipAddress = getIpAddress()
+        buildConfigField("String", "IP_ADDR", "\"$ipAddress\"")
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -31,6 +52,7 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 
 }
@@ -48,4 +70,10 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
     implementation(libs.viewpager2)
     implementation(libs.recyclerview)
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:3.12.1")
+    implementation("com.google.code.gson:gson:2.8.8")
+    implementation("com.github.bumptech.glide:glide:4.15.1")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.15.1")
 }
