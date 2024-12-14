@@ -1,5 +1,6 @@
 package com.example.eventure.adapters;
 
+import android.annotation.SuppressLint;
 import android.graphics.Paint;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,6 +11,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+
+import androidx.paging.PagedListAdapter;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -19,21 +23,31 @@ import com.example.eventure.model.Offer;
 
 import java.util.List;
 
-public class ProviderOfferAdapter extends RecyclerView.Adapter<ProviderOfferAdapter.OfferViewHolder> {
+public class ProviderOfferAdapter extends PagedListAdapter<Offer, ProviderOfferAdapter.OfferViewHolder> {
 
-    private List<Offer> offerList;
     private OnEditButtonClickListener editButtonClickListener;
 
-    // Define the interface for the edit button click listener
     public interface OnEditButtonClickListener {
         void onEditButtonClick(Offer offer);
     }
 
-    // Constructor
-    public ProviderOfferAdapter(List<Offer> offerList, OnEditButtonClickListener listener) {
-        this.offerList = offerList;
+    public ProviderOfferAdapter(OnEditButtonClickListener listener) {
+        super(DIFF_CALLBACK);
         this.editButtonClickListener = listener;
     }
+
+    private static final DiffUtil.ItemCallback<Offer> DIFF_CALLBACK = new DiffUtil.ItemCallback<Offer>() {
+        @Override
+        public boolean areItemsTheSame(@NonNull Offer oldItem, @NonNull Offer newItem) {
+            return oldItem.getId().equals(newItem.getId());
+        }
+
+        @SuppressLint("DiffUtilEquals")
+        @Override
+        public boolean areContentsTheSame(@NonNull Offer oldItem, @NonNull Offer newItem) {
+            return oldItem.equals(newItem);
+        }
+    };
 
     @NonNull
     @Override
@@ -44,26 +58,29 @@ public class ProviderOfferAdapter extends RecyclerView.Adapter<ProviderOfferAdap
 
     @Override
     public void onBindViewHolder(@NonNull OfferViewHolder holder, int position) {
-        Offer offer = offerList.get(position);
+        Offer offer = getItem(position);
+        if (offer == null) {
+            return;
+        }
+
         holder.productTitle.setText(offer.getName());
         holder.productCategory.setText(offer.getCategory());
         holder.productPrice.setText(String.format("€%.2f", offer.getPrice()));
-        if(offer.getSale() == null){
+
+        if (offer.getSale() == null) {
             holder.productSale.setText("");
             holder.productSaleTag.setVisibility(View.GONE);
             holder.productPrice.setPaintFlags(holder.productPrice.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
             holder.productSale.setVisibility(View.GONE);
-        }else{
+        } else {
             holder.productSale.setText(String.format("€%.2f", offer.getSale()));
             holder.productSaleTag.setVisibility(View.VISIBLE);
-            // Cross out the original price
             holder.productPrice.setPaintFlags(holder.productPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             holder.productSale.setVisibility(View.VISIBLE);
         }
+
         if (offer.getPhotos() != null && !offer.getPhotos().isEmpty()) {
             String imageUrl = offer.getPhotos().get(0);
-            Log.d("GlideImageURL", "Loading image URL: " + imageUrl);
-
             Glide.with(holder.itemView.getContext())
                     .load(imageUrl)
                     .placeholder(R.drawable.placeholder_image)
@@ -75,17 +92,11 @@ public class ProviderOfferAdapter extends RecyclerView.Adapter<ProviderOfferAdap
             holder.productImage.setImageResource(R.drawable.placeholder_image);
         }
 
-        // Set click listener for the edit button
         holder.editButton.setOnClickListener(v -> {
             if (editButtonClickListener != null) {
                 editButtonClickListener.onEditButtonClick(offer);
             }
         });
-    }
-
-    @Override
-    public int getItemCount() {
-        return offerList.size();
     }
 
     static class OfferViewHolder extends RecyclerView.ViewHolder {

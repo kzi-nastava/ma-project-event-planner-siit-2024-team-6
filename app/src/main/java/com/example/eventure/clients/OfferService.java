@@ -2,6 +2,7 @@ package com.example.eventure.clients;
 
 import com.example.eventure.dto.OfferDTO;
 import com.example.eventure.model.Offer;
+import com.example.eventure.model.PagedResponse;
 
 import java.util.List;
 
@@ -12,6 +13,7 @@ import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface OfferService {
     @Headers({
@@ -19,7 +21,7 @@ public interface OfferService {
             "Content-Type:application/json"
     })
     @GET("providers/{id}/my-services")
-    Call<List<Offer>> getProviderServices(@Path("id") int id);
+    Call<PagedResponse<Offer>> getProviderServices(@Path("id") int id, @Query("page") int page, @Query("size") int size);
 
     @Headers({
             "User-Agent: Mobile-Android",
