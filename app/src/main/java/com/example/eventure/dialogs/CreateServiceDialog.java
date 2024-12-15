@@ -91,6 +91,7 @@ public class CreateServiceDialog extends DialogFragment {
 
     private void populateCategorySpinner() {
         List<String> categoryNames = new ArrayList<>();
+        categoryNames.add("Select a category");
         for (Category category : categoryList) {
             categoryNames.add(category.getName());
         }
@@ -103,6 +104,9 @@ public class CreateServiceDialog extends DialogFragment {
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         serviceCategorySpinner.setAdapter(adapter);
+
+        // Set the first item as selected by default
+        serviceCategorySpinner.setSelection(0);
     }
 
 
@@ -231,7 +235,7 @@ public class CreateServiceDialog extends DialogFragment {
             String updatedCategory = null;
 
             if(proposedCategory.isEmpty()){
-                if (serviceCategorySpinner.getSelectedItemPosition() == 0) {
+                if (serviceCategorySpinner.getSelectedItem().equals("Select a category")) {
                     Snackbar.make(requireView(), "Please select or propose a new category", Snackbar.LENGTH_LONG).show();
                     return;
                 }
