@@ -99,6 +99,10 @@ public class OffersActivity extends AppCompatActivity {
             int currentFragmentId = navController.getCurrentDestination().getId();
             if (currentFragmentId == R.id.services_menu){
                 CreateServiceDialog dialog = new CreateServiceDialog();
+                dialog.setOnOfferCreatedListener(() -> {
+                    // Refresh the current fragment
+                    navController.navigate(R.id.services_menu);
+                });
                 dialog.show(getSupportFragmentManager(), "CreateServiceDialog");
             }
         });
