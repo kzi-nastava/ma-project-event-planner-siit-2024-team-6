@@ -1,15 +1,18 @@
 package com.example.eventure.dialogs;
 
 import android.app.AlertDialog;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -25,10 +28,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.eventure.R;
 import com.example.eventure.adapters.PhotoAdapter;
 import com.example.eventure.clients.ClientUtils;
+import com.example.eventure.dto.CategorySuggestionDTO;
 import com.example.eventure.dto.EventTypeDTO;
 import com.example.eventure.dto.OfferDTO;
+import com.example.eventure.model.Category;
 import com.example.eventure.model.EventType;
 import com.example.eventure.model.Offer;
+import com.example.eventure.model.Status;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
@@ -55,12 +61,56 @@ public class CreateServiceDialog extends DialogFragment {
     private RecyclerView photosRecyclerView;
     private PhotoAdapter photoAdapter;
     private List<String> photoUrls;
-    private EditServiceDialog.OnOfferUpdatedListener listener;
+    private LinearLayout eventTypesContainer;
 
-    public interface OnOfferUpdatedListener {
-        void onOfferUpdated();
+    private OnOfferCreatedListener listener;
+
+    private List<EventType> eventTypes = new ArrayList<>();
+
+    private List<Category> categoryList = new ArrayList<>();
+
+    private void loadCategories() {
+        ClientUtils.categoryService.getAllCategories().enqueue(new Callback<List<Category>>() {
+            @Override
+            public void onResponse(Call<List<Category>> call, Response<List<Category>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    categoryList = response.body();
+                    populateCategorySpinner();
+                } else {
+                    Toast.makeText(getContext(), "Failed to load categories", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Category>> call, Throwable t) {
+                Log.e("FetchCategories", "Error: " + t.getMessage());
+                Toast.makeText(getContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
-    public void setOnOfferUpdatedListener(EditServiceDialog.OnOfferUpdatedListener listener) {
+
+    private void populateCategorySpinner() {
+        List<String> categoryNames = new ArrayList<>();
+        for (Category category : categoryList) {
+            categoryNames.add(category.getName());
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                getContext(),
+                android.R.layout.simple_spinner_item,
+                categoryNames
+        );
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        serviceCategorySpinner.setAdapter(adapter);
+    }
+
+
+    public interface OnOfferCreatedListener {
+        void onOfferCreated();
+    }
+
+    public void setOnOfferCreatedListener(OnOfferCreatedListener listener) {
         this.listener = listener;
     }
 
@@ -69,8 +119,13 @@ public class CreateServiceDialog extends DialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_create_edit_service, container, false);
 
-        // Initialize UI components
         initializeViews(view);
+
+        loadEventTypes();
+        // Initialize UI components
+
+        // Load and populate categories
+        loadCategories();
 
         // Initialize photo URL list and adapter
         photoUrls = new ArrayList<>();
@@ -94,7 +149,6 @@ public class CreateServiceDialog extends DialogFragment {
 
     private void initializeViews(View view) {
         closeIcon = view.findViewById(R.id.close_icon);
-        eventTypesInput = view.findViewById(R.id.event_types_input);
         proposedCategoryInput = view.findViewById(R.id.proposed_category_input);
         serviceNameInput = view.findViewById(R.id.service_name_input);
         serviceDescriptionInput = view.findViewById(R.id.service_description_input);
@@ -120,6 +174,7 @@ public class CreateServiceDialog extends DialogFragment {
         bookingLabel = view.findViewById(R.id.booking_text);
         categoryLabel = view.findViewById(R.id.category_text);
         photosRecyclerView = view.findViewById(R.id.photos_recycler_view);
+        eventTypesContainer = view.findViewById(R.id.event_types_container);
     }
 
     private void setupListeners() {
@@ -172,6 +227,16 @@ public class CreateServiceDialog extends DialogFragment {
             String updatedServiceName = serviceNameInput.getText().toString().trim();
             String updatedDescription = serviceDescriptionInput.getText().toString().trim();
             String updatedSpecifics = serviceSpecificsInput.getText().toString().trim();
+            String proposedCategory = proposedCategoryInput.getText().toString().trim();
+            String updatedCategory = null;
+
+            if(proposedCategory.isEmpty()){
+                if (serviceCategorySpinner.getSelectedItemPosition() == 0) {
+                    Snackbar.make(requireView(), "Please select or propose a new category", Snackbar.LENGTH_LONG).show();
+                    return;
+                }
+                updatedCategory = serviceCategorySpinner.getSelectedItem().toString();
+            }
 
             // Price and Discount parsing
             double updatedPrice = 0;
@@ -213,14 +278,7 @@ public class CreateServiceDialog extends DialogFragment {
             }
 
             // Event Types
-            String eventTypesString = eventTypesInput.getText().toString().trim();
-            ArrayList<String> updatedEventTypes = new ArrayList<>();
-            if (!eventTypesString.isEmpty()) {
-                String[] types = eventTypesString.split(",");
-                for (String type : types) {
-                    updatedEventTypes.add(type.trim());
-                }
-            }
+            List<EventTypeDTO> ets = getSelectedEventTypes();
 
             // Checkboxes
             boolean updatedVisibility = visibilityCheckbox.isChecked();
@@ -228,87 +286,127 @@ public class CreateServiceDialog extends DialogFragment {
 
 
             // Validate required fields
-            if (photoUrls.isEmpty() || updatedEventTypes.isEmpty() || (updatedFixedDuration == 0 && (updatedMaxDuration == 0 || updatedMinDuration == 0)) || (updatedMinDuration == 0 && updatedMaxDuration == 0 && updatedFixedDuration == 0) || updatedCancellationDeadline <= 0 || updatedBookingDeadline <= 0 || updatedServiceName.isEmpty() || updatedDescription.isEmpty() || updatedSpecifics.isEmpty() || updatedDiscount < 0 || updatedPrice <= 0) {
+            if (photoUrls.isEmpty() || ets.isEmpty() || (updatedFixedDuration == 0 && (updatedMaxDuration == 0 || updatedMinDuration == 0)) || (updatedMinDuration == 0 && updatedMaxDuration == 0 && updatedFixedDuration == 0) || updatedCancellationDeadline <= 0 || updatedBookingDeadline <= 0 || updatedServiceName.isEmpty() || updatedDescription.isEmpty() || updatedSpecifics.isEmpty() || updatedDiscount < 0 || updatedPrice <= 0) {
                 Snackbar.make(requireView(), "Please fill in all required fields.", Snackbar.LENGTH_LONG).show();
                 return;
             }
 
-            List<EventType> eventTypes = new ArrayList<>();
-            for (String name: updatedEventTypes) {
-                ClientUtils.eventTypeService.findEventType(name).enqueue(new Callback<EventType>() {
-                    @Override
-                    public void onResponse(Call<EventType> call, Response<EventType> response) {
-                        if (response.isSuccessful()) {
-                            EventType eventType = response.body();
-                            Log.d("EventType", eventType.getName());
-                            eventTypes.add(eventType);
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<EventType> call, Throwable t) {
-                        Log.e("Error", t.getMessage());
-                    }
-                });
-
-            }
-
             // Create or update the Offer object
-            OfferDTO updatedOffer = new OfferDTO();
-            updatedOffer.setName(updatedServiceName);
-            updatedOffer.setDescription(updatedDescription);
-            updatedOffer.setPrice(updatedPrice);
-            updatedOffer.setSale(updatedDiscount);
-            updatedOffer.setSpecifics(updatedSpecifics);
-            updatedOffer.setMinDuration(updatedMinDuration);
-            updatedOffer.setMaxDuration(updatedMaxDuration);
-            updatedOffer.setPreciseDuration(updatedFixedDuration);
-            updatedOffer.setLatestReservation(updatedBookingDeadline);
-            updatedOffer.setLatestCancelation(updatedCancellationDeadline);
-            updatedOffer.setIsVisible(updatedVisibility);
-            updatedOffer.setIsAvailable(updatedAvailability);
-            updatedOffer.setReservationAutoApproved(updatedAutoApproval);
-            updatedOffer.setPhotos(photoUrls);
-            List<EventTypeDTO> list = new ArrayList<>();
-            for (EventType eventType : eventTypes) {
-                EventTypeDTO eventTypeDTO = new EventTypeDTO(eventType);
-                list.add(eventTypeDTO);
+            OfferDTO newOffer = new OfferDTO();
+            if(!proposedCategory.isEmpty()){
+                CategorySuggestionDTO dto = new CategorySuggestionDTO();
+                dto.setStatus(Status.PENDING);
+                dto.setSuggestion(proposedCategory);
+                newOffer.setCategorySuggestionDTO(dto);
+                newOffer.setStatus(Status.PENDING);
+            }else{
+                newOffer.setCategory(updatedCategory);
+                newOffer.setStatus(Status.ACCEPTED);
+                newOffer.setCategorySuggestionDTO(null);
             }
-            updatedOffer.setEventTypes(list);
+            newOffer.setEventTypes(ets);
+            newOffer.setName(updatedServiceName);
+            newOffer.setDescription(updatedDescription);
+            newOffer.setPrice(updatedPrice);
+            newOffer.setSale(updatedDiscount);
+            newOffer.setSpecifics(updatedSpecifics);
+            newOffer.setMinDuration(updatedMinDuration);
+            newOffer.setMaxDuration(updatedMaxDuration);
+            newOffer.setPreciseDuration(updatedFixedDuration);
+            newOffer.setLatestReservation(updatedBookingDeadline);
+            newOffer.setLatestCancelation(updatedCancellationDeadline);
+            newOffer.setIsVisible(updatedVisibility);
+            newOffer.setIsAvailable(updatedAvailability);
+            newOffer.setReservationAutoApproved(updatedAutoApproval);
+            newOffer.setPhotos(photoUrls);
 
             // Simulate saving or updating the data (replace with actual logic)
-            Toast.makeText(requireContext(), "Service updated successfully!", Toast.LENGTH_SHORT).show();
-            ClientUtils.offerService.createProviderService(1, updatedOffer).enqueue(new Callback<Offer>() {
+            ClientUtils.offerService.createProviderService(1, newOffer).enqueue(new Callback<Offer>() {
                 @Override
                 public void onResponse(Call<Offer> call, Response<Offer> response) {
                     if (response.isSuccessful()) {
                         Log.d("CreateOffer", "Offer created successfully: " + response.body().getName());
-                        Toast.makeText(getContext(), "Offer created successfully!", Toast.LENGTH_SHORT).show();
                         // Notify the listener
                         if (listener != null) {
-                            listener.onOfferUpdated();
+                            listener.onOfferCreated();
                         }
                         // Dismiss the dialog
                         dismiss();
                     } else {
                         Log.e("CreateOffer", "Failed to create offer: " + response.code());
-                        Toast.makeText(getContext(), "Failed to create offer", Toast.LENGTH_SHORT).show();
                     }
                 }
 
                 @Override
                 public void onFailure(Call<Offer> call, Throwable t) {
                     Log.e("CreateOffer", "Error: " + t.getMessage());
-                    Toast.makeText(getContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
 
         } catch (NumberFormatException e) {
-            Toast.makeText(requireContext(), "Please enter valid numeric values for price, discount, and durations.", Toast.LENGTH_SHORT).show();
             Log.e("EditServiceDialog", "Error parsing numeric values", e);
         } catch (Exception e) {
-            Toast.makeText(requireContext(), "An unexpected error occurred.", Toast.LENGTH_SHORT).show();
             Log.e("EditServiceDialog", "Error in handleSave", e);
         }
+    }
+    private void loadEventTypes() {
+        eventTypesContainer.removeAllViews(); // Clear any existing views
+        eventTypes.clear();
+
+        ClientUtils.eventTypeService.findAll().enqueue(new Callback<List<EventType>>() {
+            @Override
+            public void onResponse(Call<List<EventType>> call, Response<List<EventType>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    eventTypes = response.body();
+                    Log.d("EventType", eventTypes.toString());
+
+                    // Populate the checkboxes after the data is fetched
+                    for (EventType eventType : eventTypes) {
+                        CheckBox checkBox = new CheckBox(getContext());
+                        checkBox.setText(eventType.getName());
+                        checkBox.setTag(eventType);
+
+                        eventTypesContainer.addView(checkBox);
+                    }
+                } else {
+                    Log.e("EventTypeError", "Failed to load event types");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<EventType>> call, Throwable t) {
+                Log.e("EventTypeError", "Error: " + t.getMessage());
+                Toast.makeText(getContext(), "Failed to load event types", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private List<EventTypeDTO> getSelectedEventTypes() {
+        List<String> selectedEventTypes = new ArrayList<>();
+
+        for (int i = 0; i < eventTypesContainer.getChildCount(); i++) {
+            View view = eventTypesContainer.getChildAt(i);
+            if (view instanceof CheckBox) {
+                CheckBox checkBox = (CheckBox) view;
+                if (checkBox.isChecked()) {
+                    selectedEventTypes.add(checkBox.getText().toString());
+                }
+            }
+        }
+        List<EventTypeDTO> events = new ArrayList<>();
+
+        for(String name: selectedEventTypes){
+            for(EventType e: eventTypes){
+                if(e.getName().equals(name)){
+                    EventTypeDTO eDto = new EventTypeDTO();
+                    eDto.setName(e.getName());
+                    eDto.setDescription(eDto.getDescription());
+                    eDto.setIsDeleted(false);
+                    events.add(eDto);
+                }
+            }
+        }
+
+        return events;
     }
 }
