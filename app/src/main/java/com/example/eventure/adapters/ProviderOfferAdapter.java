@@ -26,14 +26,21 @@ import java.util.List;
 public class ProviderOfferAdapter extends PagedListAdapter<Offer, ProviderOfferAdapter.OfferViewHolder> {
 
     private OnEditButtonClickListener editButtonClickListener;
+    private OnDeleteButtonClickListener deleteButtonClickListener;
 
     public interface OnEditButtonClickListener {
         void onEditButtonClick(Offer offer);
     }
 
-    public ProviderOfferAdapter(OnEditButtonClickListener listener) {
+    // Define the interface for the delete button click listener
+    public interface OnDeleteButtonClickListener {
+        void onDeleteButtonClick(Offer offer);
+    }
+
+    public ProviderOfferAdapter(OnEditButtonClickListener listener, OnDeleteButtonClickListener listener2) {
         super(DIFF_CALLBACK);
         this.editButtonClickListener = listener;
+        this.deleteButtonClickListener = listener2;
     }
 
     private static final DiffUtil.ItemCallback<Offer> DIFF_CALLBACK = new DiffUtil.ItemCallback<Offer>() {
@@ -97,17 +104,23 @@ public class ProviderOfferAdapter extends PagedListAdapter<Offer, ProviderOfferA
                 editButtonClickListener.onEditButtonClick(offer);
             }
         });
+        holder.deleteButton.setOnClickListener(v -> {
+            if(deleteButtonClickListener != null){
+                deleteButtonClickListener.onDeleteButtonClick(offer);
+            }
+        });
     }
 
     static class OfferViewHolder extends RecyclerView.ViewHolder {
         TextView productTitle, productCategory, productPrice, productSale, productSaleTag;
-        Button editButton;
+        Button editButton, deleteButton;
         ImageView productImage;
 
         public OfferViewHolder(@NonNull View itemView) {
             super(itemView);
             productTitle = itemView.findViewById(R.id.product_title);
             editButton = itemView.findViewById(R.id.edit_button);
+            deleteButton = itemView.findViewById(R.id.delete_button);
             productCategory = itemView.findViewById(R.id.product_category);
             productPrice = itemView.findViewById(R.id.provider_product_price);
             productSale = itemView.findViewById(R.id.provider_sale_price);

@@ -1,6 +1,8 @@
 package com.example.eventure.fragments;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,11 +18,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.eventure.R;
 import com.example.eventure.adapters.ProviderOfferAdapter;
+import com.example.eventure.clients.ClientUtils;
 import com.example.eventure.dialogs.EditServiceDialog;
 import com.example.eventure.model.Offer;
 import com.example.eventure.viewmodel.ProviderOfferViewModel;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ProviderServicesFragment extends Fragment {
 
@@ -47,9 +54,15 @@ public class ProviderServicesFragment extends Fragment {
             EditServiceDialog dialog = EditServiceDialog.newInstance(offer);
             dialog.setOnOfferUpdatedListener(() -> offerViewModel.refresh());
             dialog.show(getChildFragmentManager(), "EditServiceDialog");
+        }, offer -> {
+            // Handle delete button click
+            showDeleteConfirmationDialog(offer);
         });
 
         recyclerView.setAdapter(offerAdapter);
+
+        progressBar.setVisibility(View.VISIBLE);
+        recyclerView.setVisibility(View.GONE);
 
         // Initialize the ViewModel with providerId and pageSize
         offerViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
@@ -89,6 +102,33 @@ public class ProviderServicesFragment extends Fragment {
             closeIcon.setOnClickListener(v1 -> bottomSheetDialog.dismiss());
 
             bottomSheetDialog.show();
+        });
+    }
+    // Method to show confirmation dialog
+    private void showDeleteConfirmationDialog(Offer offer) {
+        new AlertDialog.Builder(getContext())
+                .setTitle("Delete Service")
+                .setMessage("Are you sure you want to delete this service?")
+                .setPositiveButton("Yes", (dialog, which) -> deleteOffer(offer))
+                .setNegativeButton("No", null)
+                .show();
+    }
+    // Method to call the delete API
+    private void deleteOffer(Offer offer) {
+        ClientUtils.offerService.deleteProviderService(offer.getId()).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    offerViewModel.refresh(); // Refresh the list after deletion
+                } else {
+                    Log.e("DELETE_OFFER", "FAILED");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.e("ERROR", t.getMessage());
+            }
         });
     }
 }
