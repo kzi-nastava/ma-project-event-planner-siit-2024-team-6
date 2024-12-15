@@ -8,6 +8,7 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
@@ -33,5 +34,6 @@ public interface OfferService {
     @POST("providers/{providerId}")
     Call<Offer> createProviderService(@Path("providerId") int pId, @Body OfferDTO offer);
 
-
+    @DELETE("providers/{offerId}")
+    Call<Void> deleteProviderService(@Path("offerId") int id);
 }
