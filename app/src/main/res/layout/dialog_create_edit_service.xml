@@ -47,11 +47,14 @@
                 android:text="Event Types"
                 android:textSize="20sp"
                 android:layout_marginTop="16dp" />
-            <EditText
-                android:id="@+id/event_types_input"
+            <LinearLayout
+                android:id="@+id/event_types_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Enter event types (comma-separated)" />
+                android:orientation="vertical"
+                android:layout_marginTop="8dp">
+                <!-- Checkboxes will be added here dynamically -->
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/category_text"
