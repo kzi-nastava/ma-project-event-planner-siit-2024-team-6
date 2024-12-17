@@ -146,7 +146,7 @@ public class OffersActivity extends AppCompatActivity {
                 .getPrimaryNavigationFragment();
 
         if (currentFragment instanceof ProviderServicesFragment) {
-            ((ProviderServicesFragment) currentFragment).filterOffers(query);
+            ((ProviderServicesFragment) currentFragment).searchServices(query);
         } else {
             Log.d("OffersActivity", "Current fragment is not ProviderServicesFragment");
         }

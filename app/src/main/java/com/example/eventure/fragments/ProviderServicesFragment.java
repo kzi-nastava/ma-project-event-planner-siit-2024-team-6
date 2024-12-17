@@ -6,8 +6,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,9 +25,14 @@ import com.example.eventure.adapters.ProviderOfferAdapter;
 import com.example.eventure.clients.ClientUtils;
 import com.example.eventure.dialogs.EditServiceDialog;
 import com.example.eventure.model.Offer;
+import com.example.eventure.model.PagedResponse;
 import com.example.eventure.viewmodel.ProviderOfferViewModel;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.slider.RangeSlider;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -35,6 +44,8 @@ public class ProviderServicesFragment extends Fragment {
     private ProviderOfferAdapter offerAdapter;
     private ProgressBar progressBar;
     private ProviderOfferViewModel offerViewModel;
+    private LinearLayout eventTypeContainer;
+    private LinearLayout categoryContainer;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -82,12 +93,12 @@ public class ProviderServicesFragment extends Fragment {
 
         // Find the filter icon
         ImageView filterIcon = rootView.findViewById(R.id.filter_icon);
-        setupFilterIcon(filterIcon, inflater);
+        setupFilter(filterIcon, inflater);
 
         return rootView;
     }
 
-    private void setupFilterIcon(ImageView filterIcon, LayoutInflater inflater) {
+    private void setupFilter(ImageView filterIcon, LayoutInflater inflater) {
         filterIcon.setOnClickListener(v -> {
             BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
             View dialogView = inflater.inflate(R.layout.filter_provider_services, null);
@@ -98,12 +109,66 @@ public class ProviderServicesFragment extends Fragment {
             bottomSheetBehavior.setDraggable(false);
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
 
+            // Close Icon Listener
             ImageView closeIcon = dialogView.findViewById(R.id.close_icon);
             closeIcon.setOnClickListener(v1 -> bottomSheetDialog.dismiss());
+
+            // Containers for dynamically loaded checkboxes
+            eventTypeContainer = dialogView.findViewById(R.id.event_type_container);
+            categoryContainer = dialogView.findViewById(R.id.category_container);
+
+            // Load categories and event types
+            loadCategories();
+            loadEventTypes();
+
+            // Find the filter button
+            Button filterButton = dialogView.findViewById(R.id.filter_button);
+
+            // Add action listener for the filter button
+            filterButton.setOnClickListener(v2 -> {
+                // Collect selected categories
+                List<String> selectedCategories = new ArrayList<>();
+                for (int i = 0; i < categoryContainer.getChildCount(); i++) {
+                    View view = categoryContainer.getChildAt(i);
+                    if (view instanceof CheckBox) {
+                        CheckBox checkBox = (CheckBox) view;
+                        if (checkBox.isChecked()) {
+                            selectedCategories.add(checkBox.getText().toString());
+                        }
+                    }
+                }
+
+                // Collect selected event types
+                List<String> selectedEventTypes = new ArrayList<>();
+                for (int i = 0; i < eventTypeContainer.getChildCount(); i++) {
+                    View view = eventTypeContainer.getChildAt(i);
+                    if (view instanceof CheckBox) {
+                        CheckBox checkBox = (CheckBox) view;
+                        if (checkBox.isChecked()) {
+                            selectedEventTypes.add(checkBox.getText().toString());
+                        }
+                    }
+                }
+
+                // Get availability checkbox value
+                CheckBox availabilityCheckBox = dialogView.findViewById(R.id.availability_checkbox);
+                Boolean isAvailable = availabilityCheckBox.isChecked();
+
+                // Get price range values from the RangeSlider
+                RangeSlider priceRangeSlider = dialogView.findViewById(R.id.price_range_slider);
+                Float maxPrice = priceRangeSlider.getValues().get(0);
+                // Call the filtering method with the collected data
+                filterOffers(selectedCategories, selectedEventTypes, isAvailable, (double) maxPrice);
+
+                // Dismiss the dialog after applying filters
+                bottomSheetDialog.dismiss();
+            });
 
             bottomSheetDialog.show();
         });
     }
+
+
     // Method to show confirmation dialog
     private void showDeleteConfirmationDialog(Offer offer) {
         new AlertDialog.Builder(getContext())
@@ -113,6 +178,7 @@ public class ProviderServicesFragment extends Fragment {
                 .setNegativeButton("No", null)
                 .show();
     }
+
     // Method to call the delete API
     private void deleteOffer(Offer offer) {
         ClientUtils.offerService.deleteProviderService(offer.getId()).enqueue(new Callback<Void>() {
@@ -131,12 +197,75 @@ public class ProviderServicesFragment extends Fragment {
             }
         });
     }
-    public void filterOffers(String query) {
+
+    public void searchServices(String query) {
         progressBar.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.GONE);
         offerViewModel.searchOffers(query);
         progressBar.setVisibility(View.GONE);
         recyclerView.setVisibility(View.VISIBLE);
+    }
+
+    private void populateCheckboxes(LinearLayout container, List<String> items) {
+        container.removeAllViews(); // Clear any existing views
+
+        for (String item : items) {
+            CheckBox checkBox = new CheckBox(getContext());
+            checkBox.setText(item);
+            checkBox.setTextSize(16);
+            checkBox.setPadding(8, 8, 8, 8);
+
+            // Add the checkbox to the container
+            container.addView(checkBox);
+        }
+    }
+
+    private void loadCategories() {
+        ClientUtils.categoryService.getAllCategoryNames().enqueue(new Callback<List<String>>() {
+            List<String> categoryList;
+            @Override
+            public void onResponse(Call<List<String>> call, Response<List<String>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    categoryList = response.body();
+                    populateCheckboxes(categoryContainer, categoryList);
+                } else {
+                    Toast.makeText(getContext(), "Failed to load categories", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<String>> call, Throwable t) {
+                Log.e("FetchCategories", "Error: " + t.getMessage());
+                Toast.makeText(getContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+    private void loadEventTypes() {
+        ClientUtils.eventTypeService.findAllNames().enqueue(new Callback<List<String>>() {
+            List<String> categoryList;
+            @Override
+            public void onResponse(Call<List<String>> call, Response<List<String>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    categoryList = response.body();
+                    populateCheckboxes(eventTypeContainer, categoryList);
+                } else {
+                    Toast.makeText(getContext(), "Failed to load categories", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<String>> call, Throwable t) {
+                Log.e("FetchCategories", "Error: " + t.getMessage());
+                Toast.makeText(getContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
+    private void filterOffers(List<String> categories, List<String> eventTypes, Boolean isAvailable, Double price) {
+        // Call the API or ViewModel method to fetch the filtered offers
+        offerViewModel.filterOffers(categories, eventTypes, isAvailable, price);
     }
 
 }

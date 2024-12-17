@@ -11,6 +11,8 @@ import com.example.eventure.model.Offer;
 import com.example.eventure.paging.ProviderOfferDataSource;
 import com.example.eventure.paging.ProviderOfferDataSourceFactory;
 
+import java.util.List;
+
 public class ProviderOfferViewModel extends ViewModel {
 
     private LiveData<PagedList<Offer>> pagedOffers;
@@ -19,7 +21,7 @@ public class ProviderOfferViewModel extends ViewModel {
 
     public ProviderOfferViewModel(int providerId, int pageSize) {
         // Initialize DataSourceFactory and PagedList
-        dataSourceFactory = new ProviderOfferDataSourceFactory(providerId, pageSize, "");
+        dataSourceFactory = new ProviderOfferDataSourceFactory(providerId, pageSize, "", null, null, null, null, false);
         config = new PagedList.Config.Builder()
                 .setEnablePlaceholders(false)
                 .setPageSize(pageSize)
@@ -59,5 +61,19 @@ public class ProviderOfferViewModel extends ViewModel {
         } else {
             Log.e("ProviderOfferViewModel", "PagedList is not initialized. Cannot refresh.");
         }
+    }
+
+    public void filterOffers(List<String> categories, List<String> eventTypes, Boolean isAvailable, Double price) {
+        Log.d("ProviderOfferViewModel", "filterOffers called with: " +
+                "Categories: " + categories + ", " +
+                "Event Types: " + eventTypes + ", " +
+                "Availability: " + isAvailable + ", " +
+                "Price: " + price);
+
+        // Update the filters in the data source factory
+        dataSourceFactory.setFilters(categories, eventTypes, isAvailable, price);
+
+        // Refresh the data source to apply the new filters
+        refresh();
     }
 }
