@@ -13,7 +13,6 @@ import retrofit2.http.Query;
 
 public interface CategoryService {
     @GET("providers/categories")
-    Call<List<Category>> getAllCategories();
-
+    Call<List<String>> getAllCategoryNames();
 
 }
