@@ -36,4 +36,7 @@ public interface OfferService {
 
     @DELETE("providers/{offerId}")
     Call<Void> deleteProviderService(@Path("offerId") int id);
+
+    @GET("providers/{providerId}/search")
+    Call<PagedResponse<Offer>> getSearchedService(@Path("providerId") int id, @Query("name") String name,  @Query("page") int page, @Query("size") int size);
 }
