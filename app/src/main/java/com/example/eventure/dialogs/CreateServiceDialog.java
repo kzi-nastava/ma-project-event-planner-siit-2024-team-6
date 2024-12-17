@@ -67,12 +67,12 @@ public class CreateServiceDialog extends DialogFragment {
 
     private List<EventType> eventTypes = new ArrayList<>();
 
-    private List<Category> categoryList = new ArrayList<>();
+    private List<String> categoryList = new ArrayList<>();
 
     private void loadCategories() {
-        ClientUtils.categoryService.getAllCategories().enqueue(new Callback<List<Category>>() {
+        ClientUtils.categoryService.getAllCategoryNames().enqueue(new Callback<List<String>>() {
             @Override
-            public void onResponse(Call<List<Category>> call, Response<List<Category>> response) {
+            public void onResponse(Call<List<String>> call, Response<List<String>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     categoryList = response.body();
                     populateCategorySpinner();
@@ -82,7 +82,7 @@ public class CreateServiceDialog extends DialogFragment {
             }
 
             @Override
-            public void onFailure(Call<List<Category>> call, Throwable t) {
+            public void onFailure(Call<List<String>> call, Throwable t) {
                 Log.e("FetchCategories", "Error: " + t.getMessage());
                 Toast.makeText(getContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
@@ -92,8 +92,8 @@ public class CreateServiceDialog extends DialogFragment {
     private void populateCategorySpinner() {
         List<String> categoryNames = new ArrayList<>();
         categoryNames.add("Select a category");
-        for (Category category : categoryList) {
-            categoryNames.add(category.getName());
+        for (String category : categoryList) {
+            categoryNames.add(category);
         }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
