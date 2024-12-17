@@ -31,4 +31,5 @@ public class ClientUtils {
 
     public static final EventTypeService eventTypeService = retrofit.create(EventTypeService.class);
     public static final OfferService offerService = retrofit.create(OfferService.class);
+    public static final CategoryService categoryService = retrofit.create(CategoryService.class);
 }

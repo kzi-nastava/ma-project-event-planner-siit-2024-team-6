@@ -9,6 +9,8 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.appcompat.widget.SearchView;
+
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,6 +25,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.eventure.R;
 import com.example.eventure.dialogs.CreateServiceDialog;
+import com.example.eventure.fragments.ProviderServicesFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -58,14 +61,14 @@ public class OffersActivity extends AppCompatActivity {
                 fragment = "NOTIFICATIONS";
             } else if (id == R.id.nav_favorite_events) {
                 fragment = "FAVOURITE_EVENTS";
-            } else if (id == R.id.nav_favorite_services){
+            } else if (id == R.id.nav_favorite_services) {
                 fragment = "FAVOURITE_SERVICES";
-            } else if (id == R.id.nav_favorite_products){
+            } else if (id == R.id.nav_favorite_products) {
                 fragment = "FAVOURITE_PRODUCTS";
-            } else if (id == R.id.nav_my_calendar){
+            } else if (id == R.id.nav_my_calendar) {
                 fragment = "CALENDAR";
             }
-            if(fragment != null){
+            if (fragment != null) {
                 Intent intent = new Intent(this, HomeActivity.class);
                 intent.putExtra("FRAGMENT_NAME", fragment);
                 startActivity(intent);
@@ -97,17 +100,57 @@ public class OffersActivity extends AppCompatActivity {
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(view -> {
             int currentFragmentId = navController.getCurrentDestination().getId();
-            if (currentFragmentId == R.id.services_menu){
+            if (currentFragmentId == R.id.services_menu) {
                 CreateServiceDialog dialog = new CreateServiceDialog();
+                dialog.setOnOfferCreatedListener(() -> {
+                    // Refresh the current fragment
+                    navController.navigate(R.id.services_menu);
+                });
                 dialog.show(getSupportFragmentManager(), "CreateServiceDialog");
             }
         });
+        // Enable search by name
+        SearchView searchView = findViewById(R.id.search_view);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.d("OffersActivity", "onQueryTextSubmit: " + query);
+                performSearch(query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Log.d("OffersActivity", "onQueryTextChange: " + newText);
+                performSearch(newText);
+                return true;
+            }
+        });
+
+        Log.d("OffersActivity", "SearchView listener attached");
+
 
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar_menu, menu);
         return true;
     }
+
+    // Method to perform search
+    private void performSearch(String query) {
+        Fragment currentFragment = getSupportFragmentManager()
+                .findFragmentById(R.id.fragment_nav_content_main_home)
+                .getChildFragmentManager()
+                .getPrimaryNavigationFragment();
+
+        if (currentFragment instanceof ProviderServicesFragment) {
+            ((ProviderServicesFragment) currentFragment).searchServices(query);
+        } else {
+            Log.d("OffersActivity", "Current fragment is not ProviderServicesFragment");
+        }
+    }
+
 
 }

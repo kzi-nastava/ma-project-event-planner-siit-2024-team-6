@@ -17,4 +17,8 @@ public interface EventTypeService {
     })
     @GET("events/{name}/event-type")
     Call<EventType> findEventType(@Path("name") String name);
+    @GET("events/event-types")
+    Call<List<EventType>> findAll();
+    @GET("providers/event-types")
+    Call<List<String>> findAllNames();
 }

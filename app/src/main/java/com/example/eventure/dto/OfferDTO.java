@@ -15,6 +15,7 @@ public class OfferDTO {
     private Boolean isAvailable;
     private Boolean isDeleted;
     private String category;
+    private CategorySuggestionDTO categorySuggestionDTO;
     private List<EventTypeDTO> eventTypes;
     private String type; // product or service
 
@@ -28,6 +29,15 @@ public class OfferDTO {
     private boolean isReservationAutoApproved;
 
     // Getters and Setters
+
+    public CategorySuggestionDTO getCategorySuggestionDTO() {
+        return categorySuggestionDTO;
+    }
+
+    public void setCategorySuggestionDTO(CategorySuggestionDTO dto) {
+        categorySuggestionDTO = dto;
+    }
+
     public Status getStatus() {
         return status;
     }
