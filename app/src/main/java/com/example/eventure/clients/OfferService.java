@@ -39,4 +39,14 @@ public interface OfferService {
 
     @GET("providers/{providerId}/search")
     Call<PagedResponse<Offer>> getSearchedService(@Path("providerId") int id, @Query("name") String name,  @Query("page") int page, @Query("size") int size);
+    @GET("providers/{providerId}/services-filter")
+    Call<PagedResponse<Offer>> getFilteredServices(
+            @Path("providerId") int providerId,
+            @Query("categories") List<String> categories,
+            @Query("eventTypes") List<String> eventTypes,
+            @Query("isAvailable") Boolean isAvailable,
+            @Query("price") Double price,
+            @Query("page") int page,
+            @Query("size") int size
+    );
 }
