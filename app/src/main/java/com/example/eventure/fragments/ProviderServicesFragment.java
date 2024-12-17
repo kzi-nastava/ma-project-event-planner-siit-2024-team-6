@@ -131,4 +131,12 @@ public class ProviderServicesFragment extends Fragment {
             }
         });
     }
+    public void filterOffers(String query) {
+        progressBar.setVisibility(View.VISIBLE);
+        recyclerView.setVisibility(View.GONE);
+        offerViewModel.searchOffers(query);
+        progressBar.setVisibility(View.GONE);
+        recyclerView.setVisibility(View.VISIBLE);
+    }
+
 }
