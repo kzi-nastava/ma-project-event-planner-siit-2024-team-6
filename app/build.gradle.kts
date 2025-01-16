@@ -78,4 +78,6 @@ dependencies {
     implementation("androidx.paging:paging-runtime:2.1.2")
     implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.15.1")
+    implementation("com.github.bumptech.glide:glide:4.15.1")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.15.1")
 }
