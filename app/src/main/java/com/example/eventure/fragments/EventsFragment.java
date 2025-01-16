@@ -21,12 +21,20 @@ import android.widget.ScrollView;
 import com.example.eventure.R;
 import com.example.eventure.adapters.EventAdapter;
 import com.example.eventure.adapters.EventCarouselAdapter;
+import com.example.eventure.dto.EventDTO;
 import com.example.eventure.model.Event;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.example.eventure.clients.EventService;
+import com.example.eventure.clients.ClientUtils;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -39,6 +47,12 @@ public class EventsFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
+    private EventService eventService;
+    private ViewPager2 eventCarousel;
+    private EventCarouselAdapter carouselAdapter;
+    private RecyclerView eventRecyclerView;
+    private EventAdapter eventAdapter;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -81,152 +95,18 @@ public class EventsFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_events, container, false);
 
-        //TOP 5 EVENTS CAROUSEL
+        eventService = ClientUtils.eventService;
 
-        //Top 5 carousel
-        ViewPager2 eventCarousel = rootView.findViewById(R.id.eventCarousel);
-        ImageButton prevButton = rootView.findViewById(R.id.prevButton);
-        ImageButton nextButton = rootView.findViewById(R.id.nextButton);
-        //List of top events
-        List<Event> eventList = new ArrayList<>();
+        eventCarousel = rootView.findViewById(R.id.eventCarousel);
+        eventRecyclerView = rootView.findViewById(R.id.eventRecyclerView);
 
-        Event event1 = new Event();
-        event1.setPhotoID(R.drawable.event1);
-        event1.setTitle("Ed Sheeran Concert");
-        event1.setLocation("Bulevar Oslobodjenja 16");
-        event1.setDescription("Join us for an unforgettable night of music with the famous singer-songwriter, Ed Sheeran. Enjoy his biggest hits live in concert!");
-        event1.setDate(new java.util.Date(2024, 10, 10)); // Example date
-        event1.setTime("19h");
-        event1.setRating(4.5f);
-        eventList.add(event1);
-
-        Event event2 = new Event();
-        event2.setPhotoID(R.drawable.event2);
-        event2.setTitle("Rock Festival");
-        event2.setLocation("Central Park, New York");
-        event2.setDescription("Get ready for a rock extravaganza! Featuring top bands and artists, this festival promises an amazing atmosphere and great music.");
-        event2.setDate(new java.util.Date(2024, 10, 15));
-        event2.setTime("16h");
-        event2.setRating(4.7f);
-        eventList.add(event2);
-
-        Event event3 = new Event();
-        event3.setPhotoID(R.drawable.event3);
-        event3.setTitle("Yoga Retreat");
-        event3.setLocation("Sandy Beach Resort");
-        event3.setDescription("Escape the hustle and bustle of city life with a rejuvenating yoga retreat by the beach. Relax, stretch, and meditate in a serene environment.");
-        event3.setDate(new java.util.Date(2024, 11, 1));
-        event3.setTime("8h");
-        event3.setRating(4.2f);
-        eventList.add(event3);
-
-        Event event4 = new Event();
-        event4.setPhotoID(R.drawable.event4);
-        event4.setTitle("Food Festival");
-        event4.setLocation("City Square");
-        event4.setDescription("Taste the best local and international dishes at this exciting food festival! From savory to sweet, there’s something for everyone.");
-        event4.setDate(new java.util.Date(2024, 10, 25));
-        event4.setTime("10h");
-        event4.setRating(4.0f);
-        eventList.add(event4);
-
-        Event event5 = new Event();
-        event5.setPhotoID(R.drawable.event5);
-        event5.setTitle("Art Exhibition");
-        event5.setLocation("Modern Art Gallery");
-        event5.setDescription("Explore a stunning collection of modern art at the prestigious Modern Art Gallery. Discover new perspectives and creativity from emerging artists.");
-        event5.setDate(new java.util.Date(2024, 11, 5));
-        event5.setTime("14h");
-        event5.setRating(4.8f);
-        eventList.add(event5);
-
-        //Adapter for viewPager2
-        EventCarouselAdapter carouselAdapter = new EventCarouselAdapter(eventList);
-        eventCarousel.setAdapter(carouselAdapter);
-
-        eventCarousel.setOffscreenPageLimit(3);
-        CompositePageTransformer transformer = new CompositePageTransformer();
-        transformer.addTransformer(new MarginPageTransformer(40));
-        transformer.addTransformer((page, position) -> {
-            float r = 1 - Math.abs(position);
-            page.setScaleY(0.85f + r * 0.15f);
-        });
-        eventCarousel.setPageTransformer(transformer);
-
-        // Arrow Button Functionality
-        prevButton.setOnClickListener(v -> {
-            int currentItem = eventCarousel.getCurrentItem();
-            if (currentItem > 0) {
-                eventCarousel.setCurrentItem(currentItem - 1, true);
-            }
-        });
-
-        nextButton.setOnClickListener(v -> {
-            int currentItem = eventCarousel.getCurrentItem();
-            if (currentItem < carouselAdapter.getItemCount() - 1) {
-                eventCarousel.setCurrentItem(currentItem + 1, true);
-            }
-        });
-        //ALL EVENTS
-
-        // Find the filter icon
-        ImageView filterIcon = rootView.findViewById(R.id.filter_icon);
-
-
-        RecyclerView eventRecyclerView = rootView.findViewById(R.id.eventRecyclerView);
-
-        EventAdapter eventAdapter = new EventAdapter(eventList);
-        eventRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        eventRecyclerView.setAdapter(eventAdapter);
-
-        ScrollView parentScrollView = rootView.findViewById(R.id.parentScrollView);
-        RecyclerView recyclerView = rootView.findViewById(R.id.eventRecyclerView);
-
-        // Listen for the first scroll event on the ScrollView
-        parentScrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
-            boolean isHeightCalculated = false;
-
-            @Override
-            public void onScrollChanged() {
-                if (!isHeightCalculated) {
-                    calculateAndSetRecyclerViewHeight(recyclerView);
-                    isHeightCalculated = true;
-                }
-            }
-        });
-
-
-        // Set an OnClickListener to open the BottomSheetDialog when the icon is clicked
-        filterIcon.setOnClickListener(v -> {
-            // Create a BottomSheetDialog
-            BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
-            // Inflate the filter layout
-            View dialogView = inflater.inflate(R.layout.filter_events, null);
-            bottomSheetDialog.setContentView(dialogView);
-
-            // Access the BottomSheetBehavior from the BottomSheetDialog
-            View bottomSheet = (View) dialogView.getParent();
-            BottomSheetBehavior<View> bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
-
-            // Disable dragging to dismiss
-            bottomSheetBehavior.setDraggable(false);
-
-            // Optionally, set the initial state to expanded (or collapsed) if needed
-            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-
-
-            // Find the close icon in the filter layout
-            ImageView closeIcon = dialogView.findViewById(R.id.close_icon);
-
-            // Set an OnClickListener to dismiss the BottomSheetDialog when the close icon is clicked
-            closeIcon.setOnClickListener(v1 -> bottomSheetDialog.dismiss());
-
-            // Show the dialog
-            bottomSheetDialog.show();
-        });
+        // Fetch data from API
+        fetchTopFiveEvents(rootView);
+        fetchAllEvents(rootView, inflater);
 
         return rootView;
     }
+
     // Calculate the height of all items in RecyclerView and set the height
     private void calculateAndSetRecyclerViewHeight(RecyclerView recyclerView) {
         RecyclerView.Adapter adapter = recyclerView.getAdapter();
@@ -249,6 +129,147 @@ public class EventsFragment extends Fragment {
         ViewGroup.LayoutParams params = recyclerView.getLayoutParams();
         params.height = totalHeight;
         recyclerView.setLayoutParams(params);
+    }
+
+    private void fetchTopFiveEvents(View rootView) {
+        Log.d("EventsFragment", "fetchTopFiveEvents started");
+
+        // Initialize UI components for the carousel
+        ViewPager2 eventCarousel = rootView.findViewById(R.id.eventCarousel);
+        ImageButton prevButton = rootView.findViewById(R.id.prevButton);
+        ImageButton nextButton = rootView.findViewById(R.id.nextButton);
+        Log.d("EventsFragment", "Fetching top five events...");
+
+        // Fetch top 5 events from the API
+        eventService.getTopFive().enqueue(new Callback<List<EventDTO>>() {
+            @Override
+            public void onResponse(Call<List<EventDTO>> call, Response<List<EventDTO>> response) {
+
+                if (response.isSuccessful() && response.body() != null) {
+                    List<EventDTO> events = response.body();
+                    Log.d("EventsFragment", "Top five events fetched successfully. Count: " + events.size());
+
+                    // Update carousel adapter
+                    EventCarouselAdapter carouselAdapter = new EventCarouselAdapter(events);
+                    eventCarousel.setAdapter(carouselAdapter);
+
+                    // Apply carousel transformations
+                    eventCarousel.setOffscreenPageLimit(3);
+                    CompositePageTransformer transformer = new CompositePageTransformer();
+                    transformer.addTransformer(new MarginPageTransformer(40));
+                    transformer.addTransformer((page, position) -> {
+                        float r = 1 - Math.abs(position);
+                        page.setScaleY(0.85f + r * 0.15f);
+                    });
+                    eventCarousel.setPageTransformer(transformer);
+
+                    // Arrow Button Functionality
+                    prevButton.setOnClickListener(v -> {
+                        int currentItem = eventCarousel.getCurrentItem();
+                        if (currentItem > 0) {
+                            eventCarousel.setCurrentItem(currentItem - 1, true);
+                        }
+                    });
+
+                    nextButton.setOnClickListener(v -> {
+                        int currentItem = eventCarousel.getCurrentItem();
+                        if (currentItem < carouselAdapter.getItemCount() - 1) {
+                            eventCarousel.setCurrentItem(currentItem + 1, true);
+                        }
+                    });
+                } else {
+                    try {
+                        String errorBody = response.errorBody() != null ? response.errorBody().string() : "null";
+                        Log.e("EventsFragment", "Failed to fetch events. Response code: " + response.code());
+                        Log.e("EventsFragment", "Response error body: " + errorBody);
+                    } catch (Exception e) {
+                        Log.e("EventsFragment", "Error reading errorBody", e);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<EventDTO>> call, Throwable t) {
+                Log.e("EventsFragment", "Error fetching top 5 events", t);
+            }
+        });
+    }
+
+    private void fetchAllEvents(View rootView, LayoutInflater inflater) {
+        Log.d("EventsFragment", "fetchAllEvents started");
+
+        // Initialize RecyclerView and filter icon
+        ImageView filterIcon = rootView.findViewById(R.id.filter_icon);
+        RecyclerView eventRecyclerView = rootView.findViewById(R.id.eventRecyclerView);
+        ScrollView parentScrollView = rootView.findViewById(R.id.parentScrollView);
+
+        // Fetch all events from the API
+        Log.d("EventsFragment", "Fetching...");
+
+        eventService.getAll().enqueue(new Callback<List<EventDTO>>() {
+            @Override
+            public void onResponse(Call<List<EventDTO>> call, Response<List<EventDTO>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<EventDTO> events = response.body();
+                    Log.d("EventsFragment", "Events fetched successfully. Count: " + events.size());
+
+                    // Update RecyclerView adapter
+                    EventAdapter eventAdapter = new EventAdapter(events);
+                    eventRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                    eventRecyclerView.setAdapter(eventAdapter);
+
+                    // Listen for the first scroll event on the ScrollView
+                    parentScrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+                        boolean isHeightCalculated = false;
+
+                        @Override
+                        public void onScrollChanged() {
+                            if (!isHeightCalculated) {
+                                calculateAndSetRecyclerViewHeight(eventRecyclerView);
+                                isHeightCalculated = true;
+                            }
+                        }
+                    });
+                } else {
+                    Log.e("EventsFragment", "Failed to fetch all events.");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<EventDTO>> call, Throwable t) {
+                Log.e("EventsFragment", "Error fetching all events", t);
+            }
+        });
+
+        // Set an OnClickListener for the filter icon (if needed)
+        filterIcon.setOnClickListener(v -> showFilterDialog(inflater));
+
+    }
+    private void showFilterDialog(LayoutInflater inflater) {
+        // Create a BottomSheetDialog
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
+        // Inflate the filter layout
+        View dialogView = inflater.inflate(R.layout.filter_events, null);
+        bottomSheetDialog.setContentView(dialogView);
+
+        // Access the BottomSheetBehavior from the BottomSheetDialog
+        View bottomSheet = (View) dialogView.getParent();
+        BottomSheetBehavior<View> bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+
+        // Disable dragging to dismiss
+        bottomSheetBehavior.setDraggable(false);
+
+        // Optionally, set the initial state to expanded (or collapsed) if needed
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+
+        // Find the close icon in the filter layout
+        ImageView closeIcon = dialogView.findViewById(R.id.close_icon);
+
+        // Set an OnClickListener to dismiss the BottomSheetDialog when the close icon is clicked
+        closeIcon.setOnClickListener(v1 -> bottomSheetDialog.dismiss());
+
+        // Show the dialog
+        bottomSheetDialog.show();
     }
 
 
