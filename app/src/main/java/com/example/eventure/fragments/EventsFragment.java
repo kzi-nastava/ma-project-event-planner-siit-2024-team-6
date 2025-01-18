@@ -135,7 +135,7 @@ public class EventsFragment extends Fragment {
         Log.d("EventsFragment", "fetchTopFiveEvents started");
 
         // Initialize UI components for the carousel
-        ViewPager2 eventCarousel = rootView.findViewById(R.id.eventCarousel);
+//        ViewPager2 eventCarousel = rootView.findViewById(R.id.eventCarousel);
         ImageButton prevButton = rootView.findViewById(R.id.prevButton);
         ImageButton nextButton = rootView.findViewById(R.id.nextButton);
         Log.d("EventsFragment", "Fetching top five events...");
@@ -200,7 +200,6 @@ public class EventsFragment extends Fragment {
 
         // Initialize RecyclerView and filter icon
         ImageView filterIcon = rootView.findViewById(R.id.filter_icon);
-        RecyclerView eventRecyclerView = rootView.findViewById(R.id.eventRecyclerView);
         ScrollView parentScrollView = rootView.findViewById(R.id.parentScrollView);
 
         // Fetch all events from the API

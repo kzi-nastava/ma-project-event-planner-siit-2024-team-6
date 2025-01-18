@@ -9,16 +9,18 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.eventure.R;
+import com.example.eventure.dto.OfferDTO;
 import com.example.eventure.model.Offer;
 
 import java.util.List;
 
 public class OfferCarouselAdapter extends RecyclerView.Adapter<OfferCarouselAdapter.OfferViewHolder> {
 
-    private List<Offer> offerList;
+    private List<OfferDTO> offerList;
 
-    public OfferCarouselAdapter(List<Offer> offerList) {
+    public OfferCarouselAdapter(List<OfferDTO> offerList) {
         if (offerList == null) {
             throw new IllegalArgumentException("Offer list cannot be null");
         }
@@ -35,7 +37,7 @@ public class OfferCarouselAdapter extends RecyclerView.Adapter<OfferCarouselAdap
 
     @Override
     public void onBindViewHolder(@NonNull OfferViewHolder holder, int position) {
-        Offer offer = offerList.get(position);
+        OfferDTO offer = offerList.get(position);
         holder.bind(offer);
     }
 
@@ -59,7 +61,14 @@ public class OfferCarouselAdapter extends RecyclerView.Adapter<OfferCarouselAdap
             offerDescription = itemView.findViewById(R.id.top_offer_description);
         }
 
-        public void bind(Offer offer) {
+        public void bind(OfferDTO offer) {
+            String photo = offer.getPhotos().get(0);
+
+            Glide.with(offerImage.getContext())
+                    .load(photo)
+                    .placeholder(R.drawable.event2)
+                    .error(R.drawable.error_image)
+                    .into(offerImage);
             //offerImage.setImageResource(offer.getPhotoID());
             offerTitle.setText(offer.getName());
             offerDescription.setText(offer.getDescription());

@@ -9,16 +9,18 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.eventure.R;
+import com.example.eventure.dto.OfferDTO;
 import com.example.eventure.model.Offer;
 
 import java.util.List;
 
 public class OfferAdapter extends RecyclerView.Adapter<OfferAdapter.OfferViewHolder> {
 
-    private List<Offer> offerList;
+    private List<OfferDTO> offerList;
 
-    public OfferAdapter(List<Offer> offerList) {
+    public OfferAdapter(List<OfferDTO> offerList) {
         this.offerList = offerList;
     }
 
@@ -31,7 +33,7 @@ public class OfferAdapter extends RecyclerView.Adapter<OfferAdapter.OfferViewHol
 
     @Override
     public void onBindViewHolder(@NonNull OfferViewHolder holder, int position) {
-        Offer offer = offerList.get(position);
+        OfferDTO offer = offerList.get(position);
         holder.bind(offer);
     }
 
@@ -54,7 +56,7 @@ public class OfferAdapter extends RecyclerView.Adapter<OfferAdapter.OfferViewHol
             saleEuroIcon = itemView.findViewById(R.id.sale_euro_icon);
         }
 
-        public void bind(Offer offer) {
+        public void bind(OfferDTO offer) {
             productTitle.setText(offer.getName());
 
             if (offer.getSale() > 0) {
@@ -83,6 +85,13 @@ public class OfferAdapter extends RecyclerView.Adapter<OfferAdapter.OfferViewHol
             }
 
             // Set product image
+            String photo = offer.getPhotos().get(0);
+
+            Glide.with(productImage.getContext())
+                    .load(photo)
+                    .placeholder(R.drawable.event2)
+                    .error(R.drawable.error_image)
+                    .into(productImage);
             //productImage.setImageResource(Offer.getPhotoID());
         }
 
