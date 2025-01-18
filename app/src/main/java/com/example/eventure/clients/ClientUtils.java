@@ -15,8 +15,10 @@ import com.example.eventure.BuildConfig;
 public class ClientUtils {
     public static final String SERVICE_API_PATH = "http://" + BuildConfig.IP_ADDR + ":8080/api/"; // For Android emulator
     public static final String LOGIN = "users/login";
-    public static final String TOP_FIVE = "events/top-five";
+    public static final String TOP_FIVE_EVENTS = "events/top-five";
     public static final String ALL_EVENTS = "events/";
+    public static final String TOP_FIVE_OFFERS = "offers/top-five";
+    public static final String ALL_OFFERS = "offers/";
 
     // Create a custom Gson instance with LocalDateTime deserializer
     private static Gson gson = new GsonBuilder()

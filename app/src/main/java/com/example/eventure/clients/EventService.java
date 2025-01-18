@@ -8,7 +8,7 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 
 public interface EventService {
-    @GET(ClientUtils.TOP_FIVE)
+    @GET(ClientUtils.TOP_FIVE_EVENTS)
     Call<List<EventDTO>> getTopFive();
 
     @GET(ClientUtils.ALL_EVENTS)

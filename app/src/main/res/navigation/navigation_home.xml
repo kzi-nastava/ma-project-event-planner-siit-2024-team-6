@@ -99,10 +99,10 @@
 
 
     <fragment
-    android:id="@+id/pas_menu"
-    android:name="com.example.eventure.fragments.PasFragment"
+    android:id="@+id/offer_menu"
+    android:name="com.example.eventure.fragments.OfferFragment"
     android:label="products"
-    tools:layout="@layout/fragment_pas"
+    tools:layout="@layout/fragment_offer"
     app:popUpTo="@+id/events_menu"
     app:popUpToInclusive="true" />
 

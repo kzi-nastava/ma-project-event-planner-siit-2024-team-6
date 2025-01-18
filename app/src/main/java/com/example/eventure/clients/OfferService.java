@@ -17,6 +17,12 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface OfferService {
+
+    @GET(ClientUtils.TOP_FIVE_OFFERS)
+    Call<List<OfferDTO>> getTopFive();
+
+    @GET(ClientUtils.ALL_OFFERS)
+    Call<List<OfferDTO>> getAll();
     @Headers({
             "User-Agent: Mobile-Android",
             "Content-Type:application/json"
@@ -49,4 +55,5 @@ public interface OfferService {
             @Query("page") int page,
             @Query("size") int size
     );
+
 }

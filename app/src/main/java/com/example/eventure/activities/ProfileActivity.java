@@ -2,30 +2,18 @@ package com.example.eventure.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
 
 import com.example.eventure.R;
-import com.example.eventure.fragments.EventsFragment;
-import com.example.eventure.fragments.PasFragment;
-import com.example.eventure.fragments.ProfileStartFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
-
-import java.util.HashSet;
-import java.util.Set;
 
 public class ProfileActivity extends AppCompatActivity {
     private DrawerLayout drawer;
@@ -105,10 +93,10 @@ public class ProfileActivity extends AppCompatActivity {
             startActivity(intent);
             finish();  // Finish ProfileActivity so the user can't go back
             return true;
-        } else if (itemId == R.id.pas_menu) {
+        } else if (itemId == R.id.offer_menu) {
             // Go to HomeActivity and show PasFragment
             Intent intent = new Intent(ProfileActivity.this, HomeActivity.class);
-            intent.putExtra("fragment_key", "pas");  // Pass the fragment type
+            intent.putExtra("fragment_key", "offer");  // Pass the fragment type
             startActivity(intent);
             finish();  // Finish ProfileActivity so the user can't go back
             return true;
