@@ -2,6 +2,7 @@ package com.example.eventure.fragments;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ScrollView;
@@ -23,6 +25,7 @@ import com.example.eventure.adapters.EventAdapter;
 import com.example.eventure.adapters.EventCarouselAdapter;
 import com.example.eventure.dto.EventDTO;
 import com.example.eventure.model.Event;
+import com.example.eventure.model.PagedResponse;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
@@ -53,6 +56,11 @@ public class EventsFragment extends Fragment {
     private EventCarouselAdapter carouselAdapter;
     private RecyclerView eventRecyclerView;
     private EventAdapter eventAdapter;
+
+    private boolean isLoading = false;  // Track loading state
+    private int currentPage = 0;       // Current page number
+    private int totalItemsCount = 1;    // Total pages available
+    private boolean isInitialized = false;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -102,35 +110,116 @@ public class EventsFragment extends Fragment {
 
         // Fetch data from API
         fetchTopFiveEvents(rootView);
-        fetchAllEvents(rootView, inflater);
+        //fetchAllEvents(rootView, inflater);
+        // Fetch the first page
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        eventRecyclerView.setLayoutManager(layoutManager);
+        eventRecyclerView.setNestedScrollingEnabled(false);
+        Button loadMoreButton = rootView.findViewById(R.id.loadMoreEvents);
+        fetchAllEventsWithPagination(currentPage, loadMoreButton);
+
+        // Set up button click listener for loading more
+        loadMoreButton.setOnClickListener(v -> {
+            if (!isLoading && eventAdapter.getItemCount() < totalItemsCount) {
+                currentPage++;
+                fetchAllEventsWithPagination(currentPage, loadMoreButton);
+            }
+        });
+
 
         return rootView;
     }
 
-    // Calculate the height of all items in RecyclerView and set the height
-    private void calculateAndSetRecyclerViewHeight(RecyclerView recyclerView) {
-        RecyclerView.Adapter adapter = recyclerView.getAdapter();
-        if (adapter == null) return;
+//    private void setupPagination(View rootView) {
+//        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+//        layoutManager.setStackFromEnd(false); // Prevent auto-scrolling to the end
+//        layoutManager.setReverseLayout(false);
+//        eventRecyclerView.setLayoutManager(layoutManager);
+//        eventRecyclerView.setNestedScrollingEnabled(false);
+//
+//        // Set up the scroll listener
+//        eventRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+//                if (!isInitialized || isLoading) return;
+//                super.onScrolled(recyclerView, dx, dy);
+//
+//                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+//                if (layoutManager == null || eventAdapter == null) return;
+//                int lastVisibleItemPosition = layoutManager.findLastCompletelyVisibleItemPosition();
+//                int totalItemCount = eventAdapter.getItemCount();
+//
+//                Log.d("EventsTag", "Last visible item: " + lastVisibleItemPosition);
+//                Log.d("EventsTag", "Total item count: " + totalItemCount);
+//
+//                // Check if the user scrolled to the last item
+//                if (lastVisibleItemPosition == totalItemCount - 1 && currentPage < totalPageCount) {
+//                    Log.d("EventsTag", "User scrolled to the end. Fetching next page...");
+//                    currentPage++;
+//                    fetchAllEventsWithPagination(currentPage);
+//                }
+//            }
+//        });
+//
+//        // Fetch the first page and initialize the list
+//        fetchAllEventsWithPagination(currentPage);
+//    }
 
-        int totalHeight = 0;
-        for (int i = 0; i < adapter.getItemCount(); i++) {
-            View view = LayoutInflater.from(recyclerView.getContext())
-                    .inflate(R.layout.event_card, recyclerView, false);
+    private void fetchAllEventsWithPagination(int page, Button loadMoreButton) {
+        if (isLoading) return;
 
-            view.measure(
-                    View.MeasureSpec.makeMeasureSpec(recyclerView.getWidth(), View.MeasureSpec.EXACTLY),
-                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
-            );
+        isLoading = true; // Set loading state
+        Log.d("EventsTag", "Fetching page: " + page);
 
-            totalHeight += view.getMeasuredHeight();
-        }
+        eventService.getPagedEvents(page, 5).enqueue(new Callback<PagedResponse<EventDTO>>() {
+            @Override
+            public void onResponse(Call<PagedResponse<EventDTO>> call, Response<PagedResponse<EventDTO>> response) {
+                isLoading = false; // Reset loading state
 
-        // Set the calculated height to the RecyclerView
-        ViewGroup.LayoutParams params = recyclerView.getLayoutParams();
-        params.height = totalHeight;
-        recyclerView.setLayoutParams(params);
+                if (response.isSuccessful() && response.body() != null) {
+                    PagedResponse<EventDTO> pagedResponse = response.body();
+                    totalItemsCount = pagedResponse.getTotalElements();
+                    Log.d("EventsTag", "Total " + totalItemsCount);
+
+                    if (pagedResponse.getContent() != null && !pagedResponse.getContent().isEmpty()) {
+                        List<EventDTO> newEvents = pagedResponse.getContent();
+                        Log.d("EventsTag", "Fetched " + newEvents.size() + " events from page: " + page);
+
+                        if (eventAdapter == null) {
+                            eventAdapter = new EventAdapter(newEvents);
+                            eventRecyclerView.setAdapter(eventAdapter);
+                        } else {
+                            eventAdapter.addEvents(newEvents); // Append new events to the list
+                            eventAdapter.notifyItemRangeInserted(
+                                    eventAdapter.getItemCount() - newEvents.size(),
+                                    newEvents.size()
+                            );
+                        }
+                        Log.d("EventsTag", "current page  " +currentPage);
+                        Log.d("EventsTag", "total  " +totalItemsCount);
+
+                        // Show or hide the Load More button based on the remaining pages
+                        if (eventAdapter.getItemCount() < totalItemsCount) {
+                            loadMoreButton.setVisibility(View.VISIBLE);
+                        } else {
+                            loadMoreButton.setVisibility(View.GONE); // Hide if no more pages
+                            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) eventRecyclerView.getLayoutParams();
+                            params.bottomMargin = (int) getResources().getDisplayMetrics().density * 70; // Convert 70dp to pixels
+                            eventRecyclerView.setLayoutParams(params);
+                        }
+                    }
+                } else {
+                    Log.e("EventsFragment", "Failed to fetch events. Response code: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PagedResponse<EventDTO>> call, Throwable t) {
+                isLoading = false; // Reset loading state
+                Log.e("EventsFragment", "Error fetching events", t);
+            }
+        });
     }
-
     private void fetchTopFiveEvents(View rootView) {
         Log.d("EventsFragment", "fetchTopFiveEvents started");
 
@@ -150,7 +239,7 @@ public class EventsFragment extends Fragment {
                     Log.d("EventsFragment", "Top five events fetched successfully. Count: " + events.size());
 
                     // Update carousel adapter
-                    EventCarouselAdapter carouselAdapter = new EventCarouselAdapter(events);
+                    carouselAdapter = new EventCarouselAdapter(events);
                     eventCarousel.setAdapter(carouselAdapter);
 
                     // Apply carousel transformations
@@ -195,55 +284,6 @@ public class EventsFragment extends Fragment {
         });
     }
 
-    private void fetchAllEvents(View rootView, LayoutInflater inflater) {
-        Log.d("EventsFragment", "fetchAllEvents started");
-
-        // Initialize RecyclerView and filter icon
-        ImageView filterIcon = rootView.findViewById(R.id.filter_icon);
-        ScrollView parentScrollView = rootView.findViewById(R.id.parentScrollView);
-
-        // Fetch all events from the API
-        Log.d("EventsFragment", "Fetching...");
-
-        eventService.getAll().enqueue(new Callback<List<EventDTO>>() {
-            @Override
-            public void onResponse(Call<List<EventDTO>> call, Response<List<EventDTO>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    List<EventDTO> events = response.body();
-                    Log.d("EventsFragment", "Events fetched successfully. Count: " + events.size());
-
-                    // Update RecyclerView adapter
-                    EventAdapter eventAdapter = new EventAdapter(events);
-                    eventRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                    eventRecyclerView.setAdapter(eventAdapter);
-
-                    // Listen for the first scroll event on the ScrollView
-                    parentScrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
-                        boolean isHeightCalculated = false;
-
-                        @Override
-                        public void onScrollChanged() {
-                            if (!isHeightCalculated) {
-                                calculateAndSetRecyclerViewHeight(eventRecyclerView);
-                                isHeightCalculated = true;
-                            }
-                        }
-                    });
-                } else {
-                    Log.e("EventsFragment", "Failed to fetch all events.");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<EventDTO>> call, Throwable t) {
-                Log.e("EventsFragment", "Error fetching all events", t);
-            }
-        });
-
-        // Set an OnClickListener for the filter icon (if needed)
-        filterIcon.setOnClickListener(v -> showFilterDialog(inflater));
-
-    }
     private void showFilterDialog(LayoutInflater inflater) {
         // Create a BottomSheetDialog
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
@@ -270,6 +310,7 @@ public class EventsFragment extends Fragment {
         // Show the dialog
         bottomSheetDialog.show();
     }
+
 
 
 }

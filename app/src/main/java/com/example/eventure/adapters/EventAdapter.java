@@ -1,4 +1,5 @@
 package com.example.eventure.adapters;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,7 +39,13 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
     @Override
     public int getItemCount() {
+        //Log.d("EventsTag", String.valueOf(events.size()));
         return events.size();
+    }
+    public void addEvents(List<EventDTO> newEvents) {
+        int previousSize = events.size();
+        events.addAll(newEvents);
+        notifyItemRangeInserted(previousSize, newEvents.size());
     }
 
     static class EventViewHolder extends RecyclerView.ViewHolder {
