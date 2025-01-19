@@ -17,8 +17,10 @@ public class ClientUtils {
     public static final String LOGIN = "users/login";
     public static final String TOP_FIVE_EVENTS = "events/top-five";
     public static final String ALL_EVENTS = "events/";
+    public static final String ALL_EVENTS_PAGED = "events/all-elements";
     public static final String TOP_FIVE_OFFERS = "offers/top-five";
     public static final String ALL_OFFERS = "offers/";
+    public static final String ALL_OFFERS_PAGED = "offers/all-elements";
 
     // Create a custom Gson instance with LocalDateTime deserializer
     private static Gson gson = new GsonBuilder()
