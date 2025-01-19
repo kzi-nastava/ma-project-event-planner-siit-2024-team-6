@@ -1,5 +1,6 @@
 package com.example.eventure.clients;
 
+import com.example.eventure.dto.EventDTO;
 import com.example.eventure.dto.OfferDTO;
 import com.example.eventure.model.Offer;
 import com.example.eventure.model.PagedResponse;
@@ -23,6 +24,9 @@ public interface OfferService {
 
     @GET(ClientUtils.ALL_OFFERS)
     Call<List<OfferDTO>> getAll();
+
+    @GET(ClientUtils.ALL_OFFERS_PAGED)
+    Call<PagedResponse<OfferDTO>> getPagedOffers(@Query("page") int page, @Query("size") int size);
     @Headers({
             "User-Agent: Mobile-Android",
             "Content-Type:application/json"

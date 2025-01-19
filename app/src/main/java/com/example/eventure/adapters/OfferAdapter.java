@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.eventure.R;
+import com.example.eventure.dto.EventDTO;
 import com.example.eventure.dto.OfferDTO;
 import com.example.eventure.model.Offer;
 
@@ -40,6 +41,11 @@ public class OfferAdapter extends RecyclerView.Adapter<OfferAdapter.OfferViewHol
     @Override
     public int getItemCount() {
         return offerList.size();
+    }
+    public void addOffers(List<OfferDTO> newOffers) {
+        int previousSize = offerList.size();
+        offerList.addAll(newOffers);
+        notifyItemRangeInserted(previousSize, newOffers.size());
     }
 
     static class OfferViewHolder extends RecyclerView.ViewHolder {

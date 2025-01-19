@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     tools:context=".fragments.OffersFragment">
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:id="@+id/parentScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -98,10 +98,19 @@
                 android:id="@+id/productRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="50dp"
                 android:nestedScrollingEnabled="true"
                 android:scrollbars="none" />
 
+            <Button
+                android:id="@+id/loadMoreOffers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="80dp"
+                android:padding="10dp"
+                android:text="Load More"
+                android:visibility="gone" />
+
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 </FrameLayout>

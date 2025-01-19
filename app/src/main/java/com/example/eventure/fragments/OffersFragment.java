@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ScrollView;
@@ -25,6 +26,7 @@ import com.example.eventure.clients.ClientUtils;
 import com.example.eventure.clients.OfferService;
 import com.example.eventure.dto.OfferDTO;
 import com.example.eventure.model.Offer;
+import com.example.eventure.model.PagedResponse;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
@@ -57,6 +59,9 @@ public class OffersFragment extends Fragment {
     private RecyclerView offerRecyclerView;
     private OfferAdapter offerAdapter;
 
+    private boolean isLoading = false;  // Track loading state
+    private int currentPage = 0;       // Current page number (start from 1)
+    private int totalItemsCount = 1;
     public OffersFragment() {
         // Required empty public constructor
     }
@@ -100,34 +105,83 @@ public class OffersFragment extends Fragment {
         // Initialize UI Components
         offerCarousel = rootView.findViewById(R.id.offerCarousel);
         offerRecyclerView = rootView.findViewById(R.id.productRecyclerView);
+        // Fetch initial data
+        fetchTopOffers(rootView);  // Top 5 offers for the carousel
 
-        // Fetch data from API
-        fetchTopOffers(rootView);
-        fetchAllOffers(rootView, inflater);
+        Button loadMoreButton = rootView.findViewById(R.id.loadMoreOffers);
 
-        // Top 5 Products Carousel
-
-        // Find the filter icon
-
+        // Setup RecyclerView
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        offerRecyclerView.setLayoutManager(layoutManager);
+        offerRecyclerView.setNestedScrollingEnabled(false);
 
 
+        fetchOffersWithPagination(currentPage, loadMoreButton);  // First page of offers
 
-//        // Apply strikethrough to the old price
-//        View productCard1 = rootView.findViewById(R.id.product1);
-//        TextView oldPriceTextView = productCard1.findViewById(R.id.product_price);
-//        oldPriceTextView.setPaintFlags(oldPriceTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-//
-//
-//        //Remove sale tag and sale price
-//        View productCard2 = rootView.findViewById(R.id.product2);
-//        TextView saleTag = productCard2.findViewById(R.id.sale_tag);
-//        saleTag.setVisibility(View.GONE);
-//        View salePrice = productCard2.findViewById(R.id.sale_price_layout);
-//        salePrice.setVisibility(View.GONE);
+        // Setup Load More button click
+        loadMoreButton.setOnClickListener(v -> {
+            if (!isLoading && offerAdapter.getItemCount() < totalItemsCount) {
+                currentPage++;
+                fetchOffersWithPagination(currentPage, loadMoreButton);
+            }
+        });
 
         return rootView;
     }
 
+    private void fetchOffersWithPagination(int page, Button loadMoreButton) {
+        if (isLoading) return;
+
+        isLoading = true;  // Set loading state
+        Log.d("OffersFragment", "Fetching page: " + page);
+
+        offerService.getPagedOffers(page, 10).enqueue(new Callback<PagedResponse<OfferDTO>>() {
+            @Override
+            public void onResponse(Call<PagedResponse<OfferDTO>> call, Response<PagedResponse<OfferDTO>> response) {
+                isLoading = false;  // Reset loading state
+
+                if (response.isSuccessful() && response.body() != null) {
+                    PagedResponse<OfferDTO> pagedResponse = response.body();
+                    totalItemsCount = pagedResponse.getTotalElements();
+                    Log.d("OffersFragment", "Total  " + totalItemsCount);
+
+                    List<OfferDTO> newOffers = pagedResponse.getContent();
+                    Log.d("OffersFragment", "Fetched " + newOffers.size() + " offers from page: " + page);
+
+                    if (offerAdapter == null) {
+                        offerAdapter = new OfferAdapter(newOffers);
+                        offerRecyclerView.setAdapter(offerAdapter);
+                    } else {
+                        offerAdapter.addOffers(newOffers);  // Append new offers to the list
+                        offerAdapter.notifyItemRangeInserted(
+                                offerAdapter.getItemCount() - newOffers.size(),
+                                newOffers.size()
+                        );
+                    }
+
+                    // Show or hide the Load More button based on remaining pages
+                    if (offerAdapter.getItemCount() < totalItemsCount) {
+                        loadMoreButton.setVisibility(View.VISIBLE);
+                    } else {
+                        loadMoreButton.setVisibility(View.GONE);
+
+                        // Adjust RecyclerView bottom margin when button is hidden
+                        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) offerRecyclerView.getLayoutParams();
+                        params.bottomMargin = (int) (50 * getResources().getDisplayMetrics().density);  // 70dp in pixels
+                        offerRecyclerView.setLayoutParams(params);
+                    }
+                } else {
+                    Log.e("OffersFragment", "Failed to fetch offers. Response code: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PagedResponse<OfferDTO>> call, Throwable t) {
+                isLoading = false;  // Reset loading state
+                Log.e("OffersFragment", "Error fetching offers", t);
+            }
+        });
+    }
     private void fetchTopOffers(View rootView) {
         ImageButton offerPrevButton = rootView.findViewById(R.id.offerPrevButton);
         ImageButton offerNextButton = rootView.findViewById(R.id.offerNextButton);
