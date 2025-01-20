@@ -1,16 +1,13 @@
-package com.example.eventure.model;
+package com.example.eventure.dto;
 
-import android.app.Activity;
-
-import com.example.eventure.dto.EventDTO;
+import com.example.eventure.model.Event;
+import com.example.eventure.model.Status;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-public class Event {
 
+public class EventDTO {
     private Integer id;
     private String name;
     private String description;
@@ -19,30 +16,12 @@ public class Event {
     private Boolean isPublic;
     private String place;
     private LocalDateTime date;
-    private Double rating;
+    private EventTypeDTO eventType;
     private List<String> photos;
-    private EventType eventType;
-    private List<Activity> eventActivities;
-    //private Budget budget;
-    //private List<Product> products;
     private Boolean isDeleted;
+    private Double rating;
 
-    public Event() {}
-
-    public Event(
-            Integer id,
-            String name,
-            String description,
-            Integer maxParticipants,
-            Integer participants,
-            Boolean isPublic,
-            String place,
-            LocalDateTime date,
-            EventType eventType,
-            List<Activity> activities
-            //,Budget budget,
-            //List<Product> products
-            ) {
+    public EventDTO(Integer id, String name, String description, Integer maxParticipants, Integer participants, Boolean isPublic, String place, LocalDateTime date, EventTypeDTO eventType, List<String> photos, Boolean isDeleted, Double rating) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -52,10 +31,9 @@ public class Event {
         this.place = place;
         this.date = date;
         this.eventType = eventType;
-        this.eventActivities = activities;
-        //this.budget = budget;
-        //this.products = products;
-        this.rating = 0.0;
+        this.photos = photos;
+        this.isDeleted = isDeleted;
+        this.rating = rating;
     }
 
     public Integer getId() {
@@ -90,23 +68,19 @@ public class Event {
         return date;
     }
 
-    public Double getRating() {
-        return rating;
+    public EventTypeDTO getEventType() {
+        return eventType;
     }
 
     public List<String> getPhotos() {
         return photos;
     }
 
-    public EventType getEventType() {
-        return eventType;
-    }
-
-    public List<Activity> getEventActivities() {
-        return eventActivities;
-    }
-
     public Boolean getDeleted() {
         return isDeleted;
+    }
+
+    public Double getRating() {
+        return rating;
     }
 }

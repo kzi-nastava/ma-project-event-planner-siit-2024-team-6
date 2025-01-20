@@ -12,7 +12,7 @@
         android:layout_height="match_parent">
 
         <ImageView
-            android:id="@+id/top_pas_image"
+            android:id="@+id/top_offer_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
@@ -28,7 +28,7 @@
             android:alpha="0.8">
 
             <TextView
-                android:id="@+id/top_pas_title"
+                android:id="@+id/top_offer_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Event Title"
@@ -39,7 +39,7 @@
                 android:gravity="center" />
 
             <TextView
-                android:id="@+id/top_pas_description"
+                android:id="@+id/top_offer_description"
                 android:layout_width="match_parent"
                 android:layout_height="80dp"
                 android:textColor="@android:color/white"
@@ -50,7 +50,7 @@
                 android:maxLines="3" />
 
             <Button
-                android:id="@+id/top_pas_view_button"
+                android:id="@+id/top_offer_view_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="View"

@@ -9,42 +9,54 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.eventure.R;
-import com.example.eventure.model.PAS;
+import com.example.eventure.dto.EventDTO;
+import com.example.eventure.dto.OfferDTO;
+import com.example.eventure.model.Offer;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class PASAdapter extends RecyclerView.Adapter<PASAdapter.PASViewHolder> {
+public class OfferAdapter extends RecyclerView.Adapter<OfferAdapter.OfferViewHolder> {
 
-    private List<PAS> pasList;
+    private List<OfferDTO> offerList;
 
-    public PASAdapter(List<PAS> pasList) {
-        this.pasList = pasList;
+    public OfferAdapter(List<OfferDTO> offerList) {
+        this.offerList = offerList;
+    }
+    public OfferAdapter() {
+        this.offerList = new ArrayList<>();
     }
 
     @NonNull
     @Override
-    public PASViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public OfferViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.product_card, parent, false);
-        return new PASViewHolder(view);
+        return new OfferViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull PASViewHolder holder, int position) {
-        PAS pas = pasList.get(position);
-        holder.bind(pas);
+    public void onBindViewHolder(@NonNull OfferViewHolder holder, int position) {
+        OfferDTO offer = offerList.get(position);
+        holder.bind(offer);
     }
 
     @Override
     public int getItemCount() {
-        return pasList.size();
+        return offerList.size();
+    }
+    public void addOffers(List<OfferDTO> newOffers) {
+        int previousSize = offerList.size();
+        offerList.addAll(newOffers);
+        notifyItemRangeInserted(previousSize, newOffers.size());
     }
 
-    static class PASViewHolder extends RecyclerView.ViewHolder {
+    static class OfferViewHolder extends RecyclerView.ViewHolder {
         TextView productTitle, productPrice, productSalePrice, saleTag;
         ImageView productImage, saleEuroIcon;
 
-        public PASViewHolder(@NonNull View itemView) {
+        public OfferViewHolder(@NonNull View itemView) {
             super(itemView);
             productTitle = itemView.findViewById(R.id.product_title);
             productPrice = itemView.findViewById(R.id.product_price);
@@ -54,17 +66,17 @@ public class PASAdapter extends RecyclerView.Adapter<PASAdapter.PASViewHolder> {
             saleEuroIcon = itemView.findViewById(R.id.sale_euro_icon);
         }
 
-        public void bind(PAS pas) {
-            productTitle.setText(pas.getTitle());
+        public void bind(OfferDTO offer) {
+            productTitle.setText(offer.getName());
 
-            if (pas.getSale() > 0) {
+            if (offer.getSale() > 0) {
                 // Display original price with a line through it
-                productPrice.setText(String.format("$%s", pas.getPrice()));
+                productPrice.setText(String.format("$%s", offer.getPrice()));
                 productPrice.setPaintFlags(productPrice.getPaintFlags() | android.graphics.Paint.STRIKE_THRU_TEXT_FLAG);
 
                 // Display sale price
                 productSalePrice.setVisibility(View.VISIBLE);
-                productSalePrice.setText(String.format("$%s", pas.getSale()));
+                productSalePrice.setText(String.format("$%s", offer.getSale()));
 
                 // Display sale tag
                 saleTag.setVisibility(View.VISIBLE);
@@ -73,7 +85,7 @@ public class PASAdapter extends RecyclerView.Adapter<PASAdapter.PASViewHolder> {
                 saleEuroIcon.setVisibility(View.VISIBLE);
             } else {
                 // Display original price without line-through
-                productPrice.setText(String.format("$%s", pas.getPrice()));
+                productPrice.setText(String.format("$%s", offer.getPrice()));
                 productPrice.setPaintFlags(productPrice.getPaintFlags() & (~android.graphics.Paint.STRIKE_THRU_TEXT_FLAG));
 
                 // Hide sale-related views
@@ -83,7 +95,14 @@ public class PASAdapter extends RecyclerView.Adapter<PASAdapter.PASViewHolder> {
             }
 
             // Set product image
-            productImage.setImageResource(pas.getPhotoID());
+            String photo = offer.getPhotos().get(0);
+
+            Glide.with(productImage.getContext())
+                    .load(photo)
+                    .placeholder(R.drawable.event2)
+                    .error(R.drawable.error_image)
+                    .into(productImage);
+            //productImage.setImageResource(Offer.getPhotoID());
         }
 
     }

@@ -10,7 +10,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.eventure.R;
+import com.example.eventure.dto.EventDTO;
 import com.example.eventure.model.Event;
 
 import java.text.SimpleDateFormat;
@@ -18,9 +20,9 @@ import java.util.List;
 
 public class EventCarouselAdapter extends RecyclerView.Adapter<EventCarouselAdapter.EventViewHolder> {
 
-    private List<Event> events;
+    private List<EventDTO> events;
 
-    public EventCarouselAdapter(List<Event> events) {
+    public EventCarouselAdapter(List<EventDTO> events) {
         if (events == null) {
             throw new IllegalArgumentException("Event list cannot be null");
         }
@@ -37,7 +39,7 @@ public class EventCarouselAdapter extends RecyclerView.Adapter<EventCarouselAdap
 
     @Override
     public void onBindViewHolder(@NonNull EventViewHolder holder, int eventIndex) {
-        Event event = events.get(eventIndex);
+        EventDTO event = events.get(eventIndex);
         holder.bind(event);
     }
 
@@ -59,17 +61,19 @@ public class EventCarouselAdapter extends RecyclerView.Adapter<EventCarouselAdap
             eventDescription = itemView.findViewById(R.id.top_event_description);
         }
 
-        public void bind(Event event) {
-//            // Loading image
-//            Glide.with(itemView.getContext())
-//                    .load(event.getPhotoURL())
-//                    .into(eventImage);
+        public void bind(EventDTO event) {
 
-            eventImage.setImageResource(event.getPhotoID());
+            String photo = event.getPhotos().get(0);
+
+            Glide.with(eventImage.getContext())
+                    .load(photo)
+                    .placeholder(R.drawable.event2)
+                    .error(R.drawable.error_image)
+                    .into(eventImage);
+
+            eventImage.setImageResource(R.drawable.event5);
             //event title
-            eventTitle.setText(event.getTitle());
-
-            //event location
+            eventTitle.setText(event.getName());
             eventDescription.setText(event.getDescription());
 
         }

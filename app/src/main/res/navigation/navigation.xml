@@ -88,9 +88,9 @@
         app:popUpToInclusive="true" />
 
     <fragment
-    android:id="@+id/pas_menu"
-    android:name="com.example.eventure.fragments.PasFragment"
-    tools:layout="@layout/fragment_pas"
+    android:id="@+id/offer_menu"
+    android:name="com.example.eventure.fragments.OffersFragment"
+    tools:layout="@layout/fragment_offer"
     app:popUpTo="@+id/nav_profile"
     app:popUpToInclusive="true" />
 
