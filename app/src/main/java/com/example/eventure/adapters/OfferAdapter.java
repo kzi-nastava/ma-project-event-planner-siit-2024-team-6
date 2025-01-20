@@ -15,6 +15,7 @@ import com.example.eventure.dto.EventDTO;
 import com.example.eventure.dto.OfferDTO;
 import com.example.eventure.model.Offer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class OfferAdapter extends RecyclerView.Adapter<OfferAdapter.OfferViewHolder> {
@@ -23,6 +24,9 @@ public class OfferAdapter extends RecyclerView.Adapter<OfferAdapter.OfferViewHol
 
     public OfferAdapter(List<OfferDTO> offerList) {
         this.offerList = offerList;
+    }
+    public OfferAdapter() {
+        this.offerList = new ArrayList<>();
     }
 
     @NonNull

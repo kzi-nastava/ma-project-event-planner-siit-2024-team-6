@@ -15,6 +15,7 @@ import com.example.eventure.model.Event;
 
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> {
@@ -22,6 +23,9 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
     public EventAdapter(List<EventDTO> eventList) {
         this.events = eventList;
+    }
+    public EventAdapter() {
+        this.events = new ArrayList<>();
     }
 
     @NonNull
