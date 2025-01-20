@@ -86,6 +86,8 @@ public class OffersFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.e("MethodsTag", "OffersFragment onCreate called");
+
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
@@ -96,6 +98,8 @@ public class OffersFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.e("MethodsTag", "OffersFragment onCreateView called");
+
         View rootView = inflater.inflate(R.layout.fragment_offer, container, false);
 
 
@@ -105,6 +109,8 @@ public class OffersFragment extends Fragment {
         // Initialize UI Components
         offerCarousel = rootView.findViewById(R.id.offerCarousel);
         offerRecyclerView = rootView.findViewById(R.id.productRecyclerView);
+        offerAdapter = new OfferAdapter();
+        offerRecyclerView.setAdapter(offerAdapter);
         // Fetch initial data
         fetchTopOffers(rootView);  // Top 5 offers for the carousel
 
@@ -148,16 +154,13 @@ public class OffersFragment extends Fragment {
                     List<OfferDTO> newOffers = pagedResponse.getContent();
                     Log.d("OffersFragment", "Fetched " + newOffers.size() + " offers from page: " + page);
 
-                    if (offerAdapter == null) {
-                        offerAdapter = new OfferAdapter(newOffers);
-                        offerRecyclerView.setAdapter(offerAdapter);
-                    } else {
-                        offerAdapter.addOffers(newOffers);  // Append new offers to the list
-                        offerAdapter.notifyItemRangeInserted(
-                                offerAdapter.getItemCount() - newOffers.size(),
-                                newOffers.size()
-                        );
-                    }
+                    Log.d("EventsTag", "DODAO OFFERS");
+
+                    offerAdapter.addOffers(newOffers);  // Append new offers to the list
+                    offerAdapter.notifyItemRangeInserted(
+                            offerAdapter.getItemCount() - newOffers.size(),
+                            newOffers.size()
+                    );
 
                     // Show or hide the Load More button based on remaining pages
                     if (offerAdapter.getItemCount() < totalItemsCount) {
@@ -322,4 +325,52 @@ public class OffersFragment extends Fragment {
         bottomSheetDialog.show();
     }
 
+
+    @Override
+    public void onStart() {
+        Log.e("MethodsTag", "OffersFragment onStart called");
+
+        super.onStart();
+        // Logic to execute when the fragment becomes visible
+    }
+
+    @Override
+    public void onResume() {
+        Log.e("MethodsTag", "OffersFragment onResume called");
+
+        super.onResume();
+        // Logic to execute when the fragment is interactable
+    }
+
+    @Override
+    public void onPause() {
+        Log.e("MethodsTag", "OffersFragment onPause called");
+
+        super.onPause();
+        // Save changes or pause actions
+    }
+
+    @Override
+    public void onStop() {
+        Log.e("MethodsTag", "OffersFragment onStop called");
+
+        super.onStop();
+        // Logic to execute when the fragment is no longer visible
+    }
+
+    @Override
+    public void onDestroyView() {
+        Log.e("MethodsTag", "OffersFragment onDestoryView called");
+
+        super.onDestroyView();
+        // Clean up resources related to the view
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.e("MethodsTag", "OffersFragment onDestroy called");
+
+        super.onDestroy();
+        // Final cleanup logic
+    }
 }

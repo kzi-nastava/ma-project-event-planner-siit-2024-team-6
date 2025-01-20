@@ -90,6 +90,7 @@ public class EventsFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.e("MethodsTag", "EventsFragment onCreate called");
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
@@ -100,6 +101,7 @@ public class EventsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.e("MethodsTag", "EventsFragment onCreateView called");
 
         View rootView = inflater.inflate(R.layout.fragment_events, container, false);
 
@@ -107,15 +109,19 @@ public class EventsFragment extends Fragment {
 
         eventCarousel = rootView.findViewById(R.id.eventCarousel);
         eventRecyclerView = rootView.findViewById(R.id.eventRecyclerView);
-
+        eventAdapter = new EventAdapter();
+        eventRecyclerView.setAdapter(eventAdapter);
+        currentPage = 0;
+        totalItemsCount = 1;
         // Fetch data from API
         fetchTopFiveEvents(rootView);
         //fetchAllEvents(rootView, inflater);
         // Fetch the first page
+        Button loadMoreButton = rootView.findViewById(R.id.loadMoreEvents);
+
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         eventRecyclerView.setLayoutManager(layoutManager);
         eventRecyclerView.setNestedScrollingEnabled(false);
-        Button loadMoreButton = rootView.findViewById(R.id.loadMoreEvents);
         fetchAllEventsWithPagination(currentPage, loadMoreButton);
 
         // Set up button click listener for loading more
@@ -184,19 +190,13 @@ public class EventsFragment extends Fragment {
                     if (pagedResponse.getContent() != null && !pagedResponse.getContent().isEmpty()) {
                         List<EventDTO> newEvents = pagedResponse.getContent();
                         Log.d("EventsTag", "Fetched " + newEvents.size() + " events from page: " + page);
+                        Log.d("EventsTag", "DODAO EVENTS");
 
-                        if (eventAdapter == null) {
-                            eventAdapter = new EventAdapter(newEvents);
-                            eventRecyclerView.setAdapter(eventAdapter);
-                        } else {
-                            eventAdapter.addEvents(newEvents); // Append new events to the list
-                            eventAdapter.notifyItemRangeInserted(
-                                    eventAdapter.getItemCount() - newEvents.size(),
-                                    newEvents.size()
-                            );
-                        }
-                        Log.d("EventsTag", "current page  " +currentPage);
-                        Log.d("EventsTag", "total  " +totalItemsCount);
+                        eventAdapter.addEvents(newEvents); // Append new events to the list
+                        eventAdapter.notifyItemRangeInserted(
+                                eventAdapter.getItemCount() - newEvents.size(),
+                                newEvents.size()
+                        );
 
                         // Show or hide the Load More button based on the remaining pages
                         if (eventAdapter.getItemCount() < totalItemsCount) {
@@ -311,6 +311,53 @@ public class EventsFragment extends Fragment {
         bottomSheetDialog.show();
     }
 
+    @Override
+    public void onStart() {
+        Log.e("MethodsTag", "EventsFragment onStart called");
 
+        super.onStart();
+        // Logic to execute when the fragment becomes visible
+    }
+
+    @Override
+    public void onResume() {
+        Log.e("MethodsTag", "EventsFragment onResume called");
+
+        super.onResume();
+        // Logic to execute when the fragment is interactable
+    }
+
+    @Override
+    public void onPause() {
+        Log.e("MethodsTag", "EventsFragment onPause called");
+
+        super.onPause();
+        // Save changes or pause actions
+    }
+
+    @Override
+    public void onStop() {
+        Log.e("MethodsTag", "EventsFragment onStop called");
+
+        super.onStop();
+        // Logic to execute when the fragment is no longer visible
+    }
+
+    @Override
+    public void onDestroyView() {
+        Log.e("MethodsTag", "EventsFragment onDestoryView called");
+
+        super.onDestroyView();
+        this.onDestroy();
+        // Clean up resources related to the view
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.e("MethodsTag", "EventsFragment onDestroy called");
+
+        super.onDestroy();
+        // Final cleanup logic
+    }
 
 }
