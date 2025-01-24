@@ -7,14 +7,30 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
 import retrofit2.http.Query;
 
 public interface EventService {
     @GET(ClientUtils.TOP_FIVE_EVENTS)
+    @Headers({
+            "User-Agent: Mobile-Android",
+            "Content-Type:application/json",
+            "skip: true"
+    })
     Call<List<EventDTO>> getTopFive();
 
     @GET(ClientUtils.ALL_EVENTS)
+    @Headers({
+            "User-Agent: Mobile-Android",
+            "Content-Type:application/json",
+            "skip: true"
+    })
     Call<List<EventDTO>> getAll();
     @GET(ClientUtils.ALL_EVENTS_PAGED)
+    @Headers({
+            "User-Agent: Mobile-Android",
+            "Content-Type:application/json",
+            "skip: true"
+    })
     Call<PagedResponse<EventDTO>> getPagedEvents(@Query("page") int page, @Query("size") int size);
 }
