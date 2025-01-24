@@ -1,6 +1,8 @@
 package com.example.eventure.fragments;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,16 +15,31 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import com.example.eventure.BuildConfig;
 import com.example.eventure.R;
 import com.example.eventure.activities.HomeActivity;
 import com.example.eventure.activities.ProfileActivity;
+import com.example.eventure.clients.AuthService;
+import com.example.eventure.clients.ClientUtils;
+import com.example.eventure.clients.EventService;
+import com.example.eventure.clients.LoginService;
+import com.example.eventure.dto.LoginDTO;
+import com.example.eventure.dto.LoginResponseDTO;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class LoginFragment extends Fragment {
-
     private EditText etEmail, etPassword;
     private Button btnLogin;
+
+    public LoginFragment() {
+        // Required empty public constructor
+    }
 
     @Nullable
     @Override
@@ -45,11 +62,44 @@ public class LoginFragment extends Fragment {
                 // Логика входа (например, аутентификация)
             }
 
+            LoginDTO loginDTO = new LoginDTO();
+            loginDTO.setEmail(email);
+            loginDTO.setPassword(password);
 
-            Intent intent = new Intent(requireContext(), HomeActivity.class);
-            startActivity(intent);
+            ClientUtils.loginService.login(loginDTO).enqueue(new Callback<>() {
+                @Override
+                public void onResponse(Call<LoginResponseDTO> call, Response<LoginResponseDTO> response) {
+                    Log.d("AuthTag", "Endpoint called: " + call.request().url());
+
+                    if (response.code() == 200){
+                        AuthService authService = new AuthService(getContext());
+                        authService.logout();
+                        Log.d("AuthTag","Login successful, role  "+authService.getRole());
+
+                        authService.login(response.body().getToken());
+                        Log.d("AuthTag","Login successful, role  "+authService.getRole());
+                        Intent intent = new Intent(requireContext(), HomeActivity.class);
+                        startActivity(intent);
+
+                    }else{
+                        Log.d("AuthTag","Meesage recieved: "+response.code());
+                        Toast.makeText(getContext(), "Please enter correct email and password", Toast.LENGTH_SHORT).show();
+
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<LoginResponseDTO> call, Throwable t) {
+                    Log.d("AuthTag", t.getMessage() != null?t.getMessage():"error");
+
+                }
+            });
+
+
+
         });
 
         return view;
     }
+
 }
