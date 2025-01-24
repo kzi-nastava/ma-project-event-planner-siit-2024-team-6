@@ -50,4 +50,6 @@ public class ClientUtils {
     public static final EventService eventService = retrofit.create(EventService.class);
     public static final OfferService offerService = retrofit.create(OfferService.class);
     public static final CategoryService categoryService = retrofit.create(CategoryService.class);
+    public static final LoginService loginService = retrofit.create(LoginService.class);
+    //public static final AuthService authService = retrofit.create(AuthService.class);
 }
