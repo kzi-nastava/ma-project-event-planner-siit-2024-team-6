@@ -69,13 +69,8 @@ public class LoginFragment extends Fragment {
             ClientUtils.loginService.login(loginDTO).enqueue(new Callback<>() {
                 @Override
                 public void onResponse(Call<LoginResponseDTO> call, Response<LoginResponseDTO> response) {
-                    Log.d("AuthTag", "Endpoint called: " + call.request().url());
-
                     if (response.code() == 200){
                         AuthService authService = new AuthService(getContext());
-                        authService.logout();
-                        Log.d("AuthTag","Login successful, role  "+authService.getRole());
-
                         authService.login(response.body().getToken());
                         Log.d("AuthTag","Login successful, role  "+authService.getRole());
                         Intent intent = new Intent(requireContext(), HomeActivity.class);
