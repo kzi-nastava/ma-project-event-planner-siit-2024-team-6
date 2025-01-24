@@ -56,6 +56,13 @@ public class ClientUtils {
                 .addInterceptor(chain -> {
                     okhttp3.Request originalRequest = chain.request();
                     String skipHeader = originalRequest.header("skip");
+                    if(authService.isLoggedIn()){
+                        if(authService.hasTokenExpired()){
+                            Log.d("AuthTag", "TOKEN EXPIRED SO USER LOGGED OUT: " + originalRequest.url());
+                            authService.logout();
+                        }
+                    }
+
                     if ("true".equals(skipHeader)) {
                         Log.d("AuthTag", "Skipping token for request: " + originalRequest.url());
                         okhttp3.Request newRequest = originalRequest.newBuilder()
@@ -65,7 +72,7 @@ public class ClientUtils {
                     }
 
                     String token = authService.getToken();
-                    if (token != null && authService.isLoggedIn()) {
+                    if (authService.isLoggedIn()) {
                         Log.d("AuthTag", "Adding token to request: " + originalRequest.url());
                         okhttp3.Request newRequest = originalRequest.newBuilder()
                                 .addHeader("Authorization", "Bearer " + token)
