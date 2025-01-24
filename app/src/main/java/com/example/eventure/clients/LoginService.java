@@ -13,7 +13,8 @@ public interface LoginService {
 
     @Headers({
             "User-Agent: Mobile-Android",
-            "Content-Type:application/json"
+            "Content-Type:application/json",
+            "skip: true"
     })
     @POST(ClientUtils.LOGIN)
     Call<LoginResponseDTO> login(@Body LoginDTO tag);
