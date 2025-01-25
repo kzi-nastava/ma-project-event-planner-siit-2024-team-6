@@ -20,12 +20,27 @@ import retrofit2.http.Query;
 public interface OfferService {
 
     @GET(ClientUtils.TOP_FIVE_OFFERS)
+    @Headers({
+            "User-Agent: Mobile-Android",
+            "Content-Type:application/json",
+            "skip: true"
+    })
     Call<List<OfferDTO>> getTopFive();
 
     @GET(ClientUtils.ALL_OFFERS)
+    @Headers({
+            "User-Agent: Mobile-Android",
+            "Content-Type:application/json",
+            "skip: true"
+    })
     Call<List<OfferDTO>> getAll();
 
     @GET(ClientUtils.ALL_OFFERS_PAGED)
+    @Headers({
+            "User-Agent: Mobile-Android",
+            "Content-Type:application/json",
+            "skip: true"
+    })
     Call<PagedResponse<OfferDTO>> getPagedOffers(@Query("page") int page, @Query("size") int size);
     @Headers({
             "User-Agent: Mobile-Android",
