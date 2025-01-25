@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.MyProfileFragment"
+    android:background="@color/white">
+
+    <ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        android:background="#FFFFFF"
+        android:padding="26dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#D3A3B0"
+            android:paddingTop="50dp"
+            android:paddingHorizontal="20dp"
+            android:gravity="center_horizontal">
+
+            <!-- Email -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Email:"
+                android:textSize="16sp"
+                android:drawableStart="@drawable/ic_email"
+                android:drawablePadding="8dp" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter your email"
+                android:id="@+id/email_input"
+                android:backgroundTint="#FFFFFF" />
+
+            <!-- Role -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Role:"
+                android:textSize="16sp"
+                android:drawableStart="@drawable/ic_role"
+                android:drawablePadding="8dp" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter your role"
+                android:id="@+id/role_input"
+                android:backgroundTint="#FFFFFF" />
+
+            <!-- Name -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Name:"
+                android:textSize="16sp"
+                android:drawableStart="@drawable/profile_icon"
+                android:drawablePadding="8dp" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter your name"
+                android:id="@+id/name_input"
+                android:backgroundTint="#FFFFFF" />
+
+            <!-- Last Name -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Last Name:"
+                android:textSize="16sp"
+                android:drawableStart="@drawable/ic_lastname"
+                android:drawablePadding="8dp" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter your last name"
+                android:id="@+id/lastname_input"
+                android:backgroundTint="#FFFFFF" />
+
+            <!-- Address -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Address:"
+                android:textSize="16sp"
+                android:drawableStart="@drawable/ic_address"
+                android:drawablePadding="8dp" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter your address"
+                android:id="@+id/address_input"
+                android:backgroundTint="#FFFFFF" />
+
+            <!-- Phone Number -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Phone Number:"
+                android:textSize="16sp"
+                android:drawableStart="@drawable/ic_phone"
+                android:drawablePadding="8dp" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter your phone number"
+                android:id="@+id/phone_input"
+                android:backgroundTint="#FFFFFF" />
+
+            <!-- Profile Photo -->
+            <ImageView
+                android:id="@+id/profile_photo"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/ic_user_placeholder"
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter photo URL"
+                android:id="@+id/photo_url_input"
+                android:backgroundTint="#FFFFFF" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Save Photo"
+                android:layout_gravity="center"
+                android:id="@+id/save_photo_button"
+                android:background="#6200EE"
+                android:textColor="#FFFFFF"
+                android:layout_marginTop="8dp" />
+
+            <!-- Action Buttons -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginTop="16dp">
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Submit Changes"
+                    android:id="@+id/submit_button"
+                    android:background="#4CAF50"
+                    android:textColor="#FFFFFF" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Change Password"
+                    android:id="@+id/change_password_button"
+                    android:layout_marginStart="8dp"
+                    android:background="#FF9800"
+                    android:textColor="#FFFFFF" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Logout"
+                    android:id="@+id/logout_button"
+                    android:layout_marginStart="8dp"
+                    android:background="#F44336"
+                    android:textColor="#FFFFFF" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Deactivate"
+                    android:id="@+id/deactivate_button"
+                    android:layout_marginStart="8dp"
+                    android:background="#E53935"
+                    android:textColor="#FFFFFF" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+</FrameLayout>
