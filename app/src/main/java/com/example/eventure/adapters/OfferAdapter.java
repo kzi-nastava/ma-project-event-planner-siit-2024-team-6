@@ -51,7 +51,10 @@ public class OfferAdapter extends RecyclerView.Adapter<OfferAdapter.OfferViewHol
         offerList.addAll(newOffers);
         notifyItemRangeInserted(previousSize, newOffers.size());
     }
-
+    public void clearOffers() {
+        this.offerList.clear();
+        notifyDataSetChanged();
+    }
     static class OfferViewHolder extends RecyclerView.ViewHolder {
         TextView productTitle, productPrice, productSalePrice, saleTag;
         ImageView productImage, saleEuroIcon;
