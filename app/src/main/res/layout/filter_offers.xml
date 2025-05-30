@@ -72,37 +72,6 @@
                 android:textSize="20sp"
                 android:textColor="@color/black"
                 android:layout_marginBottom="8dp" />
-
-            <RadioGroup
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="16dp">
-
-                <RadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Catering"
-                    android:textSize="16sp"
-                    android:padding="8dp" />
-
-                <RadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Decoration"
-                    android:textSize="16sp"
-                    android:padding="8dp" />
-            </RadioGroup>
-
-            <!-- Criteria Section -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Criteria"
-                android:textSize="20sp"
-                android:textColor="@color/black"
-                android:layout_marginBottom="8dp" />
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -110,30 +79,69 @@
                 android:layout_marginBottom="16dp">
 
                 <CheckBox
+                    android:id="@+id/checkbox_product"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Option 1"
+                    android:text="Product"
                     android:textSize="16sp" />
 
                 <CheckBox
+                    android:id="@+id/checkbox_service"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Option 2"
-                    android:textSize="16sp" />
-
-                <CheckBox
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Option 3"
-                    android:textSize="16sp" />
-
-                <CheckBox
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Option 4"
+                    android:text="Service"
                     android:textSize="16sp" />
             </LinearLayout>
+            <!-- Category Dropdown -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Category"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="4dp" />
 
+            <Spinner
+                android:id="@+id/spinner_category"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:spinnerMode="dropdown"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Event Type Dropdown -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="For Event Type"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="4dp" />
+
+            <Spinner
+                android:id="@+id/spinner_event_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:spinnerMode="dropdown"
+                android:layout_marginBottom="8dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="On sale"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="4dp" />
+
+            <CheckBox
+                android:id="@+id/checkbox_on_sale"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Show only offers on sale"
+                android:textSize="16sp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp" />
             <!-- Divider -->
             <View
                 android:layout_width="match_parent"

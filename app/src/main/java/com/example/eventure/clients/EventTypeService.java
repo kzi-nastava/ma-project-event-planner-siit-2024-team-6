@@ -1,5 +1,6 @@
 package com.example.eventure.clients;
 
+import com.example.eventure.dto.EventTypeDTO;
 import com.example.eventure.model.EventType;
 import com.example.eventure.model.Offer;
 
@@ -21,4 +22,10 @@ public interface EventTypeService {
     Call<List<EventType>> findAll();
     @GET("providers/event-types")
     Call<List<String>> findAllNames();
+    @Headers({
+            "User-Agent: Mobile-Android",
+            "Content-Type:application/json"
+    })
+    @GET(ClientUtils.ALL_EVENT_TYPES)
+    Call<List<EventTypeDTO>> getAll();
 }

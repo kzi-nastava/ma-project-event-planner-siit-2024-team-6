@@ -25,12 +25,10 @@ import com.example.eventure.adapters.OfferCarouselAdapter;
 import com.example.eventure.clients.ClientUtils;
 import com.example.eventure.clients.OfferService;
 import com.example.eventure.dto.OfferDTO;
-import com.example.eventure.model.Offer;
 import com.example.eventure.model.PagedResponse;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -131,6 +129,9 @@ public class OffersFragment extends Fragment {
                 fetchOffersWithPagination(currentPage, loadMoreButton);
             }
         });
+
+        ImageView filterIcon = rootView.findViewById(R.id.offers_filter_icon);
+        filterIcon.setOnClickListener(v -> showFilterDialog(inflater));
 
         return rootView;
     }
@@ -236,7 +237,6 @@ public class OffersFragment extends Fragment {
 
     private void fetchAllOffers(View rootView, LayoutInflater inflater) {
         ScrollView parentScrollView = rootView.findViewById(R.id.parentScrollView);
-        ImageView filterIcon = rootView.findViewById(R.id.products_filter_icon);
 
         offerService.getAll().enqueue(new Callback<List<OfferDTO>>() {
             @Override
@@ -270,7 +270,6 @@ public class OffersFragment extends Fragment {
                 Log.e("OffersFragment", "Error fetching all offers", t);
             }
         });
-        filterIcon.setOnClickListener(v -> showFilterDialog(inflater));
 
     }
 
@@ -302,7 +301,7 @@ public class OffersFragment extends Fragment {
         // Create a BottomSheetDialog
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
         // Inflate the filter layout
-        View dialogView = inflater.inflate(R.layout.filter_products, null);
+        View dialogView = inflater.inflate(R.layout.filter_offers, null);
         bottomSheetDialog.setContentView(dialogView);
 
         // Access the BottomSheetBehavior from the BottomSheetDialog

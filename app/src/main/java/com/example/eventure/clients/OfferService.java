@@ -75,4 +75,26 @@ public interface OfferService {
             @Query("size") int size
     );
 
+    @GET(ClientUtils.FILTERED_OFFERS)
+    @Headers({
+            "User-Agent: Mobile-Android",
+            "Content-Type:application/json",
+            "skip: true"
+    })
+    Call<PagedResponse<OfferDTO>> getFilteredOffers(
+            @Query("name") String name,
+            @Query("description") String description,
+            @Query("maxPrice") Double maxPrice,
+            @Query("isOnSale") Boolean isOnSale,
+            @Query("startDate") String startDate,
+            @Query("endDate") String endDate,
+            @Query("category") String category,
+            @Query("eventType") String eventType,
+            @Query("isService") Boolean isService,
+            @Query("isProduct") Boolean isProduct,
+            @Query("page") int page,
+            @Query("pageSize") int pageSize
+    );
+
+
 }

@@ -2,7 +2,8 @@ package com.example.eventure.fragments;
 
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SearchView;
+import androidx.core.util.Pair;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -10,29 +11,38 @@ import androidx.viewpager2.widget.CompositePageTransformer;
 import androidx.viewpager2.widget.MarginPageTransformer;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ScrollView;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.example.eventure.R;
 import com.example.eventure.adapters.EventAdapter;
 import com.example.eventure.adapters.EventCarouselAdapter;
+import com.example.eventure.clients.EventTypeService;
 import com.example.eventure.dto.EventDTO;
-import com.example.eventure.model.Event;
+import com.example.eventure.dto.EventTypeDTO;
 import com.example.eventure.model.PagedResponse;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+
 import com.example.eventure.clients.EventService;
 import com.example.eventure.clients.ClientUtils;
+import com.google.android.material.datepicker.MaterialDatePicker;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -46,44 +56,35 @@ import retrofit2.Response;
  */
 public class EventsFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
     private EventService eventService;
+    private EventTypeService eventTypeService;
     private ViewPager2 eventCarousel;
     private EventCarouselAdapter carouselAdapter;
     private RecyclerView eventRecyclerView;
+    private TextView emptyEvents;
+    private Button loadMoreButton;
     private EventAdapter eventAdapter;
 
-    private boolean isLoading = false;  // Track loading state
-    private int currentPage = 0;       // Current page number
-    private int totalItemsCount = 1;    // Total pages available
-    private boolean isInitialized = false;
+    private boolean isLoading = false;
+    private int currentPage = 0;
+    private int totalItemsCount = 1;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    //Filter
+    private boolean isFilterMode = false;
+    private String currentFilterType = null;
+    private String currentFilterStartDate = null;
+    private String currentFilterEndDate = null;
+    private List<String> eventTypes = new ArrayList<>();
+    //Search
+    private String searchInput;
 
     public EventsFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment EventsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static EventsFragment newInstance(String param1, String param2) {
         EventsFragment fragment = new EventsFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -92,84 +93,90 @@ public class EventsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         Log.e("MethodsTag", "EventsFragment onCreate called");
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.e("MethodsTag", "EventsFragment onCreateView called");
-
         View rootView = inflater.inflate(R.layout.fragment_events, container, false);
 
         eventService = ClientUtils.eventService;
-
+        eventTypeService = ClientUtils.eventTypeService;
         eventCarousel = rootView.findViewById(R.id.eventCarousel);
         eventRecyclerView = rootView.findViewById(R.id.eventRecyclerView);
+        emptyEvents = rootView.findViewById(R.id.emptyEvents);
         eventAdapter = new EventAdapter();
         eventRecyclerView.setAdapter(eventAdapter);
         currentPage = 0;
         totalItemsCount = 1;
-        // Fetch data from API
-        fetchTopFiveEvents(rootView);
-        //fetchAllEvents(rootView, inflater);
-        // Fetch the first page
-        Button loadMoreButton = rootView.findViewById(R.id.loadMoreEvents);
 
+        // Fetch top 5
+        fetchTopFiveEvents(rootView);
+        // Fetch the first page
+        loadMoreButton = rootView.findViewById(R.id.loadMoreEvents);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         eventRecyclerView.setLayoutManager(layoutManager);
         eventRecyclerView.setNestedScrollingEnabled(false);
         fetchAllEventsWithPagination(currentPage, loadMoreButton);
-
         // Set up button click listener for loading more
         loadMoreButton.setOnClickListener(v -> {
             if (!isLoading && eventAdapter.getItemCount() < totalItemsCount) {
                 currentPage++;
-                fetchAllEventsWithPagination(currentPage, loadMoreButton);
+                if (isFilterMode) {
+                    fetchFilteredEvents(searchInput, searchInput, searchInput, currentFilterType, currentFilterStartDate, currentFilterEndDate, currentPage);
+                } else {
+                    fetchAllEventsWithPagination(currentPage, loadMoreButton);
+                }
+            }
+        });
+        // Set listener for search
+        SearchView searchView = rootView.findViewById(R.id.events_search);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.d("EventsTag",query);
+                isFilterMode = true;
+                currentPage = 0;
+                searchInput = query;
+                currentFilterType = null;
+                currentFilterStartDate = null;
+                currentFilterEndDate = null;
+                eventAdapter.clearEvents();
+                fetchFilteredEvents(searchInput,searchInput,searchInput,currentFilterType,currentFilterStartDate,currentFilterEndDate,currentPage);
+                return true;
+            }
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                // When input is cleared, reload all events
+                if (newText == null || newText.trim().isEmpty()) {
+                    isFilterMode = false;
+                    searchInput = null;
+                    currentPage = 0;
+                    eventAdapter.clearEvents();
+                    fetchAllEventsWithPagination(currentPage, loadMoreButton);
+                }
+                return false;
             }
         });
 
+        // Fetching event types for filter dropdown
+        fetchEventTypes(new Callback<List<String>>() {
+            @Override
+            public void onResponse(Call<List<String>> call, Response<List<String>> response) {
+                eventTypes.clear();
+                eventTypes.addAll(response.body());
+                eventTypes.add(0, "Select Event Type");
+            }
+            @Override
+            public void onFailure(Call<List<String>> call, Throwable t) {
+            }
+        });
+
+        ImageView filterIcon = rootView.findViewById(R.id.events_filter_icon);
+        filterIcon.setOnClickListener(v -> showFilterDialog(inflater));
 
         return rootView;
     }
-
-//    private void setupPagination(View rootView) {
-//        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-//        layoutManager.setStackFromEnd(false); // Prevent auto-scrolling to the end
-//        layoutManager.setReverseLayout(false);
-//        eventRecyclerView.setLayoutManager(layoutManager);
-//        eventRecyclerView.setNestedScrollingEnabled(false);
-//
-//        // Set up the scroll listener
-//        eventRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//            @Override
-//            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-//                if (!isInitialized || isLoading) return;
-//                super.onScrolled(recyclerView, dx, dy);
-//
-//                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
-//                if (layoutManager == null || eventAdapter == null) return;
-//                int lastVisibleItemPosition = layoutManager.findLastCompletelyVisibleItemPosition();
-//                int totalItemCount = eventAdapter.getItemCount();
-//
-//                Log.d("EventsTag", "Last visible item: " + lastVisibleItemPosition);
-//                Log.d("EventsTag", "Total item count: " + totalItemCount);
-//
-//                // Check if the user scrolled to the last item
-//                if (lastVisibleItemPosition == totalItemCount - 1 && currentPage < totalPageCount) {
-//                    Log.d("EventsTag", "User scrolled to the end. Fetching next page...");
-//                    currentPage++;
-//                    fetchAllEventsWithPagination(currentPage);
-//                }
-//            }
-//        });
-//
-//        // Fetch the first page and initialize the list
-//        fetchAllEventsWithPagination(currentPage);
-//    }
 
     private void fetchAllEventsWithPagination(int page, Button loadMoreButton) {
         if (isLoading) return;
@@ -177,7 +184,7 @@ public class EventsFragment extends Fragment {
         isLoading = true; // Set loading state
         Log.d("EventsTag", "Fetching page: " + page);
 
-        eventService.getPagedEvents(page, 5).enqueue(new Callback<PagedResponse<EventDTO>>() {
+        eventService.getPagedEvents(page, ClientUtils.PAGE_SIZE).enqueue(new Callback<PagedResponse<EventDTO>>() {
             @Override
             public void onResponse(Call<PagedResponse<EventDTO>> call, Response<PagedResponse<EventDTO>> response) {
                 isLoading = false; // Reset loading state
@@ -198,15 +205,10 @@ public class EventsFragment extends Fragment {
                                 newEvents.size()
                         );
 
+                        // show/hide empty text if there are no events found
+                        toggleEmptyEvents();
                         // Show or hide the Load More button based on the remaining pages
-                        if (eventAdapter.getItemCount() < totalItemsCount) {
-                            loadMoreButton.setVisibility(View.VISIBLE);
-                        } else {
-                            loadMoreButton.setVisibility(View.GONE); // Hide if no more pages
-                            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) eventRecyclerView.getLayoutParams();
-                            params.bottomMargin = (int) getResources().getDisplayMetrics().density * 70; // Convert 70dp to pixels
-                            eventRecyclerView.setLayoutParams(params);
-                        }
+                        updateLoadMoreVisibility();
                     }
                 } else {
                     Log.e("EventsFragment", "Failed to fetch events. Response code: " + response.code());
@@ -285,31 +287,169 @@ public class EventsFragment extends Fragment {
     }
 
     private void showFilterDialog(LayoutInflater inflater) {
-        // Create a BottomSheetDialog
-        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
-        // Inflate the filter layout
+        // Create BottomSheetDialog with full-screen style
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(requireContext(), R.style.BottomSheetFullScreen);
         View dialogView = inflater.inflate(R.layout.filter_events, null);
         bottomSheetDialog.setContentView(dialogView);
 
-        // Access the BottomSheetBehavior from the BottomSheetDialog
-        View bottomSheet = (View) dialogView.getParent();
-        BottomSheetBehavior<View> bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
-
-        // Disable dragging to dismiss
-        bottomSheetBehavior.setDraggable(false);
-
-        // Optionally, set the initial state to expanded (or collapsed) if needed
-        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-
-        // Find the close icon in the filter layout
+        // Close button
         ImageView closeIcon = dialogView.findViewById(R.id.close_icon);
+        closeIcon.setOnClickListener(v -> bottomSheetDialog.dismiss());
 
-        // Set an OnClickListener to dismiss the BottomSheetDialog when the close icon is clicked
-        closeIcon.setOnClickListener(v1 -> bottomSheetDialog.dismiss());
+        // Initialize Spinner
+        Spinner eventTypeSpinner = dialogView.findViewById(R.id.types_event);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_dropdown_item, eventTypes);
+        eventTypeSpinner.setAdapter(adapter);
 
-        // Show the dialog
+        // Setup MaterialDatePicker
+        TextView startDateText = dialogView.findViewById(R.id.start_date_text);
+        TextView endDateText = dialogView.findViewById(R.id.end_date_text);
+        Button chooseDateButton = dialogView.findViewById(R.id.choose_date_button);
+
+        final long[] selectedStartDate = {0L};
+        final long[] selectedEndDate = {0L};
+        chooseDateButton.setOnClickListener(v -> {
+            MaterialDatePicker.Builder<Pair<Long, Long>> builder = MaterialDatePicker.Builder.dateRangePicker();
+            builder.setTitleText("Select a date range");
+
+            MaterialDatePicker<Pair<Long, Long>> datePicker = builder.build();
+            datePicker.show(getParentFragmentManager(), "DATE_PICKER");
+
+            datePicker.addOnPositiveButtonClickListener(selection -> {
+                selectedStartDate[0] = selection.first;
+                selectedEndDate[0] = selection.second;
+
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                startDateText.setText("From:  " + formatDate(selectedStartDate[0]));
+                endDateText.setText("To:       " + formatDate(selectedEndDate[0]));
+            });
+        });
+
+        // RESET button
+        Button resetButton = dialogView.findViewById(R.id.reset_button);
+        resetButton.setOnClickListener(v -> {
+            selectedStartDate[0] = 0L;
+            selectedEndDate[0] = 0L;
+
+            startDateText.setText("From: Not selected");
+            endDateText.setText("To: Not selected");
+
+            eventTypeSpinner.setSelection(0);
+        });
+
+        //APPLY button
+        Button applyButton = dialogView.findViewById(R.id.filter_button);
+        applyButton.setOnClickListener(v -> {
+            String selectedType = eventTypeSpinner.getSelectedItem().toString();
+            Long start = selectedStartDate[0] == 0L ? null : selectedStartDate[0];
+            Long end = selectedEndDate[0] == 0L ? null : selectedEndDate[0];
+            // If no params were given for filter when applying just close dialog
+            if ("Select Event Type".equals(selectedType) && start == null && end == null) {
+                bottomSheetDialog.dismiss();
+                return;
+            }
+            bottomSheetDialog.dismiss();
+            isFilterMode = true;
+            currentPage = 0;
+            currentFilterType = "Select Event Type".equals(selectedType) ? null : selectedType;
+            currentFilterStartDate = formatDate(start);
+            currentFilterEndDate = formatDate(end);
+
+            eventAdapter.clearEvents();
+            fetchFilteredEvents(null,null,null, currentFilterType, currentFilterStartDate, currentFilterEndDate, currentPage);
+        });
+
         bottomSheetDialog.show();
     }
+    private void fetchFilteredEvents(String name, String description, String place, String eventType, String startDate, String endDate, int page) {
+        isLoading = true; // Prevent multiple calls at once
+        eventService.getFilteredEvents(name, description, place, eventType, startDate, endDate, page, ClientUtils.PAGE_SIZE)
+                .enqueue(new Callback<PagedResponse<EventDTO>>() {
+                    @Override
+                    public void onResponse(Call<PagedResponse<EventDTO>> call, Response<PagedResponse<EventDTO>> response) {
+                        isLoading = false;
+
+                        if (response.isSuccessful() && response.body() != null) {
+                            PagedResponse<EventDTO> pagedResponse = response.body();
+                            totalItemsCount = pagedResponse.getTotalElements();
+                            List<EventDTO> filteredEvents = pagedResponse.getContent();
+                            if (filteredEvents != null && !filteredEvents.isEmpty()) {
+                                Log.d("EventsTag", "Fetched " + filteredEvents.size() + " filtered events on page: " + page);
+                                eventAdapter.addEvents(filteredEvents); // Append new items
+                                eventAdapter.notifyItemRangeInserted(
+                                        eventAdapter.getItemCount() - filteredEvents.size(),
+                                        filteredEvents.size()
+                                );
+                            } else {
+                                Log.d("EventsTag", "No filtered events on page: " + page);
+                            }
+                        } else {
+                            totalItemsCount = 0;
+                            Log.d("EventsTag", "No filtered events fetched: " + response.code());
+                        }
+                        // show/hide empty text if there are no events found
+                        toggleEmptyEvents();
+                        // Show or hide the Load More button based on the remaining pages
+                        updateLoadMoreVisibility();
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<PagedResponse<EventDTO>> call, Throwable t) {
+                        isLoading = false;
+                        Log.e("EventsTag", "Error loading filtered events: " + t.getMessage());
+                    }
+                });
+    }
+    public void fetchEventTypes(Callback<List<String>> callback) {
+        eventTypeService.getAll().enqueue(new Callback<List<EventTypeDTO>>() {
+            @Override
+            public void onResponse(Call<List<EventTypeDTO>> call, Response<List<EventTypeDTO>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<EventTypeDTO> eventTypes = response.body();
+                    List<String> eventTypeNames = new ArrayList<>();
+                    for (EventTypeDTO eventType : eventTypes) {
+                        eventTypeNames.add(eventType.getName());
+                    }
+                    callback.onResponse(null, Response.success(eventTypeNames));
+                } else {
+                    callback.onFailure(null, new Throwable("Response for event types unsuccessful or empty"));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<EventTypeDTO>> call, Throwable t) {
+                callback.onFailure(null, t);
+            }
+        });
+    }
+
+    private void updateLoadMoreVisibility() {
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) eventRecyclerView.getLayoutParams();
+        if (eventAdapter.getItemCount() < totalItemsCount) {
+            loadMoreButton.setVisibility(View.VISIBLE);
+            params.bottomMargin = 0;
+        } else {
+            loadMoreButton.setVisibility(View.GONE);
+            params.bottomMargin = (int) (70 * getResources().getDisplayMetrics().density);
+        }
+        eventRecyclerView.setLayoutParams(params);
+    }
+    private void toggleEmptyEvents() {
+        if (eventAdapter.getItemCount() == 0) {
+            emptyEvents.setVisibility(View.VISIBLE);
+        } else {
+            emptyEvents.setVisibility(View.GONE);
+        }
+    }
+    private String formatDate(Long millis) {
+        if (millis == null) return null;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        return sdf.format(new Date(millis));
+    }
+
+
+
 
     @Override
     public void onStart() {
