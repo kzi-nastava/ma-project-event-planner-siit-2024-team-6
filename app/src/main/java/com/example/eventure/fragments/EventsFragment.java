@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -290,16 +291,6 @@ public class EventsFragment extends Fragment {
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(requireContext(), R.style.BottomSheetFullScreen);
         View dialogView = inflater.inflate(R.layout.filter_events, null);
         bottomSheetDialog.setContentView(dialogView);
-
-        // Access the BottomSheetBehavior and force full screen
-        View bottomSheet = dialogView.getParent() instanceof View ? (View) dialogView.getParent() : null;
-        if (bottomSheet != null) {
-            BottomSheetBehavior<View> behavior = BottomSheetBehavior.from(bottomSheet);
-            behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-            DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
-            int screenHeight = displayMetrics.heightPixels;
-            behavior.setPeekHeight(screenHeight);
-        }
 
         // Close button
         ImageView closeIcon = dialogView.findViewById(R.id.close_icon);
