@@ -15,7 +15,29 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+            <!-- Search -->
+            <LinearLayout
+                android:background="@color/blue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@id/toolbar"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
 
+                <androidx.appcompat.widget.SearchView
+                    android:id="@+id/events_search"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/border_background"
+                    android:backgroundTint="@color/white"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginTop="10dp"
+                    android:theme="@style/Theme.Eventure"
+                    android:layout_marginBottom="8dp"
+                    app:searchIcon="@drawable/search_icon"/>
+            </LinearLayout>
             <!-- Carousel -->
             <RelativeLayout
                 android:layout_width="match_parent"
