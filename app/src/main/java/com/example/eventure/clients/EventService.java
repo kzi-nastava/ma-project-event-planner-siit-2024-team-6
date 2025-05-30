@@ -40,6 +40,9 @@ public interface EventService {
             "skip: true"
     })
     Call<PagedResponse<EventDTO>> getFilteredEvents(
+            @Query("name") String name,
+            @Query("description") String description,
+            @Query("place") String place,
             @Query("eventType") String eventType,
             @Query("startDate") String startDate,
             @Query("endDate") String endDate,

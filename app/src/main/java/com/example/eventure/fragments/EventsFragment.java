@@ -2,6 +2,7 @@ package com.example.eventure.fragments;
 
 import android.os.Bundle;
 
+import androidx.appcompat.widget.SearchView;
 import androidx.core.util.Pair;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -73,7 +74,8 @@ public class EventsFragment extends Fragment {
     private String currentFilterStartDate = null;
     private String currentFilterEndDate = null;
     private List<String> eventTypes = new ArrayList<>();
-    private String selectedEventType = "";
+    //Search
+    private String searchInput;
 
     public EventsFragment() {
         // Required empty public constructor
@@ -95,8 +97,6 @@ public class EventsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.e("MethodsTag", "EventsFragment onCreateView called");
-
         View rootView = inflater.inflate(R.layout.fragment_events, container, false);
 
         eventService = ClientUtils.eventService;
@@ -108,28 +108,56 @@ public class EventsFragment extends Fragment {
         eventRecyclerView.setAdapter(eventAdapter);
         currentPage = 0;
         totalItemsCount = 1;
-        // Fetch data from API
+
+        // Fetch top 5
         fetchTopFiveEvents(rootView);
-        //fetchAllEvents(rootView, inflater);
         // Fetch the first page
         loadMoreButton = rootView.findViewById(R.id.loadMoreEvents);
-
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         eventRecyclerView.setLayoutManager(layoutManager);
         eventRecyclerView.setNestedScrollingEnabled(false);
         fetchAllEventsWithPagination(currentPage, loadMoreButton);
-
         // Set up button click listener for loading more
         loadMoreButton.setOnClickListener(v -> {
             if (!isLoading && eventAdapter.getItemCount() < totalItemsCount) {
                 currentPage++;
                 if (isFilterMode) {
-                    fetchFilteredEvents(currentFilterType, currentFilterStartDate, currentFilterEndDate, currentPage);
+                    fetchFilteredEvents(searchInput, searchInput, searchInput, currentFilterType, currentFilterStartDate, currentFilterEndDate, currentPage);
                 } else {
                     fetchAllEventsWithPagination(currentPage, loadMoreButton);
                 }
             }
         });
+        // Set listener for search
+        SearchView searchView = rootView.findViewById(R.id.events_search);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.d("EventsTag",query);
+                isFilterMode = true;
+                currentPage = 0;
+                searchInput = query;
+                currentFilterType = null;
+                currentFilterStartDate = null;
+                currentFilterEndDate = null;
+                eventAdapter.clearEvents();
+                fetchFilteredEvents(searchInput,searchInput,searchInput,currentFilterType,currentFilterStartDate,currentFilterEndDate,currentPage);
+                return true;
+            }
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                // When input is cleared, reload all events
+                if (newText == null || newText.trim().isEmpty()) {
+                    isFilterMode = false;
+                    searchInput = null;
+                    currentPage = 0;
+                    eventAdapter.clearEvents();
+                    fetchAllEventsWithPagination(currentPage, loadMoreButton);
+                }
+                return false;
+            }
+        });
+
         // Fetching event types for filter dropdown
         fetchEventTypes(new Callback<List<String>>() {
             @Override
@@ -137,9 +165,7 @@ public class EventsFragment extends Fragment {
                 eventTypes.clear();
                 eventTypes.addAll(response.body());
                 eventTypes.add(0, "Select Event Type");
-
             }
-
             @Override
             public void onFailure(Call<List<String>> call, Throwable t) {
             }
@@ -157,7 +183,7 @@ public class EventsFragment extends Fragment {
         isLoading = true; // Set loading state
         Log.d("EventsTag", "Fetching page: " + page);
 
-        eventService.getPagedEvents(page, 5).enqueue(new Callback<PagedResponse<EventDTO>>() {
+        eventService.getPagedEvents(page, ClientUtils.PAGE_SIZE).enqueue(new Callback<PagedResponse<EventDTO>>() {
             @Override
             public void onResponse(Call<PagedResponse<EventDTO>> call, Response<PagedResponse<EventDTO>> response) {
                 isLoading = false; // Reset loading state
@@ -338,16 +364,15 @@ public class EventsFragment extends Fragment {
             currentFilterStartDate = formatDate(start);
             currentFilterEndDate = formatDate(end);
 
-            eventAdapter.clearEvents(); // Clear old data
-            fetchFilteredEvents(currentFilterType, currentFilterStartDate, currentFilterEndDate, currentPage);
+            eventAdapter.clearEvents();
+            fetchFilteredEvents(null,null,null, currentFilterType, currentFilterStartDate, currentFilterEndDate, currentPage);
         });
 
         bottomSheetDialog.show();
     }
-    private void fetchFilteredEvents(String eventType, String startDate, String endDate, int page) {
+    private void fetchFilteredEvents(String name, String description, String place, String eventType, String startDate, String endDate, int page) {
         isLoading = true; // Prevent multiple calls at once
-
-        eventService.getFilteredEvents(eventType, startDate, endDate, page, 2)
+        eventService.getFilteredEvents(name, description, place, eventType, startDate, endDate, page, ClientUtils.PAGE_SIZE)
                 .enqueue(new Callback<PagedResponse<EventDTO>>() {
                     @Override
                     public void onResponse(Call<PagedResponse<EventDTO>> call, Response<PagedResponse<EventDTO>> response) {
@@ -356,7 +381,6 @@ public class EventsFragment extends Fragment {
                         if (response.isSuccessful() && response.body() != null) {
                             PagedResponse<EventDTO> pagedResponse = response.body();
                             totalItemsCount = pagedResponse.getTotalElements();
-
                             List<EventDTO> filteredEvents = pagedResponse.getContent();
                             if (filteredEvents != null && !filteredEvents.isEmpty()) {
                                 Log.d("EventsTag", "Fetched " + filteredEvents.size() + " filtered events on page: " + page);
@@ -369,7 +393,8 @@ public class EventsFragment extends Fragment {
                                 Log.d("EventsTag", "No filtered events on page: " + page);
                             }
                         } else {
-                            Log.d("EventsTag", "Failed to fetch filtered events: " + response.code());
+                            totalItemsCount = 0;
+                            Log.d("EventsTag", "No filtered events fetched: " + response.code());
                         }
                         // show/hide empty text if there are no events found
                         toggleEmptyEvents();

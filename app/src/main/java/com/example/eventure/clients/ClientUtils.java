@@ -28,7 +28,7 @@ public class ClientUtils {
     public static final String ALL_OFFERS_PAGED = "offers/all-elements";
     public static final String FILTERED_OFFERS = "offers/search";
     public static final String ALL_EVENT_TYPES = "admins/event-types";
-
+    public static final int PAGE_SIZE = 5;
 
     private static AuthService authService;
     public static void initializeAuthService(Context context) {
