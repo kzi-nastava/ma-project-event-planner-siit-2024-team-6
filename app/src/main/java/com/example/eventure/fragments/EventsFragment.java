@@ -58,6 +58,7 @@ public class EventsFragment extends Fragment {
 
     private EventService eventService;
     private EventTypeService eventTypeService;
+    // ui
     private ViewPager2 eventCarousel;
     private EventCarouselAdapter carouselAdapter;
     private RecyclerView eventRecyclerView;
@@ -65,6 +66,7 @@ public class EventsFragment extends Fragment {
     private Button loadMoreButton;
     private EventAdapter eventAdapter;
 
+    //pagination
     private boolean isLoading = false;
     private int currentPage = 0;
     private int totalItemsCount = 1;
@@ -75,6 +77,7 @@ public class EventsFragment extends Fragment {
     private String currentFilterStartDate = null;
     private String currentFilterEndDate = null;
     private List<String> eventTypes = new ArrayList<>();
+
     //Search
     private String searchInput;
 

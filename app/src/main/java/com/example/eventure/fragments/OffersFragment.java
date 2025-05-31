@@ -2,6 +2,7 @@ package com.example.eventure.fragments;
 
 import android.os.Bundle;
 
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,6 +19,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ScrollView;
+import android.widget.TextView;
 
 import com.example.eventure.R;
 import com.example.eventure.adapters.OfferAdapter;
@@ -42,42 +44,43 @@ import retrofit2.Response;
  */
 public class OffersFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
     private OfferService offerService;
+    // ui
     private ViewPager2 offerCarousel;
     private OfferCarouselAdapter carouselAdapter;
     private RecyclerView offerRecyclerView;
     private OfferAdapter offerAdapter;
+    private TextView emptyOffers;
+    private Button loadMoreButton;
 
-    private boolean isLoading = false;  // Track loading state
-    private int currentPage = 0;       // Current page number (start from 1)
+    // pagination params
+    private boolean isLoading = false;
+    private int currentPage = 0;
     private int totalItemsCount = 1;
+
+    //filter
+    private boolean isFilterMode = false;
+    private String currentName = null;
+    private String currentDescription = null;
+    private Double currentMaxPrice = null;
+    private Boolean currentIsOnSale = null;
+    private String currentStartDate = null;
+    private String currentEndDate = null;
+    private String currentCategory = null;
+    private String currentEventType = null;
+    private Boolean currentIsService = null;
+    private Boolean currentIsProduct = null;
+
+    //Search
+    private String searchInput;
     public OffersFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment OfferFragment.
-     */
-    // TODO: Rename and change types and number of parameters
+
     public static OffersFragment newInstance(String param1, String param2) {
         OffersFragment fragment = new OffersFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -85,12 +88,7 @@ public class OffersFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         Log.e("MethodsTag", "OffersFragment onCreate called");
-
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -100,33 +98,58 @@ public class OffersFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_offer, container, false);
 
-
-        // Initialize API Service
         offerService = ClientUtils.offerService;
 
-        // Initialize UI Components
         offerCarousel = rootView.findViewById(R.id.offerCarousel);
         offerRecyclerView = rootView.findViewById(R.id.productRecyclerView);
+        emptyOffers = rootView.findViewById(R.id.emptyOffers);
         offerAdapter = new OfferAdapter();
         offerRecyclerView.setAdapter(offerAdapter);
-        // Fetch initial data
-        fetchTopOffers(rootView);  // Top 5 offers for the carousel
-
-        Button loadMoreButton = rootView.findViewById(R.id.loadMoreOffers);
-
-        // Setup RecyclerView
+        // Fetch top 5
+        fetchTopOffers(rootView);
+        // Fetch the first page
+        loadMoreButton = rootView.findViewById(R.id.loadMoreOffers);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         offerRecyclerView.setLayoutManager(layoutManager);
         offerRecyclerView.setNestedScrollingEnabled(false);
-
-
-        fetchOffersWithPagination(currentPage, loadMoreButton);  // First page of offers
+        fetchOffersWithPagination(currentPage, loadMoreButton);
 
         // Setup Load More button click
         loadMoreButton.setOnClickListener(v -> {
             if (!isLoading && offerAdapter.getItemCount() < totalItemsCount) {
                 currentPage++;
-                fetchOffersWithPagination(currentPage, loadMoreButton);
+                if (isFilterMode) {
+                    fetchFilteredOffers(searchInput,searchInput,currentMaxPrice,currentIsOnSale,currentStartDate,currentEndDate,currentCategory,currentEventType,currentIsService,currentIsProduct,currentPage);
+                } else {
+                    fetchOffersWithPagination(currentPage, loadMoreButton);
+                }
+            }
+        });
+        // Set listener for search
+        SearchView searchView = rootView.findViewById(R.id.offers_search);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.d("OffersTag",query);
+                isFilterMode = true;
+                currentPage = 0;
+                searchInput = query;
+                resetFilter();
+                offerAdapter.clearOffers();
+                fetchFilteredOffers(searchInput,searchInput,currentMaxPrice,currentIsOnSale,currentStartDate,currentEndDate,currentCategory,currentEventType,currentIsService,currentIsProduct,currentPage);
+                return true;
+            }
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                // When input is cleared, reload all offers
+                if (newText == null || newText.trim().isEmpty()) {
+                    isFilterMode = false;
+                    searchInput = null;
+                    currentPage = 0;
+                    offerAdapter.clearOffers();
+                    fetchOffersWithPagination(currentPage, loadMoreButton);
+                }
+                return false;
             }
         });
 
@@ -235,6 +258,7 @@ public class OffersFragment extends Fragment {
         });
     }
 
+/*
     private void fetchAllOffers(View rootView, LayoutInflater inflater) {
         ScrollView parentScrollView = rootView.findViewById(R.id.parentScrollView);
 
@@ -296,6 +320,7 @@ public class OffersFragment extends Fragment {
         params.height = totalHeight;
         recyclerView.setLayoutParams(params);
     }
+*/
 
     private void showFilterDialog(LayoutInflater inflater) {
         // Create a BottomSheetDialog
@@ -324,6 +349,100 @@ public class OffersFragment extends Fragment {
         bottomSheetDialog.show();
     }
 
+    private void fetchFilteredOffers(
+            String name,
+            String description,
+            Double maxPrice,
+            Boolean isOnSale,
+            String startDate,
+            String endDate,
+            String category,
+            String eventType,
+            Boolean isService,
+            Boolean isProduct,
+            int page
+    ) {
+        isLoading = true;
+
+        offerService.getFilteredOffers(
+                name,
+                description,
+                maxPrice,
+                isOnSale,
+                startDate,
+                endDate,
+                category,
+                eventType,
+                isService,
+                isProduct,
+                page,
+                ClientUtils.PAGE_SIZE
+        ).enqueue(new Callback<PagedResponse<OfferDTO>>() {
+            @Override
+            public void onResponse(Call<PagedResponse<OfferDTO>> call, Response<PagedResponse<OfferDTO>> response) {
+                isLoading = false;
+
+                if (response.isSuccessful() && response.body() != null) {
+                    PagedResponse<OfferDTO> pagedResponse = response.body();
+                    totalItemsCount = pagedResponse.getTotalElements();
+                    List<OfferDTO> filteredOffers = pagedResponse.getContent();
+
+                    if (filteredOffers != null && !filteredOffers.isEmpty()) {
+                        Log.d("OffersTag", "Fetched " + filteredOffers.size() + " filtered offers on page: " + page);
+                        offerAdapter.addOffers(filteredOffers);
+                        offerAdapter.notifyItemRangeInserted(
+                                offerAdapter.getItemCount() - filteredOffers.size(),
+                                filteredOffers.size()
+                        );
+                    } else {
+                        Log.d("OffersTag", "No filtered offers on page: " + page);
+                    }
+                } else {
+                    totalItemsCount = 0;
+                    Log.d("OffersTag", "No filtered offers fetched: " + response.code());
+                }
+
+                toggleEmptyOffers();
+                updateLoadMoreVisibility();
+            }
+
+            @Override
+            public void onFailure(Call<PagedResponse<OfferDTO>> call, Throwable t) {
+                isLoading = false;
+                Log.e("OffersTag", "Error loading filtered offers: " + t.getMessage());
+            }
+        });
+    }
+    private void updateLoadMoreVisibility() {
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) offerRecyclerView.getLayoutParams();
+        if (offerAdapter.getItemCount() < totalItemsCount) {
+            loadMoreButton.setVisibility(View.VISIBLE);
+            params.bottomMargin = 0;
+        } else {
+            loadMoreButton.setVisibility(View.GONE);
+            params.bottomMargin = (int) (70 * getResources().getDisplayMetrics().density);
+        }
+        offerRecyclerView.setLayoutParams(params);
+    }
+    private void toggleEmptyOffers() {
+        if (offerAdapter.getItemCount() == 0) {
+            emptyOffers.setVisibility(View.VISIBLE);
+        } else {
+            emptyOffers.setVisibility(View.GONE);
+        }
+    }
+    private void resetFilter() {
+        currentName = null;
+        currentDescription = null;
+        currentMaxPrice = null;
+        currentIsOnSale = null;
+        currentStartDate = null;
+        currentEndDate = null;
+        currentCategory = null;
+        currentEventType = null;
+        currentIsService = null;
+        currentIsProduct = null;
+    }
 
     @Override
     public void onStart() {
