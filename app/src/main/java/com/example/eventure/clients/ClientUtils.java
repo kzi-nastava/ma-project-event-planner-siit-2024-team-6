@@ -48,14 +48,10 @@ public class ClientUtils {
             .create();
 
     public static OkHttpClient test() {
-        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-
         return new OkHttpClient.Builder()
                 .connectTimeout(120, TimeUnit.SECONDS)
                 .readTimeout(120, TimeUnit.SECONDS)
                 .writeTimeout(120, TimeUnit.SECONDS)
-                .addInterceptor(interceptor)
                 .addInterceptor(chain -> {
                     okhttp3.Request originalRequest = chain.request();
                     String skipHeader = originalRequest.header("skip");
@@ -78,27 +74,12 @@ public class ClientUtils {
                     if (authService.isLoggedIn()) {
                         Log.d("AuthTag", "Adding token to request: " + originalRequest.url());
                         okhttp3.Request newRequest = originalRequest.newBuilder()
-                                .addHeader("Authorization", "Bearer " + token)
+                                .addHeader("X-Auth-Token", "Bearer " + token)
                                 .build();
                         return chain.proceed(newRequest);
                     }
                     Log.d("AuthTag", "No token available or user is not logged in");
                     return chain.proceed(originalRequest);
-                })
-                .addInterceptor(chain -> {
-                    // Get the outgoing request
-                    okhttp3.Request request = chain.request();
-
-                    // Check and log if the Authorization header is present
-                    String authorizationHeader = request.header("Authorization");
-                    if (authorizationHeader != null) {
-                        Log.d("AuthTag", "Authorization Token attached: " + authorizationHeader);
-                    } else {
-                        Log.d("AuthTag", "No Authorization token attached to the request");
-                    }
-
-                    // Proceed with the request
-                    return chain.proceed(request);
                 })
                 .build();
     }
