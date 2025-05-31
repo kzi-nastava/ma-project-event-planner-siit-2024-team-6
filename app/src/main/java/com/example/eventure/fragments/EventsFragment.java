@@ -27,7 +27,6 @@ import android.widget.TextView;
 import com.example.eventure.R;
 import com.example.eventure.adapters.EventAdapter;
 import com.example.eventure.adapters.EventCarouselAdapter;
-import com.example.eventure.clients.EventTypeService;
 import com.example.eventure.dto.EventDTO;
 import com.example.eventure.dto.EventTypeDTO;
 import com.example.eventure.model.PagedResponse;
@@ -57,7 +56,6 @@ import retrofit2.Response;
 public class EventsFragment extends Fragment {
 
     private EventService eventService;
-    private EventTypeService eventTypeService;
     // ui
     private ViewPager2 eventCarousel;
     private EventCarouselAdapter carouselAdapter;
@@ -102,9 +100,9 @@ public class EventsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_events, container, false);
+        Log.e("MethodsTag", "EventsFragment onCreateView called");
 
         eventService = ClientUtils.eventService;
-        eventTypeService = ClientUtils.eventTypeService;
         eventCarousel = rootView.findViewById(R.id.eventCarousel);
         eventRecyclerView = rootView.findViewById(R.id.eventRecyclerView);
         emptyEvents = rootView.findViewById(R.id.emptyEvents);
@@ -405,7 +403,7 @@ public class EventsFragment extends Fragment {
                 });
     }
     public void fetchEventTypes(Callback<List<String>> callback) {
-        eventTypeService.getAll().enqueue(new Callback<List<EventTypeDTO>>() {
+        ClientUtils.eventTypeService.getAll().enqueue(new Callback<List<EventTypeDTO>>() {
             @Override
             public void onResponse(Call<List<EventTypeDTO>> call, Response<List<EventTypeDTO>> response) {
                 if (response.isSuccessful() && response.body() != null) {

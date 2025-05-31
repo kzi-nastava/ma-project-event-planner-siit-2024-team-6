@@ -15,10 +15,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ScrollView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.eventure.R;
@@ -26,11 +29,16 @@ import com.example.eventure.adapters.OfferAdapter;
 import com.example.eventure.adapters.OfferCarouselAdapter;
 import com.example.eventure.clients.ClientUtils;
 import com.example.eventure.clients.OfferService;
+import com.example.eventure.dto.EventTypeDTO;
 import com.example.eventure.dto.OfferDTO;
 import com.example.eventure.model.PagedResponse;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.slider.RangeSlider;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import retrofit2.Call;
@@ -70,6 +78,8 @@ public class OffersFragment extends Fragment {
     private String currentEventType = null;
     private Boolean currentIsService = null;
     private Boolean currentIsProduct = null;
+    private List<String> eventTypes = new ArrayList<>();
+    private List<String> categories = new ArrayList<>();
 
     //Search
     private String searchInput;
@@ -150,6 +160,34 @@ public class OffersFragment extends Fragment {
                     fetchOffersWithPagination(currentPage, loadMoreButton);
                 }
                 return false;
+            }
+        });
+
+        // Fetching event types for filter dropdown
+        fetchEventTypes(new Callback<List<String>>() {
+            @Override
+            public void onResponse(Call<List<String>> call, Response<List<String>> response) {
+                eventTypes.clear();
+                eventTypes.addAll(response.body());
+                eventTypes.add(0, "Select Event Type");
+            }
+            @Override
+            public void onFailure(Call<List<String>> call, Throwable t) {
+            }
+        });
+
+        // Fetching categories for filter dropdown
+        fetchCategories(new Callback<List<String>>() {
+            @Override
+            public void onResponse(Call<List<String>> call, Response<List<String>> response) {
+                categories.clear();
+                categories.addAll(response.body());
+                categories.add(0, "Select Category");
+            }
+
+            @Override
+            public void onFailure(Call<List<String>> call, Throwable t) {
+                Log.e("OffersTag", "Fetching categories failed: " + t.getMessage(), t);
             }
         });
 
@@ -258,70 +296,6 @@ public class OffersFragment extends Fragment {
         });
     }
 
-/*
-    private void fetchAllOffers(View rootView, LayoutInflater inflater) {
-        ScrollView parentScrollView = rootView.findViewById(R.id.parentScrollView);
-
-        offerService.getAll().enqueue(new Callback<List<OfferDTO>>() {
-            @Override
-            public void onResponse(Call<List<OfferDTO>> call, Response<List<OfferDTO>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    List<OfferDTO> offers = response.body();
-
-                    offerAdapter = new OfferAdapter(offers);
-                    offerRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                    offerRecyclerView.setAdapter(offerAdapter);
-
-                    // Adjust RecyclerView height
-                    parentScrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
-                        boolean isHeightCalculated = false;
-
-                        @Override
-                        public void onScrollChanged() {
-                            if (!isHeightCalculated) {
-                                calculateAndSetRecyclerViewHeight(offerRecyclerView);
-                                isHeightCalculated = true;
-                            }
-                        }
-                    });
-                } else {
-                    Log.e("OffersFragment", "Failed to fetch all offers.");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<OfferDTO>> call, Throwable t) {
-                Log.e("OffersFragment", "Error fetching all offers", t);
-            }
-        });
-
-    }
-
-    // Calculate the height of all items in RecyclerView and set the height
-    private void calculateAndSetRecyclerViewHeight(RecyclerView recyclerView) {
-        RecyclerView.Adapter adapter = recyclerView.getAdapter();
-        if (adapter == null) return;
-
-        int totalHeight = 0;
-        for (int i = 0; i < adapter.getItemCount(); i++) {
-            View view = LayoutInflater.from(recyclerView.getContext())
-                    .inflate(R.layout.product_card, recyclerView, false);
-
-            view.measure(
-                    View.MeasureSpec.makeMeasureSpec(recyclerView.getWidth(), View.MeasureSpec.EXACTLY),
-                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
-            );
-
-            totalHeight += view.getMeasuredHeight();
-        }
-
-        // Set the calculated height to the RecyclerView
-        ViewGroup.LayoutParams params = recyclerView.getLayoutParams();
-        params.height = totalHeight;
-        recyclerView.setLayoutParams(params);
-    }
-*/
-
     private void showFilterDialog(LayoutInflater inflater) {
         // Create a BottomSheetDialog
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
@@ -329,22 +303,65 @@ public class OffersFragment extends Fragment {
         View dialogView = inflater.inflate(R.layout.filter_offers, null);
         bottomSheetDialog.setContentView(dialogView);
 
+
+
         // Access the BottomSheetBehavior from the BottomSheetDialog
         View bottomSheet = (View) dialogView.getParent();
         BottomSheetBehavior<View> bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
-
         // Disable dragging to dismiss
         bottomSheetBehavior.setDraggable(false);
-
         // Optionally, set the initial state to expanded (or collapsed) if needed
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
 
-        // Find the close icon in the filter layout
-        ImageView closeIcon = dialogView.findViewById(R.id.close_icon);
 
-        // Set an OnClickListener to dismiss the BottomSheetDialog when the close icon is clicked
+
+        ImageView closeIcon = dialogView.findViewById(R.id.close_icon);
         closeIcon.setOnClickListener(v1 -> bottomSheetDialog.dismiss());
 
+        Spinner categorySpinner = dialogView.findViewById(R.id.spinner_category);
+        Spinner eventTypeSpinner = dialogView.findViewById(R.id.spinner_event_type);
+        CheckBox onSaleCheckBox = dialogView.findViewById(R.id.checkbox_on_sale);
+        CheckBox productCheckBox = dialogView.findViewById(R.id.checkbox_product);
+        CheckBox serviceCheckBox = dialogView.findViewById(R.id.checkbox_service);
+        RangeSlider priceSlider = dialogView.findViewById(R.id.price_range_slider);
+        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_dropdown_item, categories);
+        categorySpinner.setAdapter(categoryAdapter);
+        ArrayAdapter<String> eventTypeAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_dropdown_item, eventTypes);
+        eventTypeSpinner.setAdapter(eventTypeAdapter);
+
+        Button applyButton = dialogView.findViewById(R.id.filter_button);
+        applyButton.setOnClickListener(v -> {
+            String selectedCategory = categorySpinner.getSelectedItem().toString();
+            String selectedEventType = eventTypeSpinner.getSelectedItem().toString();
+            currentCategory = selectedCategory.equals("Select Category") ? null : selectedCategory;
+            currentEventType = selectedEventType.equals("Select Event Type") ? null : selectedEventType;
+            currentIsOnSale = onSaleCheckBox.isChecked() ? true : null;
+            currentIsProduct = productCheckBox.isChecked() ? true : null;
+            currentIsService = serviceCheckBox.isChecked() ? true : null;
+            List<Float> values = priceSlider.getValues();
+            currentMaxPrice = Double.valueOf(values.get(1));
+            if (isOffersFilterEmpty(
+                    currentCategory,
+                    currentEventType,
+                    null, // minPrice not used
+                    currentMaxPrice,
+                    null, // startDate not used
+                    null, // endDate not used
+                    currentIsOnSale != null,
+                    currentIsProduct != null,
+                    currentIsService != null
+            )) {
+                bottomSheetDialog.dismiss();
+                return;
+            }
+            bottomSheetDialog.dismiss();
+            isFilterMode = true;
+            currentPage = 0;
+
+            offerAdapter.clearOffers();
+            fetchFilteredOffers(null, null, currentMaxPrice, currentIsOnSale, currentStartDate, currentEndDate,
+                    currentCategory, currentEventType, currentIsService, currentIsProduct, currentPage);
+        });
         // Show the dialog
         bottomSheetDialog.show();
     }
@@ -363,7 +380,24 @@ public class OffersFragment extends Fragment {
             int page
     ) {
         isLoading = true;
-
+        //RAZMISLITI STA DA MI BUDE DEFAULT ZA ISPRODUCT I ISSERVICE
+        Log.d("OffersTag", "Fetching filtered offers with parameters:");
+        Log.d("OffersTag", "name: " + name);
+        Log.d("OffersTag", "description: " + description);
+        Log.d("OffersTag", "maxPrice: " + maxPrice);
+        Log.d("OffersTag", "isOnSale: " + isOnSale);
+        Log.d("OffersTag", "startDate: " + startDate);
+        Log.d("OffersTag", "endDate: " + endDate);
+        Log.d("OffersTag", "category: " + category);
+        Log.d("OffersTag", "eventType: " + eventType);
+        Log.d("OffersTag", "isService: " + isService);
+        Log.d("OffersTag", "isProduct: " + isProduct);
+        if(isService == null){
+            isService = false;
+        }
+        if(isProduct == null){
+            isProduct = false;
+        }
         offerService.getFilteredOffers(
                 name,
                 description,
@@ -384,7 +418,10 @@ public class OffersFragment extends Fragment {
 
                 if (response.isSuccessful() && response.body() != null) {
                     PagedResponse<OfferDTO> pagedResponse = response.body();
+
                     totalItemsCount = pagedResponse.getTotalElements();
+                    Log.d("OffersTag", "Fetched TOTAL " + totalItemsCount + " filtered offers on page: " + page);
+
                     List<OfferDTO> filteredOffers = pagedResponse.getContent();
 
                     if (filteredOffers != null && !filteredOffers.isEmpty()) {
@@ -413,6 +450,50 @@ public class OffersFragment extends Fragment {
             }
         });
     }
+    public void fetchEventTypes(Callback<List<String>> callback) {
+        ClientUtils.eventTypeService.getAll().enqueue(new Callback<List<EventTypeDTO>>() {
+            @Override
+            public void onResponse(Call<List<EventTypeDTO>> call, Response<List<EventTypeDTO>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<EventTypeDTO> eventTypes = response.body();
+                    List<String> eventTypeNames = new ArrayList<>();
+                    for (EventTypeDTO eventType : eventTypes) {
+                        eventTypeNames.add(eventType.getName());
+                    }
+                    callback.onResponse(null, Response.success(eventTypeNames));
+                } else {
+                    callback.onFailure(null, new Throwable("Response for event types unsuccessful or empty"));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<EventTypeDTO>> call, Throwable t) {
+                callback.onFailure(null, t);
+            }
+        });
+    }
+    public void fetchCategories(Callback<List<String>> callback) {
+        ClientUtils.categoryService.getCategories().enqueue(new Callback<List<String>>() {
+            @Override
+            public void onResponse(Call<List<String>> call, Response<List<String>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<String> categoriesNames = response.body();
+                    callback.onResponse(null, Response.success(categoriesNames));
+                } else {
+                    callback.onFailure(null, new Throwable("Response for categories unsuccessful or empty"));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<String>> call, Throwable t) {
+                // Log network or Retrofit-level failures
+                Log.e("OffersTag", "fetchCategories() failed: " + t.getMessage(), t);
+                callback.onFailure(null, t);
+            }
+        });
+    }
+
+
     private void updateLoadMoreVisibility() {
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) offerRecyclerView.getLayoutParams();
         if (offerAdapter.getItemCount() < totalItemsCount) {
@@ -443,6 +524,24 @@ public class OffersFragment extends Fragment {
         currentIsService = null;
         currentIsProduct = null;
     }
+    private boolean isOffersFilterEmpty(String selectedCategory, String selectedEventType,
+                                        Float minPrice, Double maxPrice,
+                                        Long startDate, Long endDate,
+                                        boolean isOnSaleChecked,
+                                        boolean isProductChecked,
+                                        boolean isServiceChecked) {
+        boolean noCategorySelected = selectedCategory == null || "Select Category".equals(selectedCategory);
+        boolean noEventTypeSelected = selectedEventType == null || "Select Event Type".equals(selectedEventType);
+        boolean noPriceFilter = (minPrice == null || minPrice == 0f) && (maxPrice == null || maxPrice == 0f);
+        boolean noDateFilter = startDate == null && endDate == null;
+        boolean noOnSaleChecked = !isOnSaleChecked;
+        boolean noProductChecked = !isProductChecked;
+        boolean noServiceChecked = !isServiceChecked;
+
+        return noCategorySelected && noEventTypeSelected && noPriceFilter && noDateFilter
+                && noOnSaleChecked && noProductChecked && noServiceChecked;
+    }
+
 
     @Override
     public void onStart() {
