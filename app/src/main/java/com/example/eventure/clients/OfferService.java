@@ -67,8 +67,8 @@ public interface OfferService {
     Call<PagedResponse<Offer>> getFilteredServices(
             @Query("category") String category,
             @Query("eventType") String eventType,
-            @Query("isAvailable") Boolean isAvailable,
             @Query("isOnSale") Boolean isOnSale,
+            @Query("isAvailable") Boolean isAvailable,
             @Query("maxPrice") Double maxPrice,
             @Query("page") int page,
             @Query("pageSize") int size
