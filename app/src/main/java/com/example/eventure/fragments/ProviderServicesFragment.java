@@ -101,9 +101,25 @@ public class ProviderServicesFragment extends Fragment {
     }
 
     private void setupFilter(ImageView filterIcon, LayoutInflater inflater) {
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
+        View dialogView = inflater.inflate(R.layout.filter_provider_services, null);
+
+        CheckBox availabilityCheckBox = dialogView.findViewById(R.id.availability_checkbox);
+        availabilityCheckBox.setChecked(true);
+
+        // Containers for dynamically loaded checkboxes
+        eventTypeSpinner = dialogView.findViewById(R.id.event_type_spinner);
+        categorySpinner = dialogView.findViewById(R.id.category_spinner);
+
+        // Load categories and event types
+        loadCategoriesIntoSpinner();
+        loadEventTypesIntoSpinner();
+
+        RangeSlider priceRangeSlider = dialogView.findViewById(R.id.price_range_slider);
+        priceRangeSlider.setValues(priceRangeSlider.getValueTo());
+
         filterIcon.setOnClickListener(v -> {
-            BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
-            View dialogView = inflater.inflate(R.layout.filter_provider_services, null);
+
             bottomSheetDialog.setContentView(dialogView);
 
             View bottomSheet = (View) dialogView.getParent();
@@ -115,13 +131,6 @@ public class ProviderServicesFragment extends Fragment {
             ImageView closeIcon = dialogView.findViewById(R.id.close_icon);
             closeIcon.setOnClickListener(v1 -> bottomSheetDialog.dismiss());
 
-            // Containers for dynamically loaded checkboxes
-            eventTypeSpinner = dialogView.findViewById(R.id.event_type_spinner);
-            categorySpinner = dialogView.findViewById(R.id.category_spinner);
-
-            // Load categories and event types
-            loadCategoriesIntoSpinner();
-            loadEventTypesIntoSpinner();
 
             // Find the filter button
             Button filterButton = dialogView.findViewById(R.id.filter_button);
@@ -140,16 +149,14 @@ public class ProviderServicesFragment extends Fragment {
                 }
 
                 // Get availability checkbox value
-                CheckBox availabilityCheckBox = dialogView.findViewById(R.id.availability_checkbox);
                 Boolean isAvailable = availabilityCheckBox.isChecked();
 
-                // Get sale checkbox value
                 CheckBox saleCheckBox = dialogView.findViewById(R.id.sale_checkbox);
                 Boolean onSale = saleCheckBox.isChecked();
 
                 // Get price range values from the RangeSlider
-                RangeSlider priceRangeSlider = dialogView.findViewById(R.id.price_range_slider);
                 Float maxPrice = priceRangeSlider.getValues().get(0);
+
                 // Call the filtering method with the collected dat0
                 filterOffers(selectedCategory, selectedEventType, onSale, isAvailable, (double) maxPrice);
 
@@ -162,17 +169,18 @@ public class ProviderServicesFragment extends Fragment {
                 categorySpinner.setSelection(0); // back to "Select Category"
                 eventTypeSpinner.setSelection(0); // back to "Select Event Type"
 
-                CheckBox availabilityCheckBox = dialogView.findViewById(R.id.availability_checkbox);
-                availabilityCheckBox.setChecked(false);
+                availabilityCheckBox.setChecked(true);
 
                 CheckBox saleCheckBox = dialogView.findViewById(R.id.sale_checkbox);
                 saleCheckBox.setChecked(false);
 
-                RangeSlider priceRangeSlider = dialogView.findViewById(R.id.price_range_slider);
-                priceRangeSlider.setValues(priceRangeSlider.getValueFrom(), priceRangeSlider.getValueTo());
+                priceRangeSlider.setValues(priceRangeSlider.getValueTo());
 
-                // Optionally refresh full list
-                offerViewModel.refresh();
+                // Call the filtering method with the collected dat0
+                filterOffers(null, null, false, true, (double) priceRangeSlider.getValueTo());
+
+                // Dismiss the dialog after applying filters
+                bottomSheetDialog.dismiss();
 
                 Toast.makeText(getContext(), "Filters reset", Toast.LENGTH_SHORT).show();
             });
