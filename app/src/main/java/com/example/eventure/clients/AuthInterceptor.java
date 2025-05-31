@@ -18,7 +18,7 @@ public class AuthInterceptor implements Interceptor {
         String token = authService.getToken();
         if (token != null && authService.isLoggedIn()) {
             Request request = chain.request().newBuilder()
-                    .addHeader("Authorization", "Bearer " + token)
+                    .addHeader("X-Auth-Token", "Bearer " + token)
                     .build();
             return chain.proceed(request);
         }

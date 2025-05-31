@@ -78,7 +78,7 @@ public class ClientUtils {
                     if (authService.isLoggedIn()) {
                         Log.d("AuthTag", "Adding token to request: " + originalRequest.url());
                         okhttp3.Request newRequest = originalRequest.newBuilder()
-                                .addHeader("Authorization", "Bearer " + token)
+                                .addHeader("X-Auth-Token", "Bearer " + token)
                                 .build();
                         return chain.proceed(newRequest);
                     }
@@ -90,7 +90,7 @@ public class ClientUtils {
                     okhttp3.Request request = chain.request();
 
                     // Check and log if the Authorization header is present
-                    String authorizationHeader = request.header("Authorization");
+                    String authorizationHeader = request.header("X-Auth-Token");
                     if (authorizationHeader != null) {
                         Log.d("AuthTag", "Authorization Token attached: " + authorizationHeader);
                     } else {
