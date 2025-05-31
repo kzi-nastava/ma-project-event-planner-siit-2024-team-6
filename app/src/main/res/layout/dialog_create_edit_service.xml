@@ -47,15 +47,18 @@
                 android:text="Event Types"
                 android:textSize="20sp"
                 android:layout_marginTop="16dp" />
-            <LinearLayout
-                android:id="@+id/event_types_container"
+            <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:layout_height="150dp"
                 android:layout_marginTop="8dp">
-                <!-- Checkboxes will be added here dynamically -->
-            </LinearLayout>
-
+                <LinearLayout
+                    android:id="@+id/event_types_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <!-- Checkboxes will be added dynamically here -->
+                </LinearLayout>
+            </ScrollView>
             <TextView
                 android:id="@+id/category_text"
                 android:layout_width="match_parent"
@@ -135,7 +138,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Discount percentage"
+                android:text="Discount price"
                 android:textSize="20sp"
                 android:layout_marginTop="8dp" />
             <EditText
@@ -289,6 +292,7 @@
                 android:text="Submit"
                 android:layout_marginTop="24dp" />
         </LinearLayout>
+
     </ScrollView>
 
 
