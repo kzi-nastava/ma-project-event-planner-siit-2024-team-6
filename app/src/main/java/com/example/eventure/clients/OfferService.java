@@ -52,11 +52,11 @@ public interface OfferService {
             "User-Agent: Mobile-Android",
             "Content-Type:application/json"
     })
-    @PUT("providers/{providerId}/{offerId}")
-    Call<Offer> editProviderService(@Path("providerId") int pId, @Path("offerId") int oId, @Body OfferDTO offer);
+    @PUT("providers/{offerId}")
+    Call<Offer> editProviderService( @Path("offerId") int oId, @Body OfferDTO offer);
 
-    @POST("providers/{providerId}")
-    Call<Offer> createProviderService(@Path("providerId") int pId, @Body OfferDTO offer);
+    @POST("providers/")
+    Call<Offer> createProviderService(@Body OfferDTO offer);
 
     @DELETE("providers/{offerId}")
     Call<Void> deleteProviderService(@Path("offerId") int id);
