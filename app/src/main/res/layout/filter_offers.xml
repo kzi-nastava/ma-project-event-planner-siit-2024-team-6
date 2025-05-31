@@ -164,8 +164,8 @@
                 android:layout_height="wrap_content"
                 android:contentDescription="Price Range Slider"
                 android:valueFrom="0.0"
-                android:valueTo="100.0"
-                android:stepSize="1.0"
+                android:valueTo="2000.0"
+                android:stepSize="10.0"
                 app:values="@array/slider_initial_values" />
 
 
