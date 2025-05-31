@@ -63,17 +63,11 @@
                 android:textColor="@color/black"
                 android:layout_marginBottom="8dp" />
 
-            <ScrollView
+            <Spinner
+                android:id="@+id/event_type_spinner"
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
-                android:layout_marginBottom="16dp">
-
-                <LinearLayout
-                    android:id="@+id/event_type_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical" />
-            </ScrollView>
+                android:layout_height="wrap_content"
+                android:spinnerMode="dropdown" />
 
             <!-- Divider -->
             <View
@@ -91,17 +85,11 @@
                 android:textColor="@color/black"
                 android:layout_marginBottom="8dp" />
 
-            <ScrollView
+            <Spinner
+                android:id="@+id/category_spinner"
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
-                android:layout_marginBottom="16dp">
-
-                <LinearLayout
-                    android:id="@+id/category_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical" />
-            </ScrollView>
+                android:layout_height="wrap_content"
+                android:spinnerMode="dropdown" />
 
             <!-- Divider -->
             <View
@@ -151,6 +139,22 @@
                 android:text="Available"
                 android:textSize="16sp" />
 
+            <!-- Sale Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Only services on sale"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                android:layout_marginBottom="8dp" />
+
+            <CheckBox
+                android:id="@+id/sale_checkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="On sale"
+                android:textSize="16sp" />
+
             <!-- Filter Button -->
             <Button
                 android:id="@+id/filter_button"
@@ -160,6 +164,18 @@
                 android:backgroundTint="@color/blue"
                 android:padding="12dp"
                 android:text="Apply Filter"
+                android:textColor="@android:color/white"
+                android:textStyle="bold" />
+
+            <!-- Reset Filter Button -->
+            <Button
+                android:id="@+id/reset_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="@color/black"
+                android:padding="12dp"
+                android:text="Reset Filter"
                 android:textColor="@android:color/white"
                 android:textStyle="bold" />
 
