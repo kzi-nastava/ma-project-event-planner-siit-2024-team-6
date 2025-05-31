@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -48,6 +49,7 @@ public class ProviderServicesFragment extends Fragment {
     private ProviderOfferViewModel offerViewModel;
     private Spinner eventTypeSpinner;
     private Spinner categorySpinner;
+    private TextView emptyView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -58,6 +60,8 @@ public class ProviderServicesFragment extends Fragment {
         // Initialize RecyclerView
         recyclerView = rootView.findViewById(R.id.services_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        emptyView = rootView.findViewById(R.id.empty_view);
 
         progressBar = rootView.findViewById(R.id.progress_bar);
 
@@ -82,7 +86,7 @@ public class ProviderServicesFragment extends Fragment {
             @NonNull
             @Override
             public <T extends androidx.lifecycle.ViewModel> T create(@NonNull Class<T> modelClass) {
-                return (T) new ProviderOfferViewModel(1, 10); // Example providerId = 1, pageSize = 10
+                return (T) new ProviderOfferViewModel(10); //pageSize = 10
             }
         }).get(ProviderOfferViewModel.class);
 

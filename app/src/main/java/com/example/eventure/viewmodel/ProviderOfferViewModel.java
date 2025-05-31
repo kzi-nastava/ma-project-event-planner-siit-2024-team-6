@@ -19,7 +19,7 @@ public class ProviderOfferViewModel extends ViewModel {
     private ProviderOfferDataSourceFactory dataSourceFactory;
     private PagedList.Config config;
 
-    public ProviderOfferViewModel(int providerId, int pageSize) {
+    public ProviderOfferViewModel(int pageSize) {
         // Initialize DataSourceFactory and PagedList
         dataSourceFactory = new ProviderOfferDataSourceFactory( pageSize, "", null, null, null, null, false, false);
         config = new PagedList.Config.Builder()
@@ -53,13 +53,15 @@ public class ProviderOfferViewModel extends ViewModel {
      * Refreshes the current data source to fetch updated data.
      */
     public void refresh() {
-        if (pagedOffers != null && pagedOffers.getValue() != null) {
-            Log.d("ProviderOfferViewModel", "Refreshing data...");
-            // Invalidate the data source and rebuild LiveData
-            dataSourceFactory.getCurrentDataSource().invalidate();
-            pagedOffers = new LivePagedListBuilder<>(dataSourceFactory, config).build();
+        if (dataSourceFactory != null) {
+            ProviderOfferDataSource currentDataSource = dataSourceFactory.getCurrentDataSource();
+            if (currentDataSource != null) {
+                currentDataSource.invalidate();
+            } else {
+                Log.e("ProviderOfferViewModel", "CurrentDataSource is null");
+            }
         } else {
-            Log.e("ProviderOfferViewModel", "PagedList is not initialized. Cannot refresh.");
+            Log.e("ProviderOfferViewModel", "DataSourceFactory is null");
         }
     }
 
