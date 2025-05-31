@@ -19,11 +19,12 @@ public class ProviderOfferDataSourceFactory extends DataSource.Factory<Integer, 
     private MutableLiveData<ProviderOfferDataSource> dataSourceLiveData;
     private ProviderOfferDataSource currentDataSource;
 
-    public ProviderOfferDataSourceFactory(int pageSize, String query, String c, String et, Double price, Boolean a, boolean f) {
+    public ProviderOfferDataSourceFactory(int pageSize, String query, String c, String et, Double price, Boolean s, Boolean a, boolean f) {
         this.pageSize = pageSize;
         this.query = query;
         this.category = c;
         this.eventType = et;
+        this.onSale = s;
         this.isAvailable = a;
         this.price = price;
         this.isFilter = f;

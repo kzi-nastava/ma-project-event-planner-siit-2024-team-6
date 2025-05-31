@@ -21,7 +21,7 @@ public class ProviderOfferViewModel extends ViewModel {
 
     public ProviderOfferViewModel(int providerId, int pageSize) {
         // Initialize DataSourceFactory and PagedList
-        dataSourceFactory = new ProviderOfferDataSourceFactory( pageSize, "", null, null, null, null, false);
+        dataSourceFactory = new ProviderOfferDataSourceFactory( pageSize, "", null, null, null, null, false, false);
         config = new PagedList.Config.Builder()
                 .setEnablePlaceholders(false)
                 .setPageSize(pageSize)
