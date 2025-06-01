@@ -98,7 +98,11 @@ public class EditServiceDialog extends DialogFragment {
         args.putString("serviceName", o.getName());
         args.putString("description", o.getDescription());
         args.putDouble("price", o.getPrice());
-        args.putDouble("discount", o.getSale());
+        if (o.getSale() == null){
+            args.putDouble("discount", 0.0);
+        }else{
+            args.putDouble("discount", o.getSale());
+        }
         args.putString("specifics", o.getSpecifics());
         args.putInt("minDuration", o.getMinDuration());
         args.putInt("maxDuration", o.getMaxDuration());
