@@ -1,6 +1,5 @@
 package com.example.eventure.clients;
 
-import com.example.eventure.dto.EventDTO;
 import com.example.eventure.dto.OfferDTO;
 import com.example.eventure.model.Offer;
 import com.example.eventure.model.PagedResponse;
@@ -53,26 +52,26 @@ public interface OfferService {
             "User-Agent: Mobile-Android",
             "Content-Type:application/json"
     })
-    @PUT("providers/{providerId}/{offerId}")
-    Call<Offer> editProviderService(@Path("providerId") int pId, @Path("offerId") int oId, @Body OfferDTO offer);
+    @PUT("providers/{offerId}")
+    Call<Offer> editProviderService( @Path("offerId") int oId, @Body OfferDTO offer);
 
-    @POST("providers/{providerId}")
-    Call<Offer> createProviderService(@Path("providerId") int pId, @Body OfferDTO offer);
+    @POST("providers/")
+    Call<Offer> createProviderService(@Body OfferDTO offer);
 
     @DELETE("providers/{offerId}")
     Call<Void> deleteProviderService(@Path("offerId") int id);
 
-    @GET("providers/{providerId}/search")
-    Call<PagedResponse<Offer>> getSearchedService(@Path("providerId") int id, @Query("name") String name,  @Query("page") int page, @Query("size") int size);
-    @GET("providers/{providerId}/services-filter")
+    @GET("offers/search-services")
+    Call<PagedResponse<Offer>> getSearchedService( @Query("name") String name,  @Query("page") int page, @Query("pageSize") int size);
+    @GET("offers/search-services")
     Call<PagedResponse<Offer>> getFilteredServices(
-            @Path("providerId") int providerId,
-            @Query("categories") List<String> categories,
-            @Query("eventTypes") List<String> eventTypes,
+            @Query("category") String category,
+            @Query("eventType") String eventType,
+            @Query("isOnSale") Boolean isOnSale,
             @Query("isAvailable") Boolean isAvailable,
-            @Query("price") Double price,
+            @Query("maxPrice") Double maxPrice,
             @Query("page") int page,
-            @Query("size") int size
+            @Query("pageSize") int size
     );
 
     @GET(ClientUtils.FILTERED_OFFERS)

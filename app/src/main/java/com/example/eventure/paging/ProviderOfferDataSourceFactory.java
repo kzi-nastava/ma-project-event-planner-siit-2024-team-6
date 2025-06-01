@@ -13,19 +13,18 @@ public class ProviderOfferDataSourceFactory extends DataSource.Factory<Integer, 
 
     private int providerId;
     private int pageSize;
-    private String query;
+    private String query, category, eventType;
     private Double price;
-    private List<String> categories, eventTypes;
-    private Boolean isAvailable, isFilter;
+    private Boolean isAvailable, isFilter, onSale;
     private MutableLiveData<ProviderOfferDataSource> dataSourceLiveData;
     private ProviderOfferDataSource currentDataSource;
 
-    public ProviderOfferDataSourceFactory(int providerId, int pageSize, String query, List<String> c, List<String> et, Double price, Boolean a, boolean f) {
-        this.providerId = providerId;
+    public ProviderOfferDataSourceFactory(int pageSize, String query, String c, String et, Double price, Boolean s, Boolean a, boolean f) {
         this.pageSize = pageSize;
         this.query = query;
-        this.categories = c;
-        this.eventTypes = et;
+        this.category = c;
+        this.eventType = et;
+        this.onSale = s;
         this.isAvailable = a;
         this.price = price;
         this.isFilter = f;
@@ -35,7 +34,7 @@ public class ProviderOfferDataSourceFactory extends DataSource.Factory<Integer, 
     @Override
     public DataSource<Integer, Offer> create() {
         // Create a new instance of the data source
-        currentDataSource = new ProviderOfferDataSource(providerId, pageSize, query, categories, eventTypes, isAvailable, price, isFilter);
+        currentDataSource = new ProviderOfferDataSource(pageSize, query, category, eventType, onSale, isAvailable, price, isFilter);
         // Post the current data source for observation
         dataSourceLiveData.postValue(currentDataSource);
         return currentDataSource;
@@ -69,9 +68,10 @@ public class ProviderOfferDataSourceFactory extends DataSource.Factory<Integer, 
         return currentDataSource;
     }
 
-    public void setFilters(List<String> categories, List<String> eventTypes, Boolean isAvailable, Double price) {
-        this.categories = categories;
-        this.eventTypes = eventTypes;
+    public void setFilters(String category, String eventType, Boolean onSale, Boolean isAvailable, Double price) {
+        this.category = category;
+        this.eventType = eventType;
+        this.onSale = onSale;
         this.isAvailable = isAvailable;
         this.price = price;
         this.isFilter = true;
