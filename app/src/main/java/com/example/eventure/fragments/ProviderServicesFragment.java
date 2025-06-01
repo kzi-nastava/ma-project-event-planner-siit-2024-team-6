@@ -6,11 +6,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -44,8 +47,9 @@ public class ProviderServicesFragment extends Fragment {
     private ProviderOfferAdapter offerAdapter;
     private ProgressBar progressBar;
     private ProviderOfferViewModel offerViewModel;
-    private LinearLayout eventTypeContainer;
-    private LinearLayout categoryContainer;
+    private Spinner eventTypeSpinner;
+    private Spinner categorySpinner;
+    private TextView emptyView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -56,6 +60,8 @@ public class ProviderServicesFragment extends Fragment {
         // Initialize RecyclerView
         recyclerView = rootView.findViewById(R.id.services_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        emptyView = rootView.findViewById(R.id.empty_view);
 
         progressBar = rootView.findViewById(R.id.progress_bar);
 
@@ -80,7 +86,7 @@ public class ProviderServicesFragment extends Fragment {
             @NonNull
             @Override
             public <T extends androidx.lifecycle.ViewModel> T create(@NonNull Class<T> modelClass) {
-                return (T) new ProviderOfferViewModel(1, 10); // Example providerId = 1, pageSize = 10
+                return (T) new ProviderOfferViewModel(10); //pageSize = 10
             }
         }).get(ProviderOfferViewModel.class);
 
@@ -99,9 +105,25 @@ public class ProviderServicesFragment extends Fragment {
     }
 
     private void setupFilter(ImageView filterIcon, LayoutInflater inflater) {
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
+        View dialogView = inflater.inflate(R.layout.filter_provider_services, null);
+
+        CheckBox availabilityCheckBox = dialogView.findViewById(R.id.availability_checkbox);
+        availabilityCheckBox.setChecked(true);
+
+        // Containers for dynamically loaded checkboxes
+        eventTypeSpinner = dialogView.findViewById(R.id.event_type_spinner);
+        categorySpinner = dialogView.findViewById(R.id.category_spinner);
+
+        // Load categories and event types
+        loadCategoriesIntoSpinner();
+        loadEventTypesIntoSpinner();
+
+        RangeSlider priceRangeSlider = dialogView.findViewById(R.id.price_range_slider);
+        priceRangeSlider.setValues(priceRangeSlider.getValueTo());
+
         filterIcon.setOnClickListener(v -> {
-            BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
-            View dialogView = inflater.inflate(R.layout.filter_provider_services, null);
+
             bottomSheetDialog.setContentView(dialogView);
 
             View bottomSheet = (View) dialogView.getParent();
@@ -113,55 +135,58 @@ public class ProviderServicesFragment extends Fragment {
             ImageView closeIcon = dialogView.findViewById(R.id.close_icon);
             closeIcon.setOnClickListener(v1 -> bottomSheetDialog.dismiss());
 
-            // Containers for dynamically loaded checkboxes
-            eventTypeContainer = dialogView.findViewById(R.id.event_type_container);
-            categoryContainer = dialogView.findViewById(R.id.category_container);
-
-            // Load categories and event types
-            loadCategories();
-            loadEventTypes();
 
             // Find the filter button
             Button filterButton = dialogView.findViewById(R.id.filter_button);
 
             // Add action listener for the filter button
             filterButton.setOnClickListener(v2 -> {
-                // Collect selected categories
-                List<String> selectedCategories = new ArrayList<>();
-                for (int i = 0; i < categoryContainer.getChildCount(); i++) {
-                    View view = categoryContainer.getChildAt(i);
-                    if (view instanceof CheckBox) {
-                        CheckBox checkBox = (CheckBox) view;
-                        if (checkBox.isChecked()) {
-                            selectedCategories.add(checkBox.getText().toString());
-                        }
-                    }
+                String selectedCategory = categorySpinner.getSelectedItem().toString();
+                String selectedEventType = eventTypeSpinner.getSelectedItem().toString();
+
+                if (selectedCategory.equals("Select Category")) {
+                    selectedCategory = null;
                 }
 
-                // Collect selected event types
-                List<String> selectedEventTypes = new ArrayList<>();
-                for (int i = 0; i < eventTypeContainer.getChildCount(); i++) {
-                    View view = eventTypeContainer.getChildAt(i);
-                    if (view instanceof CheckBox) {
-                        CheckBox checkBox = (CheckBox) view;
-                        if (checkBox.isChecked()) {
-                            selectedEventTypes.add(checkBox.getText().toString());
-                        }
-                    }
+                if (selectedEventType.equals("Select Event Type")) {
+                    selectedEventType = null;
                 }
 
                 // Get availability checkbox value
-                CheckBox availabilityCheckBox = dialogView.findViewById(R.id.availability_checkbox);
                 Boolean isAvailable = availabilityCheckBox.isChecked();
 
+                CheckBox saleCheckBox = dialogView.findViewById(R.id.sale_checkbox);
+                Boolean onSale = saleCheckBox.isChecked();
+
                 // Get price range values from the RangeSlider
-                RangeSlider priceRangeSlider = dialogView.findViewById(R.id.price_range_slider);
                 Float maxPrice = priceRangeSlider.getValues().get(0);
-                // Call the filtering method with the collected data
-                filterOffers(selectedCategories, selectedEventTypes, isAvailable, (double) maxPrice);
+
+                // Call the filtering method with the collected dat0
+                filterOffers(selectedCategory, selectedEventType, onSale, isAvailable, (double) maxPrice);
 
                 // Dismiss the dialog after applying filters
                 bottomSheetDialog.dismiss();
+            });
+
+            Button resetButton = dialogView.findViewById(R.id.reset_button);
+            resetButton.setOnClickListener(v3 -> {
+                categorySpinner.setSelection(0); // back to "Select Category"
+                eventTypeSpinner.setSelection(0); // back to "Select Event Type"
+
+                availabilityCheckBox.setChecked(true);
+
+                CheckBox saleCheckBox = dialogView.findViewById(R.id.sale_checkbox);
+                saleCheckBox.setChecked(false);
+
+                priceRangeSlider.setValues(priceRangeSlider.getValueTo());
+
+                // Call the filtering method with the collected dat0
+                filterOffers(null, null, false, true, (double) priceRangeSlider.getValueTo());
+
+                // Dismiss the dialog after applying filters
+                bottomSheetDialog.dismiss();
+
+                Toast.makeText(getContext(), "Filters reset", Toast.LENGTH_SHORT).show();
             });
 
             bottomSheetDialog.show();
@@ -206,66 +231,59 @@ public class ProviderServicesFragment extends Fragment {
         recyclerView.setVisibility(View.VISIBLE);
     }
 
-    private void populateCheckboxes(LinearLayout container, List<String> items) {
-        container.removeAllViews(); // Clear any existing views
-
-        for (String item : items) {
-            CheckBox checkBox = new CheckBox(getContext());
-            checkBox.setText(item);
-            checkBox.setTextSize(16);
-            checkBox.setPadding(8, 8, 8, 8);
-
-            // Add the checkbox to the container
-            container.addView(checkBox);
-        }
-    }
-
-    private void loadCategories() {
+    private void loadCategoriesIntoSpinner() {
         ClientUtils.categoryService.getAllCategoryNames().enqueue(new Callback<List<String>>() {
-            List<String> categoryList;
             @Override
             public void onResponse(Call<List<String>> call, Response<List<String>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    categoryList = response.body();
-                    populateCheckboxes(categoryContainer, categoryList);
-                } else {
+                    List<String> categoryList = new ArrayList<>();
+                    categoryList.add("Select Category"); // default
+                    categoryList.addAll(response.body());
+
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),
+                            android.R.layout.simple_spinner_item, categoryList);
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    categorySpinner.setAdapter(adapter);
+                }else {
                     Toast.makeText(getContext(), "Failed to load categories", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<List<String>> call, Throwable t) {
-                Log.e("FetchCategories", "Error: " + t.getMessage());
                 Toast.makeText(getContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-
     }
-    private void loadEventTypes() {
+
+    private void loadEventTypesIntoSpinner() {
         ClientUtils.eventTypeService.findAllNames().enqueue(new Callback<List<String>>() {
-            List<String> categoryList;
             @Override
             public void onResponse(Call<List<String>> call, Response<List<String>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    categoryList = response.body();
-                    populateCheckboxes(eventTypeContainer, categoryList);
+                    List<String> eventTypes = new ArrayList<>();
+                    eventTypes.add("Select Event Type"); // default
+                    eventTypes.addAll(response.body());
+
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),
+                            android.R.layout.simple_spinner_item, eventTypes);
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    eventTypeSpinner.setAdapter(adapter);
                 } else {
-                    Toast.makeText(getContext(), "Failed to load categories", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Failed to load event types", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<List<String>> call, Throwable t) {
-                Log.e("FetchCategories", "Error: " + t.getMessage());
                 Toast.makeText(getContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-
     }
 
-    private void filterOffers(List<String> categories, List<String> eventTypes, Boolean isAvailable, Double price) {
+    private void filterOffers(String category, String eventType, Boolean onSale, Boolean isAvailable, Double price) {
         // Call the API or ViewModel method to fetch the filtered offers
-        offerViewModel.filterOffers(categories, eventTypes, isAvailable, price);
+        offerViewModel.filterOffers(category, eventType, onSale, isAvailable, price);
     }
 
 }

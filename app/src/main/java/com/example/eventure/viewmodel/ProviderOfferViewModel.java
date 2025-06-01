@@ -19,9 +19,9 @@ public class ProviderOfferViewModel extends ViewModel {
     private ProviderOfferDataSourceFactory dataSourceFactory;
     private PagedList.Config config;
 
-    public ProviderOfferViewModel(int providerId, int pageSize) {
+    public ProviderOfferViewModel(int pageSize) {
         // Initialize DataSourceFactory and PagedList
-        dataSourceFactory = new ProviderOfferDataSourceFactory(providerId, pageSize, "", null, null, null, null, false);
+        dataSourceFactory = new ProviderOfferDataSourceFactory( pageSize, "", null, null, null, null, false, false);
         config = new PagedList.Config.Builder()
                 .setEnablePlaceholders(false)
                 .setPageSize(pageSize)
@@ -53,25 +53,28 @@ public class ProviderOfferViewModel extends ViewModel {
      * Refreshes the current data source to fetch updated data.
      */
     public void refresh() {
-        if (pagedOffers != null && pagedOffers.getValue() != null) {
-            Log.d("ProviderOfferViewModel", "Refreshing data...");
-            // Invalidate the data source and rebuild LiveData
-            dataSourceFactory.getCurrentDataSource().invalidate();
-            pagedOffers = new LivePagedListBuilder<>(dataSourceFactory, config).build();
+        if (dataSourceFactory != null) {
+            ProviderOfferDataSource currentDataSource = dataSourceFactory.getCurrentDataSource();
+            if (currentDataSource != null) {
+                currentDataSource.invalidate();
+            } else {
+                Log.e("ProviderOfferViewModel", "CurrentDataSource is null");
+            }
         } else {
-            Log.e("ProviderOfferViewModel", "PagedList is not initialized. Cannot refresh.");
+            Log.e("ProviderOfferViewModel", "DataSourceFactory is null");
         }
     }
 
-    public void filterOffers(List<String> categories, List<String> eventTypes, Boolean isAvailable, Double price) {
+    public void filterOffers(String category, String eventType, Boolean onSale, Boolean isAvailable, Double price) {
         Log.d("ProviderOfferViewModel", "filterOffers called with: " +
-                "Categories: " + categories + ", " +
-                "Event Types: " + eventTypes + ", " +
+                "Categories: " + category + ", " +
+                "Event Types: " + eventType + ", " +
+                "On sale: " + onSale + ", " +
                 "Availability: " + isAvailable + ", " +
                 "Price: " + price);
 
         // Update the filters in the data source factory
-        dataSourceFactory.setFilters(categories, eventTypes, isAvailable, price);
+        dataSourceFactory.setFilters(category, eventType, onSale, isAvailable, price);
 
         // Refresh the data source to apply the new filters
         refresh();

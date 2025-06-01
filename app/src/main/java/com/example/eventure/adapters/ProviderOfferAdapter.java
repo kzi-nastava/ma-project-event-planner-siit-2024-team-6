@@ -74,7 +74,7 @@ public class ProviderOfferAdapter extends PagedListAdapter<Offer, ProviderOfferA
         holder.productCategory.setText(offer.getCategory());
         holder.productPrice.setText(String.format("€%.2f", offer.getPrice()));
 
-        if (offer.getSale() == null) {
+        if (offer.getSale() == null || offer.getSale() == 0.0) {
             holder.productSale.setText("");
             holder.productSaleTag.setVisibility(View.GONE);
             holder.productPrice.setPaintFlags(holder.productPrice.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));

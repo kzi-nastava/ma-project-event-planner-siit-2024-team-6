@@ -20,18 +20,16 @@ public class ProviderOfferDataSource extends PageKeyedDataSource<Integer, Offer>
     private static final int FIRST_PAGE = 0;
     private int providerId;
     private int pageSize;
-    private String searchQuery;
-    private List<String> categories;
-    private List<String> eventTypes;
-    private Boolean isAvailable, isFilter;
+    private String searchQuery, catgeory, eventType;
+    private Boolean isAvailable, isFilter, onSale;
     private Double price;
 
-    public ProviderOfferDataSource(int providerId, int pageSize, String searchQuery, List<String> categories, List<String> eventTypes, Boolean isAvailable, Double price, boolean filter) {
-        this.providerId = providerId;
+    public ProviderOfferDataSource(int pageSize, String searchQuery, String c, String et, Boolean onSale, Boolean isAvailable, Double price, boolean filter) {
         this.pageSize = pageSize;
         this.searchQuery = searchQuery;
-        this.categories = categories;
-        this.eventTypes = eventTypes;
+        this.catgeory = c;
+        this.eventType = et;
+        this.onSale = onSale;
         this.isAvailable = isAvailable;
         this.price = price;
         this.isFilter = filter;
@@ -87,10 +85,10 @@ public class ProviderOfferDataSource extends PageKeyedDataSource<Integer, Offer>
     private void fetchOffers(int page, Callback<PagedResponse<Offer>> callback) {
         if (!isFilter) {
             Log.d("ProviderOfferDataSource", "Searching offers with page: " + page);
-            ClientUtils.offerService.getSearchedService(providerId, searchQuery, page, pageSize).enqueue(callback);
+            ClientUtils.offerService.getSearchedService(searchQuery, page, pageSize).enqueue(callback);
         } else {
             Log.d("ProviderOfferDataSource", "Filtering offers with page: " + page);
-            ClientUtils.offerService.getFilteredServices(providerId, categories, eventTypes, isAvailable, price, page, pageSize).enqueue(callback);
+            ClientUtils.offerService.getFilteredServices(catgeory, eventType, onSale, isAvailable, price, page, pageSize).enqueue(callback);
         }
     }
 

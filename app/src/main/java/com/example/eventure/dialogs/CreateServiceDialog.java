@@ -36,9 +36,12 @@ import com.example.eventure.model.EventType;
 import com.example.eventure.model.Offer;
 import com.example.eventure.model.Status;
 import com.google.android.material.snackbar.Snackbar;
+import com.example.eventure.dto.EventTypeDTO;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -65,9 +68,11 @@ public class CreateServiceDialog extends DialogFragment {
 
     private OnOfferCreatedListener listener;
 
-    private List<EventType> eventTypes = new ArrayList<>();
+    private List<EventTypeDTO> eventTypes = new ArrayList<>();
 
     private List<String> categoryList = new ArrayList<>();
+
+    private final Map<String, EventTypeDTO> eventTypeMap = new HashMap<>();
 
     private void loadCategories() {
         ClientUtils.categoryService.getAllCategoryNames().enqueue(new Callback<List<String>>() {
@@ -283,6 +288,7 @@ public class CreateServiceDialog extends DialogFragment {
 
             // Event Types
             List<EventTypeDTO> ets = getSelectedEventTypes();
+            Log.d("EVENTY", ets.toString());
 
             // Checkboxes
             boolean updatedVisibility = visibilityCheckbox.isChecked();
@@ -290,8 +296,36 @@ public class CreateServiceDialog extends DialogFragment {
 
 
             // Validate required fields
-            if (photoUrls.isEmpty() || ets.isEmpty() || (updatedFixedDuration == 0 && (updatedMaxDuration == 0 || updatedMinDuration == 0)) || (updatedMinDuration == 0 && updatedMaxDuration == 0 && updatedFixedDuration == 0) || updatedCancellationDeadline <= 0 || updatedBookingDeadline <= 0 || updatedServiceName.isEmpty() || updatedDescription.isEmpty() || updatedSpecifics.isEmpty() || updatedDiscount < 0 || updatedPrice <= 0) {
-                Snackbar.make(requireView(), "Please fill in all required fields.", Snackbar.LENGTH_LONG).show();
+            if (photoUrls.isEmpty()) {
+                showSnackbar("At least one photo is required.");
+                return;
+            }
+            if (ets.isEmpty()) {
+                showSnackbar("Please select at least one event type.");
+                return;
+            }
+            if (updatedFixedDuration == 0 && (updatedMinDuration == 0 || updatedMaxDuration == 0)) {
+                showSnackbar("Please enter valid durations.");
+                return;
+            }
+            if (updatedBookingDeadline <= 0 || updatedCancellationDeadline <= 0) {
+                showSnackbar("Please enter valid deadlines.");
+                return;
+            }
+            if (updatedServiceName.isEmpty() || updatedDescription.isEmpty() || updatedSpecifics.isEmpty()) {
+                showSnackbar("Text fields cannot be empty.");
+                return;
+            }
+            if (updatedPrice <= 0) {
+                showSnackbar("Price must be greater than 0.");
+                return;
+            }
+            if (updatedDiscount < 0) {
+                showSnackbar("Discount cannot be negative.");
+                return;
+            }
+            if (updatedMinDuration > updatedMaxDuration) {
+                showSnackbar("Minimum duration cannot be greater than maximum duration.");
                 return;
             }
 
@@ -325,7 +359,8 @@ public class CreateServiceDialog extends DialogFragment {
             newOffer.setPhotos(photoUrls);
 
             // Simulate saving or updating the data (replace with actual logic)
-            ClientUtils.offerService.createProviderService(1, newOffer).enqueue(new Callback<Offer>() {
+            submitButton.setEnabled(false);
+            ClientUtils.offerService.createProviderService(newOffer).enqueue(new Callback<Offer>() {
                 @Override
                 public void onResponse(Call<Offer> call, Response<Offer> response) {
                     if (response.isSuccessful()) {
@@ -335,9 +370,12 @@ public class CreateServiceDialog extends DialogFragment {
                             listener.onOfferCreated();
                         }
                         // Dismiss the dialog
+                        showSnackbar("The service successfully created");
                         dismiss();
                     } else {
                         Log.e("CreateOffer", "Failed to create offer: " + response.code());
+                        showSnackbar("Failed to create the service");
+                        submitButton.setEnabled(false);
                     }
                 }
 
@@ -357,19 +395,17 @@ public class CreateServiceDialog extends DialogFragment {
         eventTypesContainer.removeAllViews(); // Clear any existing views
         eventTypes.clear();
 
-        ClientUtils.eventTypeService.findAll().enqueue(new Callback<List<EventType>>() {
+        ClientUtils.eventTypeService.getAll().enqueue(new Callback<List<EventTypeDTO>>() {
             @Override
-            public void onResponse(Call<List<EventType>> call, Response<List<EventType>> response) {
+            public void onResponse(Call<List<EventTypeDTO>> call, Response<List<EventTypeDTO>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    eventTypes = response.body();
-                    Log.d("EventType", eventTypes.toString());
+                    eventTypes.clear();
+                    for (EventTypeDTO eventType : response.body()) {
+                        eventTypeMap.put(eventType.getName(), eventType);
 
-                    // Populate the checkboxes after the data is fetched
-                    for (EventType eventType : eventTypes) {
                         CheckBox checkBox = new CheckBox(getContext());
                         checkBox.setText(eventType.getName());
-                        checkBox.setTag(eventType);
-
+                        checkBox.setTag(eventType.getName());
                         eventTypesContainer.addView(checkBox);
                     }
                 } else {
@@ -378,7 +414,7 @@ public class CreateServiceDialog extends DialogFragment {
             }
 
             @Override
-            public void onFailure(Call<List<EventType>> call, Throwable t) {
+            public void onFailure(Call<List<EventTypeDTO>> call, Throwable t) {
                 Log.e("EventTypeError", "Error: " + t.getMessage());
                 Toast.makeText(getContext(), "Failed to load event types", Toast.LENGTH_SHORT).show();
             }
@@ -386,31 +422,20 @@ public class CreateServiceDialog extends DialogFragment {
     }
 
     private List<EventTypeDTO> getSelectedEventTypes() {
-        List<String> selectedEventTypes = new ArrayList<>();
+        List<EventTypeDTO> selected = new ArrayList<>();
 
         for (int i = 0; i < eventTypesContainer.getChildCount(); i++) {
             View view = eventTypesContainer.getChildAt(i);
-            if (view instanceof CheckBox) {
-                CheckBox checkBox = (CheckBox) view;
-                if (checkBox.isChecked()) {
-                    selectedEventTypes.add(checkBox.getText().toString());
-                }
-            }
-        }
-        List<EventTypeDTO> events = new ArrayList<>();
-
-        for(String name: selectedEventTypes){
-            for(EventType e: eventTypes){
-                if(e.getName().equals(name)){
-                    EventTypeDTO eDto = new EventTypeDTO();
-                    eDto.setName(e.getName());
-                    eDto.setDescription(eDto.getDescription());
-                    eDto.setIsDeleted(false);
-                    events.add(eDto);
-                }
+            if (view instanceof CheckBox && ((CheckBox) view).isChecked()) {
+                String eventTypeName = (String) view.getTag();
+                selected.add(eventTypeMap.get(eventTypeName));
             }
         }
 
-        return events;
+        return selected;
     }
+    private void showSnackbar(String message) {
+        Snackbar.make(requireView(), message, Snackbar.LENGTH_LONG).show();
+    }
+
 }
