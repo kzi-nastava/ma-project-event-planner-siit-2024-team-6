@@ -8,11 +8,20 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface CategoryService {
     @GET("providers/categories")
     Call<List<String>> getAllCategoryNames();
+    @Headers({
+            "User-Agent: Mobile-Android",
+            "Content-Type:application/json",
+            "skip: false"
+    })
+    @GET("offers/categories")
+    Call<List<String>> getCategories();
+
 
 }

@@ -14,15 +14,6 @@
         android:layout_marginBottom="0dp"
         android:background="@color/blue">
 
-        <!-- Filter Icon -->
-        <ImageView
-            android:id="@+id/filter_icon"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:src="@drawable/filter_icon"
-            android:contentDescription="Filter Icon"
-            android:layout_alignParentStart="true" />
-
         <!-- Title -->
         <TextView
             android:id="@+id/filter_title"
@@ -92,6 +83,13 @@
                     android:text="Service"
                     android:textSize="16sp" />
             </LinearLayout>
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/black"
+                android:layout_marginBottom="16dp" />
+
             <!-- Category Dropdown -->
             <TextView
                 android:layout_width="wrap_content"
@@ -108,6 +106,12 @@
                 android:layout_height="wrap_content"
                 android:spinnerMode="dropdown"
                 android:layout_marginBottom="8dp" />
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/black"
+                android:layout_marginBottom="16dp" />
 
             <!-- Event Type Dropdown -->
             <TextView
@@ -125,6 +129,15 @@
                 android:layout_height="wrap_content"
                 android:spinnerMode="dropdown"
                 android:layout_marginBottom="8dp" />
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/black"
+                android:layout_marginBottom="16dp" />
+
+            <!-- On sale -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -164,23 +177,41 @@
                 android:layout_height="wrap_content"
                 android:contentDescription="Price Range Slider"
                 android:valueFrom="0.0"
-                android:valueTo="100.0"
-                android:stepSize="1.0"
+                android:valueTo="1000.0"
+                android:stepSize="10.0"
                 app:values="@array/slider_initial_values" />
 
-
-
-            <!-- Filter Button -->
-            <Button
-                android:id="@+id/filter_button"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Apply Filter"
-                android:backgroundTint="@color/blue"
-                android:textColor="@android:color/white"
-                android:textStyle="bold"
-                android:padding="12dp"
-                android:layout_marginTop="16dp" />
+                android:orientation="horizontal"
+                android:gravity="bottom"
+                android:paddingBottom="16dp">
+
+                <Button
+                    android:id="@+id/reset_button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Reset"
+                    android:backgroundTint="@color/black"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    android:padding="12dp"
+                    android:layout_marginEnd="8dp"/>
+
+                <Button
+                    android:id="@+id/filter_button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Apply"
+                    android:backgroundTint="@color/blue"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    android:padding="12dp" />
+            </LinearLayout>
+
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
