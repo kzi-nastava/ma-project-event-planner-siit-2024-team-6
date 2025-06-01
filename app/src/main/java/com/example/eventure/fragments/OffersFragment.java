@@ -3,6 +3,7 @@ package com.example.eventure.fragments;
 import android.os.Bundle;
 
 import androidx.appcompat.widget.SearchView;
+import androidx.core.util.Pair;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -34,12 +35,16 @@ import com.example.eventure.dto.OfferDTO;
 import com.example.eventure.model.PagedResponse;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.slider.RangeSlider;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -68,16 +73,13 @@ public class OffersFragment extends Fragment {
 
     //filter
     private boolean isFilterMode = false;
-    private String currentName = null;
-    private String currentDescription = null;
-    private Double currentMaxPrice = null;
-    private Boolean currentIsOnSale = null;
-    private String currentStartDate = null;
-    private String currentEndDate = null;
+    private Double currentMinPrice = Double.valueOf(0);
+    private Double currentMaxPrice = Double.valueOf(0);
+    private Boolean currentIsOnSale = false;
     private String currentCategory = null;
     private String currentEventType = null;
-    private Boolean currentIsService = null;
-    private Boolean currentIsProduct = null;
+    private Boolean currentIsService = true;
+    private Boolean currentIsProduct = true;
     private List<String> eventTypes = new ArrayList<>();
     private List<String> categories = new ArrayList<>();
 
@@ -122,16 +124,16 @@ public class OffersFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         offerRecyclerView.setLayoutManager(layoutManager);
         offerRecyclerView.setNestedScrollingEnabled(false);
-        fetchOffersWithPagination(currentPage, loadMoreButton);
+        fetchOffersWithPagination(currentPage);
 
         // Setup Load More button click
         loadMoreButton.setOnClickListener(v -> {
             if (!isLoading && offerAdapter.getItemCount() < totalItemsCount) {
                 currentPage++;
                 if (isFilterMode) {
-                    fetchFilteredOffers(searchInput,searchInput,currentMaxPrice,currentIsOnSale,currentStartDate,currentEndDate,currentCategory,currentEventType,currentIsService,currentIsProduct,currentPage);
+                    fetchFilteredOffers(searchInput,searchInput,currentMinPrice,currentMaxPrice,currentIsOnSale,currentCategory,currentEventType,currentIsService,currentIsProduct,currentPage);
                 } else {
-                    fetchOffersWithPagination(currentPage, loadMoreButton);
+                    fetchOffersWithPagination(currentPage);
                 }
             }
         });
@@ -143,10 +145,10 @@ public class OffersFragment extends Fragment {
                 Log.d("OffersTag",query);
                 isFilterMode = true;
                 currentPage = 0;
-                searchInput = query;
                 resetFilter();
+                searchInput = query;
                 offerAdapter.clearOffers();
-                fetchFilteredOffers(searchInput,searchInput,currentMaxPrice,currentIsOnSale,currentStartDate,currentEndDate,currentCategory,currentEventType,currentIsService,currentIsProduct,currentPage);
+                fetchFilteredOffers(searchInput,searchInput,currentMinPrice,currentMaxPrice,currentIsOnSale,currentCategory,currentEventType,currentIsService,currentIsProduct,currentPage);
                 return true;
             }
             @Override
@@ -157,7 +159,7 @@ public class OffersFragment extends Fragment {
                     searchInput = null;
                     currentPage = 0;
                     offerAdapter.clearOffers();
-                    fetchOffersWithPagination(currentPage, loadMoreButton);
+                    fetchOffersWithPagination(currentPage);
                 }
                 return false;
             }
@@ -197,11 +199,12 @@ public class OffersFragment extends Fragment {
         return rootView;
     }
 
-    private void fetchOffersWithPagination(int page, Button loadMoreButton) {
+    private void fetchOffersWithPagination(int page) {
         if (isLoading) return;
+        Log.d("OffersTag", "FETCH ALL");
 
         isLoading = true;  // Set loading state
-        Log.d("OffersFragment", "Fetching page: " + page);
+        Log.d("OffersTag", "Fetching page: " + page);
 
         offerService.getPagedOffers(page, 10).enqueue(new Callback<PagedResponse<OfferDTO>>() {
             @Override
@@ -211,12 +214,12 @@ public class OffersFragment extends Fragment {
                 if (response.isSuccessful() && response.body() != null) {
                     PagedResponse<OfferDTO> pagedResponse = response.body();
                     totalItemsCount = pagedResponse.getTotalElements();
-                    Log.d("OffersFragment", "Total  " + totalItemsCount);
+                    Log.d("OffersTag", "Total  " + totalItemsCount);
 
                     List<OfferDTO> newOffers = pagedResponse.getContent();
-                    Log.d("OffersFragment", "Fetched " + newOffers.size() + " offers from page: " + page);
+                    Log.d("OffersTag", "Fetched " + newOffers.size() + " offers from page: " + page);
 
-                    Log.d("EventsTag", "DODAO OFFERS");
+                    Log.d("OffersTag", "DODAO OFFERS");
 
                     offerAdapter.addOffers(newOffers);  // Append new offers to the list
                     offerAdapter.notifyItemRangeInserted(
@@ -323,11 +326,36 @@ public class OffersFragment extends Fragment {
         CheckBox onSaleCheckBox = dialogView.findViewById(R.id.checkbox_on_sale);
         CheckBox productCheckBox = dialogView.findViewById(R.id.checkbox_product);
         CheckBox serviceCheckBox = dialogView.findViewById(R.id.checkbox_service);
+        productCheckBox.setChecked(currentIsProduct);
+        serviceCheckBox.setChecked(currentIsService);
+
         RangeSlider priceSlider = dialogView.findViewById(R.id.price_range_slider);
+        priceSlider.setValues(0f, 0f);
         ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_dropdown_item, categories);
         categorySpinner.setAdapter(categoryAdapter);
         ArrayAdapter<String> eventTypeAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_dropdown_item, eventTypes);
         eventTypeSpinner.setAdapter(eventTypeAdapter);
+
+
+        // RESET button
+        Button resetButton = dialogView.findViewById(R.id.reset_button);
+        resetButton.setOnClickListener(v -> {
+            try {
+                resetFilter();
+                categorySpinner.setSelection(0);
+                eventTypeSpinner.setSelection(0);
+                productCheckBox.setChecked(true);
+                serviceCheckBox.setChecked(true);
+                onSaleCheckBox.setChecked(false);
+                priceSlider.setValues(0f, 0f);
+                //search without filter when filter is reset
+                currentPage = 0;
+                offerAdapter.clearOffers();
+                fetchOffersWithPagination(currentPage);
+            } catch (Exception e) {
+                Log.e("OffersTag", "Reset error: " + e.getMessage(), e);
+            }
+        });
 
         Button applyButton = dialogView.findViewById(R.id.filter_button);
         applyButton.setOnClickListener(v -> {
@@ -335,21 +363,20 @@ public class OffersFragment extends Fragment {
             String selectedEventType = eventTypeSpinner.getSelectedItem().toString();
             currentCategory = selectedCategory.equals("Select Category") ? null : selectedCategory;
             currentEventType = selectedEventType.equals("Select Event Type") ? null : selectedEventType;
-            currentIsOnSale = onSaleCheckBox.isChecked() ? true : null;
-            currentIsProduct = productCheckBox.isChecked() ? true : null;
-            currentIsService = serviceCheckBox.isChecked() ? true : null;
+            currentIsOnSale = onSaleCheckBox.isChecked() ? true : false;
+            currentIsProduct = productCheckBox.isChecked() ? true : false;
+            currentIsService = serviceCheckBox.isChecked() ? true : false;
             List<Float> values = priceSlider.getValues();
+            currentMinPrice = Double.valueOf(values.get(0));
             currentMaxPrice = Double.valueOf(values.get(1));
             if (isOffersFilterEmpty(
                     currentCategory,
                     currentEventType,
-                    null, // minPrice not used
+                    currentMinPrice,
                     currentMaxPrice,
-                    null, // startDate not used
-                    null, // endDate not used
-                    currentIsOnSale != null,
-                    currentIsProduct != null,
-                    currentIsService != null
+                    currentIsOnSale,
+                    currentIsProduct,
+                    currentIsService
             )) {
                 bottomSheetDialog.dismiss();
                 return;
@@ -357,9 +384,8 @@ public class OffersFragment extends Fragment {
             bottomSheetDialog.dismiss();
             isFilterMode = true;
             currentPage = 0;
-
             offerAdapter.clearOffers();
-            fetchFilteredOffers(null, null, currentMaxPrice, currentIsOnSale, currentStartDate, currentEndDate,
+            fetchFilteredOffers(null, null, currentMinPrice, currentMaxPrice, currentIsOnSale,
                     currentCategory, currentEventType, currentIsService, currentIsProduct, currentPage);
         });
         // Show the dialog
@@ -369,10 +395,9 @@ public class OffersFragment extends Fragment {
     private void fetchFilteredOffers(
             String name,
             String description,
+            Double minPrice,
             Double maxPrice,
             Boolean isOnSale,
-            String startDate,
-            String endDate,
             String category,
             String eventType,
             Boolean isService,
@@ -380,31 +405,27 @@ public class OffersFragment extends Fragment {
             int page
     ) {
         isLoading = true;
-        //RAZMISLITI STA DA MI BUDE DEFAULT ZA ISPRODUCT I ISSERVICE
+        Log.d("OffersTag", "FETCH FILTER");
+
         Log.d("OffersTag", "Fetching filtered offers with parameters:");
         Log.d("OffersTag", "name: " + name);
         Log.d("OffersTag", "description: " + description);
-        Log.d("OffersTag", "maxPrice: " + maxPrice);
+        Double minPriceParam = (minPrice != null && minPrice == 0.0) ? null : minPrice;
+        Double maxPriceParam = (maxPrice != null && maxPrice == 0.0) ? null : maxPrice;
+        Log.d("OffersTag", "minPrice: " + minPriceParam);
+        Log.d("OffersTag", "maxPrice: " + maxPriceParam);
         Log.d("OffersTag", "isOnSale: " + isOnSale);
-        Log.d("OffersTag", "startDate: " + startDate);
-        Log.d("OffersTag", "endDate: " + endDate);
         Log.d("OffersTag", "category: " + category);
         Log.d("OffersTag", "eventType: " + eventType);
         Log.d("OffersTag", "isService: " + isService);
         Log.d("OffersTag", "isProduct: " + isProduct);
-        if(isService == null){
-            isService = false;
-        }
-        if(isProduct == null){
-            isProduct = false;
-        }
+        //IMPLEMENTIRATI ZA START I END JER SE SAD NE POZIVA FJA DOSTUPNOSTI
         offerService.getFilteredOffers(
                 name,
                 description,
-                maxPrice,
+                minPriceParam,
+                maxPriceParam,
                 isOnSale,
-                startDate,
-                endDate,
                 category,
                 eventType,
                 isService,
@@ -513,36 +534,37 @@ public class OffersFragment extends Fragment {
         }
     }
     private void resetFilter() {
-        currentName = null;
-        currentDescription = null;
-        currentMaxPrice = null;
-        currentIsOnSale = null;
-        currentStartDate = null;
-        currentEndDate = null;
+        searchInput = null;
+        currentMinPrice = Double.valueOf(0);
+        currentMaxPrice = Double.valueOf(0);
+        currentIsOnSale = false;
         currentCategory = null;
         currentEventType = null;
-        currentIsService = null;
-        currentIsProduct = null;
+        currentIsService = true;
+        currentIsProduct = true;
+
     }
     private boolean isOffersFilterEmpty(String selectedCategory, String selectedEventType,
-                                        Float minPrice, Double maxPrice,
-                                        Long startDate, Long endDate,
+                                        Double minPrice, Double maxPrice,
                                         boolean isOnSaleChecked,
-                                        boolean isProductChecked,
-                                        boolean isServiceChecked) {
+                                        boolean isProduct,
+                                        boolean isService) {
         boolean noCategorySelected = selectedCategory == null || "Select Category".equals(selectedCategory);
         boolean noEventTypeSelected = selectedEventType == null || "Select Event Type".equals(selectedEventType);
         boolean noPriceFilter = (minPrice == null || minPrice == 0f) && (maxPrice == null || maxPrice == 0f);
-        boolean noDateFilter = startDate == null && endDate == null;
         boolean noOnSaleChecked = !isOnSaleChecked;
-        boolean noProductChecked = !isProductChecked;
-        boolean noServiceChecked = !isServiceChecked;
+        // if both are true (default) then user did not choose a new option while filtering
+        boolean typeNotChanged = isProduct == true && isService == true;
 
-        return noCategorySelected && noEventTypeSelected && noPriceFilter && noDateFilter
-                && noOnSaleChecked && noProductChecked && noServiceChecked;
+        return noCategorySelected && noEventTypeSelected && noPriceFilter
+                && noOnSaleChecked && typeNotChanged;
     }
 
-
+    private String formatDate(Long millis) {
+        if (millis == null) return null;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        return sdf.format(new Date(millis));
+    }
     @Override
     public void onStart() {
         Log.e("MethodsTag", "OffersFragment onStart called");

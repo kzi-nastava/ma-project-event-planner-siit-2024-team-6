@@ -118,7 +118,7 @@ public class EventsFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         eventRecyclerView.setLayoutManager(layoutManager);
         eventRecyclerView.setNestedScrollingEnabled(false);
-        fetchAllEventsWithPagination(currentPage, loadMoreButton);
+        fetchAllEventsWithPagination(currentPage);
         // Set up button click listener for loading more
         loadMoreButton.setOnClickListener(v -> {
             if (!isLoading && eventAdapter.getItemCount() < totalItemsCount) {
@@ -126,7 +126,7 @@ public class EventsFragment extends Fragment {
                 if (isFilterMode) {
                     fetchFilteredEvents(searchInput, searchInput, searchInput, currentFilterType, currentFilterStartDate, currentFilterEndDate, currentPage);
                 } else {
-                    fetchAllEventsWithPagination(currentPage, loadMoreButton);
+                    fetchAllEventsWithPagination(currentPage);
                 }
             }
         });
@@ -138,10 +138,8 @@ public class EventsFragment extends Fragment {
                 Log.d("EventsTag",query);
                 isFilterMode = true;
                 currentPage = 0;
+                resetFilter();
                 searchInput = query;
-                currentFilterType = null;
-                currentFilterStartDate = null;
-                currentFilterEndDate = null;
                 eventAdapter.clearEvents();
                 fetchFilteredEvents(searchInput,searchInput,searchInput,currentFilterType,currentFilterStartDate,currentFilterEndDate,currentPage);
                 return true;
@@ -154,7 +152,7 @@ public class EventsFragment extends Fragment {
                     searchInput = null;
                     currentPage = 0;
                     eventAdapter.clearEvents();
-                    fetchAllEventsWithPagination(currentPage, loadMoreButton);
+                    fetchAllEventsWithPagination(currentPage);
                 }
                 return false;
             }
@@ -179,7 +177,7 @@ public class EventsFragment extends Fragment {
         return rootView;
     }
 
-    private void fetchAllEventsWithPagination(int page, Button loadMoreButton) {
+    private void fetchAllEventsWithPagination(int page) {
         if (isLoading) return;
 
         isLoading = true; // Set loading state
@@ -329,6 +327,7 @@ public class EventsFragment extends Fragment {
         // RESET button
         Button resetButton = dialogView.findViewById(R.id.reset_button);
         resetButton.setOnClickListener(v -> {
+            resetFilter();
             selectedStartDate[0] = 0L;
             selectedEndDate[0] = 0L;
 
@@ -336,6 +335,9 @@ public class EventsFragment extends Fragment {
             endDateText.setText("To: Not selected");
 
             eventTypeSpinner.setSelection(0);
+            currentPage = 0;
+            eventAdapter.clearEvents();
+            fetchAllEventsWithPagination(currentPage);
         });
 
         //APPLY button
@@ -450,7 +452,12 @@ public class EventsFragment extends Fragment {
     }
 
 
-
+    private void resetFilter() {
+        searchInput = null;
+        currentFilterType = null;
+        currentFilterStartDate = null;
+        currentFilterEndDate = null;
+    }
 
     @Override
     public void onStart() {

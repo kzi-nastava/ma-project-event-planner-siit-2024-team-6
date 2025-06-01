@@ -84,10 +84,9 @@ public interface OfferService {
     Call<PagedResponse<OfferDTO>> getFilteredOffers(
             @Query("name") String name,
             @Query("description") String description,
+            @Query("minPrice") Double minPrice,
             @Query("maxPrice") Double maxPrice,
             @Query("isOnSale") Boolean isOnSale,
-            @Query("startDate") String startDate,
-            @Query("endDate") String endDate,
             @Query("category") String category,
             @Query("eventType") String eventType,
             @Query("isService") Boolean isService,
