@@ -108,6 +108,7 @@ public class Offer implements Parcelable, Serializable {
     }
 
     public Offer(OfferDTO offerDTO){
+        this.id = offerDTO.getId();
         this.name = offerDTO.getName();
         this.status = offerDTO.getStatus();
         this.description = offerDTO.getDescription();
