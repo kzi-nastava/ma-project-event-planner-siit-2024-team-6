@@ -153,7 +153,7 @@ public class OfferDetailsDialog extends DialogFragment {
                         if (isFavourited) {
                             // Show filled heart icon or other UI indicator
                             btnFavorite.setImageResource(R.drawable.heart_filled_icon);
-                            isFavourited = true;
+                            isFavorited = true;
                         } else {
                             // Show unfilled heart icon
                             btnFavorite.setImageResource(R.drawable.heart_icon);
