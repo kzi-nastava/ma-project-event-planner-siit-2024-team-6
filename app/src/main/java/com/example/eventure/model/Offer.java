@@ -6,11 +6,14 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.example.eventure.dto.EventTypeDTO;
+import com.example.eventure.dto.OfferDTO;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Offer implements Parcelable, Serializable {
@@ -102,6 +105,31 @@ public class Offer implements Parcelable, Serializable {
         this.latestCancellation = latestCancellation;
         this.latestReservation = latestReservation;
         this.isReservationAutoApproved = isReservationAutoApproved;
+    }
+
+    public Offer(OfferDTO offerDTO){
+        this.name = offerDTO.getName();
+        this.status = offerDTO.getStatus();
+        this.description = offerDTO.getDescription();
+        this.photos = offerDTO.getPhotos();
+        this.price = offerDTO.getPrice();
+        this.sale = offerDTO.getSale();
+        this.isAvailable = offerDTO.getIsAvailable();
+        this.isDeleted = offerDTO.getIsDeleted();
+        this.isVisible = offerDTO.getIsVisible();
+        this.eventTypes = new ArrayList<>();
+        for (EventTypeDTO et: offerDTO.getEventTypes()){
+            this.eventTypes.add(new EventType(et));
+        }
+        this.category = offerDTO.getCategory();
+        this.type = offerDTO.getType();
+        this.specifics = offerDTO.getSpecifics();
+        this.maxDuration = offerDTO.getMaxDuration();
+        this.minDuration = offerDTO.getMinDuration();
+        this.preciseDuration = offerDTO.getPreciseDuration();
+        this.latestCancellation = offerDTO.getLatestCancelation();
+        this.latestReservation = offerDTO.getLatestReservation();
+        this.isReservationAutoApproved = offerDTO.isReservationAutoApproved();
     }
 
     public Offer(Parcel in) {

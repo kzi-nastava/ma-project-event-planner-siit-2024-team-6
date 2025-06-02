@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import com.example.eventure.dto.EventTypeDTO;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -41,6 +42,12 @@ public class EventType implements Parcelable, Serializable {
         description = in.readString();
         byte tmpIsDeleted = in.readByte();
         isDeleted = tmpIsDeleted == 0 ? null : tmpIsDeleted == 1;
+    }
+
+    public EventType(EventTypeDTO eventTypeDTO){
+        name = eventTypeDTO.getName();
+        description = eventTypeDTO.getDescription();
+        isDeleted = eventTypeDTO.getIsDeleted();
     }
 
     @Override
