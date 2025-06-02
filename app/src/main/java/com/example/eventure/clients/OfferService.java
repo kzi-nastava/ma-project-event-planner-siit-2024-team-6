@@ -5,6 +5,7 @@ import com.example.eventure.dto.OfferDTO;
 import com.example.eventure.dto.ProviderDTO;
 import com.example.eventure.model.Offer;
 import com.example.eventure.model.PagedResponse;
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.Header;
 
 import java.util.List;
 
@@ -59,6 +60,18 @@ public interface OfferService {
 
     @GET("offers/{offerId}/provider")
     Call<ProviderDTO> getProviderByOfferId(@Path("offerId") int offerId);
+
+    @POST("offers/{offerId}/add-favour")
+    Call<Void> addOfferToFavourites(
+            @Path("offerId") int offerId
+    );
+
+    @POST("offers/{offerId}/remove-favour")
+    Call<Void> removeOfferFromFavourites(
+            @Path("offerId") int offerId
+    );
+    @GET("offers/{offerId}/is-favourited")
+    Call<Boolean> isOfferFavourited(@Path("offerId") int offerId);
 
     @POST("providers/")
     Call<Offer> createProviderService(@Body NewOfferDTO offer);

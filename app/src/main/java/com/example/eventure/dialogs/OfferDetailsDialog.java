@@ -22,6 +22,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.eventure.R;
 import com.example.eventure.adapters.ImageCarouselAdapter;
+import com.example.eventure.clients.AuthService;
 import com.example.eventure.clients.ClientUtils;
 import com.example.eventure.clients.OfferService;
 import com.example.eventure.dto.NewOfferDTO;
@@ -93,16 +94,81 @@ public class OfferDetailsDialog extends DialogFragment {
         ImageButton btnExit = view.findViewById(R.id.btn_exit);
         btnExit.setOnClickListener(v -> dismiss());
 
+
         btnFavorite = view.findViewById(R.id.btn_favorite);
         btnFavorite.setOnClickListener(v -> {
-            isFavorited = !isFavorited;
-            if (isFavorited) {
-                btnFavorite.setImageResource(R.drawable.heart_filled_icon);
-            } else {
-                btnFavorite.setImageResource(R.drawable.heart_icon);
+            if (!ClientUtils.getAuthService().isLoggedIn()){
+                Snackbar.make(view, "User error: " + "You must be logged to like the offer.", Snackbar.LENGTH_SHORT).show();
+            }else{
+                isFavorited = !isFavorited;
+                if (isFavorited) {
+                    btnFavorite.setImageResource(R.drawable.heart_filled_icon);
+                    // Add to favourites
+                    ClientUtils.offerService.addOfferToFavourites(offer.getId()).enqueue(new Callback<Void>() {
+                        @Override
+                        public void onResponse(Call<Void> call, Response<Void> response) {
+                            if (response.isSuccessful()) {
+                                Snackbar.make(view, "Added to favourites", Snackbar.LENGTH_SHORT).show();
+                            } else {
+                                Snackbar.make(view, "Failed to add: " + response.code(), Snackbar.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Void> call, Throwable t) {
+                            Snackbar.make(view, "Network error: " + t.getMessage(), Snackbar.LENGTH_SHORT).show();
+                        }
+                    });
+                } else {
+                    btnFavorite.setImageResource(R.drawable.heart_icon);
+                    // Remove from favourites
+                    ClientUtils.offerService.removeOfferFromFavourites(offer.getId()).enqueue(new Callback<Void>() {
+                        @Override
+                        public void onResponse(Call<Void> call, Response<Void> response) {
+                            if (response.isSuccessful()) {
+                                Snackbar.make(view, "Removed from favourites", Snackbar.LENGTH_SHORT).show();
+                            } else {
+                                Snackbar.make(view, "Failed to remove: " + response.code(), Snackbar.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Void> call, Throwable t) {
+                            Snackbar.make(view, "Network error: " + t.getMessage(), Snackbar.LENGTH_SHORT).show();
+                        }
+                    });
+                }
             }
-            // TODO: Add API request to update favorite status
         });
+
+        isFavorited = false;
+
+        // Check to see if the offer is already in users favourites:
+        if (ClientUtils.getAuthService().isLoggedIn()){
+            ClientUtils.offerService.isOfferFavourited(offer.getId()).enqueue(new Callback<Boolean>() {
+                @Override
+                public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        boolean isFavourited = response.body();
+                        if (isFavourited) {
+                            // Show filled heart icon or other UI indicator
+                            btnFavorite.setImageResource(R.drawable.heart_filled_icon);
+                            isFavourited = true;
+                        } else {
+                            // Show unfilled heart icon
+                            btnFavorite.setImageResource(R.drawable.heart_icon);
+                        }
+                    } else {
+                        Snackbar.make(view, "Failed to check favourite status", Snackbar.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Boolean> call, Throwable t) {
+                    Snackbar.make(view, "Error: " + t.getMessage(), Snackbar.LENGTH_SHORT).show();
+                }
+            });
+        }
 
         btnBook = view.findViewById(R.id.btn_book);
         btnBook.setOnClickListener(v -> {
