@@ -115,7 +115,7 @@ public class OffersFragment extends Fragment {
         offerCarousel = rootView.findViewById(R.id.offerCarousel);
         offerRecyclerView = rootView.findViewById(R.id.productRecyclerView);
         emptyOffers = rootView.findViewById(R.id.emptyOffers);
-        offerAdapter = new OfferAdapter();
+        offerAdapter = new OfferAdapter(getChildFragmentManager());
         offerRecyclerView.setAdapter(offerAdapter);
         // Fetch top 5
         fetchTopOffers(rootView);
