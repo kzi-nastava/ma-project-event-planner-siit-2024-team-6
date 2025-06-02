@@ -89,7 +89,7 @@ public class HomeActivity extends AppCompatActivity {
             int id = item.getItemId();
 
             if (id == R.id.nav_my_offers) {
-                Intent intent = new Intent(HomeActivity.this, OffersActivity.class);
+                Intent intent = new Intent(HomeActivity.this, ProviderOffersActivity.class);
                 startActivity(intent);
                 drawer.closeDrawer(GravityCompat.START);
                 return true;

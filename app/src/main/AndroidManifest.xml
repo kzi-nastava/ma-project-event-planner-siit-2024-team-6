@@ -20,6 +20,9 @@
             android:name=".activities.LoginActivity"
             android:exported="false" />
         <activity
+            android:name=".activities.OfferDetailsActivity"
+            android:exported="false"/>
+        <activity
             android:name=".activities.RegistrationActivity"
             android:exported="false" /> <!-- <activity -->
         <!-- android:name=".activities.HomeActivity" -->
@@ -37,7 +40,7 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-        <activity android:name=".activities.OffersActivity"
+        <activity android:name=".activities.ProviderOffersActivity"
             android:exported="false"/>
         <activity
             android:name=".activities.SplashScreenActivity"
