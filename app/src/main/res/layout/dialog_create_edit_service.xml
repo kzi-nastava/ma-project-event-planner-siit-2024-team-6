@@ -223,7 +223,7 @@
                 android:id="@+id/fixed_duration_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Enter fixed duration (e.g., 1h)"
+                android:hint="Enter fixed duration (minutes) (e.g., 15)"
                 android:visibility="gone" />
             <EditText
                 android:id="@+id/min_duration_input"
