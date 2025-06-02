@@ -30,6 +30,7 @@ import com.example.eventure.adapters.PhotoAdapter;
 import com.example.eventure.clients.ClientUtils;
 import com.example.eventure.dto.CategorySuggestionDTO;
 import com.example.eventure.dto.EventTypeDTO;
+import com.example.eventure.dto.NewOfferDTO;
 import com.example.eventure.dto.OfferDTO;
 import com.example.eventure.model.Category;
 import com.example.eventure.model.EventType;
@@ -330,7 +331,7 @@ public class CreateServiceDialog extends DialogFragment {
             }
 
             // Create or update the Offer object
-            OfferDTO newOffer = new OfferDTO();
+            NewOfferDTO newOffer = new NewOfferDTO();
             if(!proposedCategory.isEmpty()){
                 CategorySuggestionDTO dto = new CategorySuggestionDTO();
                 dto.setStatus(Status.PENDING);

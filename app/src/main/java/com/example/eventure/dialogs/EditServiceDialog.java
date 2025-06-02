@@ -29,6 +29,7 @@ import com.example.eventure.R;
 import com.example.eventure.adapters.PhotoAdapter;
 import com.example.eventure.clients.EventTypeService;
 import com.example.eventure.dto.EventTypeDTO;
+import com.example.eventure.dto.NewOfferDTO;
 import com.example.eventure.dto.OfferDTO;
 import com.example.eventure.model.EventType;
 import com.example.eventure.model.Offer;
@@ -384,7 +385,7 @@ public class EditServiceDialog extends DialogFragment {
 
 
             // Create or update the Offer object
-            OfferDTO updatedOffer = new OfferDTO();
+            NewOfferDTO updatedOffer = new NewOfferDTO();
             updatedOffer.setName(updatedServiceName);
             updatedOffer.setEventTypes(ets);
             updatedOffer.setDescription(updatedDescription);
