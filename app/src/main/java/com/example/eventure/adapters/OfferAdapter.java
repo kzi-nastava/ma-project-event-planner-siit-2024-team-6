@@ -1,5 +1,7 @@
 package com.example.eventure.adapters;
 
+import android.content.Intent;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.eventure.R;
-import com.example.eventure.dto.EventDTO;
+import com.example.eventure.activities.OfferDetailsActivity;
 import com.example.eventure.dto.OfferDTO;
 import com.example.eventure.model.Offer;
 
@@ -67,6 +69,7 @@ public class OfferAdapter extends RecyclerView.Adapter<OfferAdapter.OfferViewHol
             productImage = itemView.findViewById(R.id.product_image);
             saleTag = itemView.findViewById(R.id.sale_tag);
             saleEuroIcon = itemView.findViewById(R.id.sale_euro_icon);
+
         }
 
         public void bind(OfferDTO offer) {
@@ -106,6 +109,13 @@ public class OfferAdapter extends RecyclerView.Adapter<OfferAdapter.OfferViewHol
                     .error(R.drawable.error_image)
                     .into(productImage);
             //productImage.setImageResource(Offer.getPhotoID());
+
+            itemView.setOnClickListener(v -> {
+                Offer o = new Offer(offer);
+                Intent intent = new Intent(itemView.getContext(), OfferDetailsActivity.class);
+                intent.putExtra("offer", (Parcelable) o); // Make Offer Parcelable
+                itemView.getContext().startActivity(intent);
+            });
         }
 
     }
