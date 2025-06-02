@@ -6,6 +6,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StrikethroughSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,8 +22,22 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.eventure.R;
 import com.example.eventure.adapters.ImageCarouselAdapter;
+import com.example.eventure.clients.ClientUtils;
+import com.example.eventure.clients.OfferService;
+import com.example.eventure.dto.NewOfferDTO;
+import com.example.eventure.dto.OfferDTO;
+import com.example.eventure.dto.ProviderDTO;
 import com.example.eventure.model.EventType;
 import com.example.eventure.model.Offer;
+import com.example.eventure.model.PagedResponse;
+import com.example.eventure.model.Provider;
+import com.google.android.material.snackbar.Snackbar;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class OfferDetailsDialog extends DialogFragment {
 
@@ -97,6 +112,30 @@ public class OfferDetailsDialog extends DialogFragment {
                 // TODO: Implement booking logic for products
             }
         });
+
+        ImageButton btnAccount = view.findViewById(R.id.provider_icon);
+        btnAccount.setOnClickListener(v -> {
+            Call<ProviderDTO> call = ClientUtils.offerService.getProviderByOfferId(offer.getId());
+
+            call.enqueue(new Callback<ProviderDTO>() {
+                @Override
+                public void onResponse(Call<ProviderDTO> call, Response<ProviderDTO> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        ProviderDTO providerDTO = response.body();
+                        Provider p = new Provider(providerDTO);
+                        CompanyDetailsDialog providerDialog = CompanyDetailsDialog.newInstance(p);
+                        providerDialog.show(requireActivity().getSupportFragmentManager(), "ProviderDetailsDialog");
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ProviderDTO> call, Throwable t) {
+                    Snackbar.make(requireView(), "Network error. Please try again.", Snackbar.LENGTH_LONG).show();
+                    Log.e("OfferDetailsDialog", "Failed to fetch provider: " + t.getMessage());
+                }
+            });
+        });
+
     }
 
     @SuppressLint("ResourceAsColor")

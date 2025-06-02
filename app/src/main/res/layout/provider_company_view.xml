@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/white"
+        android:padding="15dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginBottom="0dp"
+            android:background="@color/blue">
+            <!-- Close Icon -->
+            <!-- Exit Button in top-right -->
+            <ImageButton
+                android:id="@+id/btn_exit"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_gravity="end|top"
+                android:layout_alignParentEnd="true"
+                android:background="?android:selectableItemBackgroundBorderless"
+                android:src="@drawable/close_icon"
+                app:tint="@color/white" />
+        </RelativeLayout>
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/photo_carousel"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:id="@+id/tv_company_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Company Name"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textStyle="bold"
+            android:textSize="26dp"
+            android:paddingBottom="8dp" />
+
+        <TextView
+            android:id="@+id/tv_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Description"
+            android:textSize="18dp"
+            android:textStyle="italic"
+            android:paddingBottom="8dp" />
+
+        <TextView
+            android:id="@+id/tv_company_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Email"
+            android:autoLink="email"
+            android:textSize="20dp"
+            android:paddingBottom="8dp" />
+
+        <TextView
+            android:id="@+id/tv_company_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Address"
+            android:textSize="20dp"
+            android:paddingBottom="8dp" />
+
+        <TextView
+            android:id="@+id/tv_working_hours"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Opening Time"
+            android:textSize="20dp"
+            android:paddingBottom="4dp" />
+
+        <Button
+            android:id="@+id/btn_report"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Report provider"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@color/purple"
+        android:layout_marginTop="16dp" />
+    </LinearLayout>
+</ScrollView>
