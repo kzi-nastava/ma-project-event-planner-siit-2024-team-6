@@ -5,7 +5,6 @@ import com.example.eventure.dto.OfferDTO;
 import com.example.eventure.dto.ProviderDTO;
 import com.example.eventure.model.Offer;
 import com.example.eventure.model.PagedResponse;
-import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.Header;
 
 import java.util.List;
 
