@@ -24,15 +24,6 @@
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop" />
 
-            <!-- Heart Icon in Top Right Corner -->
-            <ImageView
-                android:id="@+id/favorite_icon"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:src="@drawable/heart_icon"
-                android:contentDescription="Favorite"
-                android:layout_gravity="top|end"
-                android:layout_margin="20dp" />
         </FrameLayout>
 
         <!-- Content Container for Title, Location, Date, and Rating -->
