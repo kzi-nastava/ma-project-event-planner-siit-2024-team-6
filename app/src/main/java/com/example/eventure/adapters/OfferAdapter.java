@@ -1,5 +1,6 @@
 package com.example.eventure.adapters;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,11 +8,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.eventure.R;
-import com.example.eventure.dto.EventDTO;
+import com.example.eventure.dialogs.OfferDetailsDialog;
 import com.example.eventure.dto.OfferDTO;
 import com.example.eventure.model.Offer;
 
@@ -21,12 +23,15 @@ import java.util.List;
 public class OfferAdapter extends RecyclerView.Adapter<OfferAdapter.OfferViewHolder> {
 
     private List<OfferDTO> offerList;
+    private FragmentManager fragmentManager;
 
-    public OfferAdapter(List<OfferDTO> offerList) {
+    public OfferAdapter(List<OfferDTO> offerList, FragmentManager fragmentManager) {
         this.offerList = offerList;
+        this.fragmentManager = fragmentManager;
     }
-    public OfferAdapter() {
+    public OfferAdapter(FragmentManager fragmentManager) {
         this.offerList = new ArrayList<>();
+        this.fragmentManager = fragmentManager;
     }
 
     @NonNull
@@ -39,7 +44,7 @@ public class OfferAdapter extends RecyclerView.Adapter<OfferAdapter.OfferViewHol
     @Override
     public void onBindViewHolder(@NonNull OfferViewHolder holder, int position) {
         OfferDTO offer = offerList.get(position);
-        holder.bind(offer);
+        holder.bind(offer, this.fragmentManager);
     }
 
     @Override
@@ -67,9 +72,10 @@ public class OfferAdapter extends RecyclerView.Adapter<OfferAdapter.OfferViewHol
             productImage = itemView.findViewById(R.id.product_image);
             saleTag = itemView.findViewById(R.id.sale_tag);
             saleEuroIcon = itemView.findViewById(R.id.sale_euro_icon);
+
         }
 
-        public void bind(OfferDTO offer) {
+        public void bind(OfferDTO offer, FragmentManager fragmentManager) {
             productTitle.setText(offer.getName());
 
             if (offer.getSale() > 0) {
@@ -106,6 +112,13 @@ public class OfferAdapter extends RecyclerView.Adapter<OfferAdapter.OfferViewHol
                     .error(R.drawable.error_image)
                     .into(productImage);
             //productImage.setImageResource(Offer.getPhotoID());
+
+            itemView.setOnClickListener(v -> {
+                Offer o = new Offer(offer);
+                Log.d("DialogTest", "Showing OfferDetailsDialog");
+                OfferDetailsDialog dialog = OfferDetailsDialog.newInstance(o);
+                dialog.show(fragmentManager, "OfferDetailsDialog");
+            });
         }
 
     }

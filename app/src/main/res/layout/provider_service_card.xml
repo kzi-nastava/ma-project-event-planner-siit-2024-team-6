@@ -26,15 +26,6 @@
                 android:scaleType="centerCrop"
                 android:src="@drawable/decoration" />
 
-            <ImageView
-                android:id="@+id/favorite_icon"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:src="@drawable/heart_icon"
-                android:contentDescription="Favorite"
-                android:layout_alignParentEnd="true"
-                android:layout_margin="16dp" />
-
             <TextView
                 android:id="@+id/provider_sale_tag"
                 android:layout_width="wrap_content"

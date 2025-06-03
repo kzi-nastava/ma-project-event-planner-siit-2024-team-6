@@ -2,12 +2,10 @@ package com.example.eventure.activities;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.appcompat.widget.SearchView;
 
@@ -30,7 +28,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
-public class OffersActivity extends AppCompatActivity {
+public class ProviderOffersActivity extends AppCompatActivity {
     private DrawerLayout drawer;
     private NavController navController;
     private AppBarConfiguration appBarConfiguration;
@@ -92,7 +90,7 @@ public class OffersActivity extends AppCompatActivity {
         @SuppressLint("ResourceType") View profileIcon = toolbar.findViewById(R.id.nav_profile);
         profileIcon.setOnClickListener(v -> {
             // Create an Intent to start ProfileActivity
-            Intent intent = new Intent(OffersActivity.this, ProfileActivity.class);
+            Intent intent = new Intent(ProviderOffersActivity.this, ProfileActivity.class);
             startActivity(intent);
         });
 
