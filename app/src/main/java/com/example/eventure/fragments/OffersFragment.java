@@ -326,8 +326,9 @@ public class OffersFragment extends Fragment {
         CheckBox onSaleCheckBox = dialogView.findViewById(R.id.checkbox_on_sale);
         CheckBox productCheckBox = dialogView.findViewById(R.id.checkbox_product);
         CheckBox serviceCheckBox = dialogView.findViewById(R.id.checkbox_service);
-        productCheckBox.setChecked(currentIsProduct);
-        serviceCheckBox.setChecked(currentIsService);
+        resetFilter();
+        productCheckBox.setChecked(true);
+        serviceCheckBox.setChecked(true);
 
         RangeSlider priceSlider = dialogView.findViewById(R.id.price_range_slider);
         priceSlider.setValues(0f, 0f);
@@ -419,7 +420,6 @@ public class OffersFragment extends Fragment {
         Log.d("OffersTag", "eventType: " + eventType);
         Log.d("OffersTag", "isService: " + isService);
         Log.d("OffersTag", "isProduct: " + isProduct);
-        //IMPLEMENTIRATI ZA START I END JER SE SAD NE POZIVA FJA DOSTUPNOSTI
         offerService.getFilteredOffers(
                 name,
                 description,

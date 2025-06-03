@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.app.Service;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -173,9 +174,26 @@ public class OfferDetailsDialog extends DialogFragment {
         btnBook = view.findViewById(R.id.btn_book);
         btnBook.setOnClickListener(v -> {
             if (offer.getType().equals("Service")) {
-                // TODO: Implement booking logic for services
+
+                BookServiceDialog dialog = new BookServiceDialog(offer.getId());
+                dialog.setBookingResultListener(success -> {
+                    if (success) {
+                        // Booking was successful
+                        Log.d("BookingTag", "Booking completed");
+                        View rootView = getView();
+                        if (rootView != null) {
+                            makeReviewUIVisible(rootView);
+                        } else {
+                            Log.e("BookingTag", "Root view is null, can't make review UI visible");
+                        }
+
+                    } else {
+                        Log.d("BookingTag", "Booking was not completed");
+                    }
+                });
+                dialog.show(getParentFragmentManager(), "book_service");
             } else {
-                // TODO: Implement booking logic for products
+                // Handle booking for product
             }
         });
 
