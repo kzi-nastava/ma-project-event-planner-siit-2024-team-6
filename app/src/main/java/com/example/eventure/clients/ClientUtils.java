@@ -17,17 +17,23 @@ import com.example.eventure.BuildConfig;
 
 public class ClientUtils {
     public static final String SERVICE_API_PATH = "http://" + BuildConfig.IP_ADDR + ":8080/api/"; // For Android emulator
+    //Events
     public static final String LOGIN = "users/login";
     public static final String TOP_FIVE_EVENTS = "events/top-five";
     public static final String ALL_EVENTS = "events/";
     public static final String ALL_EVENTS_PAGED = "events/all-elements";
     public static final String FILTERED_EVENTS = "events/search";
 
+    //Offers
     public static final String TOP_FIVE_OFFERS = "offers/top-five";
     public static final String ALL_OFFERS = "offers/";
     public static final String ALL_OFFERS_PAGED = "offers/all-elements";
     public static final String FILTERED_OFFERS = "offers/search";
     public static final String ALL_EVENT_TYPES = "admins/event-types";
+    // Organizer
+    public static final String ORGANIZER_FUTURE_EVENTS = "organizers/{organizerId}/future-events";
+    public static final String ADD_RESERVATION = "reservations/";
+
     public static final int PAGE_SIZE = 5;
 
     private static AuthService authService;
@@ -114,6 +120,8 @@ public class ClientUtils {
     public static final EventService eventService = retrofit.create(EventService.class);
     public static final OfferService offerService = retrofit.create(OfferService.class);
     public static final CategoryService categoryService = retrofit.create(CategoryService.class);
+    public static final OrganizerService organizerService = retrofit.create(OrganizerService.class);
+    public static final ReservationService reservationService = retrofit.create(ReservationService.class);
     public static final LoginService loginService = retrofit.create(LoginService.class);
     //public static final AuthService authService = retrofit.create(AuthService.class);
 }
