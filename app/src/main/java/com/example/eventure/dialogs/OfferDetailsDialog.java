@@ -172,30 +172,52 @@ public class OfferDetailsDialog extends DialogFragment {
         }
 
         btnBook = view.findViewById(R.id.btn_book);
-        btnBook.setOnClickListener(v -> {
-            if (offer.getType().equals("Service")) {
 
-                BookServiceDialog dialog = new BookServiceDialog(offer.getId(),offer.getPreciseDuration());
-                dialog.setBookingResultListener(success -> {
-                    if (success) {
-                        // Booking was successful
-                        Log.d("BookingTag", "Booking completed");
-                        View rootView = getView();
-                        if (rootView != null) {
-                            makeReviewUIVisible(rootView);
+        if(ClientUtils.getAuthService().isLoggedIn() && ClientUtils.getAuthService().getRole().equals("ROLE_ORGANIZER")){
+            btnBook.setOnClickListener(v -> {
+                if (offer.getType().equals("Service")) {
+
+                    BookServiceDialog dialog = new BookServiceDialog(offer.getId(),offer.getPreciseDuration());
+                    dialog.setBookingResultListener(success -> {
+                        if (success) {
+                            // Booking was successful
+                            Log.d("BookingTag", "Booking completed");
+                            View rootView = getView();
+                            if (rootView != null) {
+                                makeReviewUIVisible(rootView);
+                            } else {
+                                Log.e("BookingTag", "Root view is null, can't make review UI visible");
+                            }
+
                         } else {
-                            Log.e("BookingTag", "Root view is null, can't make review UI visible");
+                            Log.d("BookingTag", "Booking was not completed");
                         }
+                    });
+                    dialog.show(getParentFragmentManager(), "book_service");
+                } else {
+                    Log.d("BLAH", "Booking was not completed");
+                    BuyProductDialog dialog = new BuyProductDialog(offer.getId());
+                    dialog.setBookingResultListener(success -> {
+                        if (success) {
+                            // Booking was successful
+                            Log.d("BookingTag", "Booking completed");
+                            View rootView = getView();
+                            if (rootView != null) {
+                                makeReviewUIVisible(rootView);
+                            } else {
+                                Log.e("BookingTag", "Root view is null, can't make review UI visible");
+                            }
 
-                    } else {
-                        Log.d("BookingTag", "Booking was not completed");
-                    }
-                });
-                dialog.show(getParentFragmentManager(), "book_service");
-            } else {
-                // Handle booking for product
-            }
-        });
+                        } else {
+                            Log.d("BookingTag", "Booking was not completed");
+                        }
+                    });
+                    dialog.show(getParentFragmentManager(), "BuyProductDialog");
+                }
+            });
+        }else{
+            btnBook.setVisibility(View.INVISIBLE);
+        }
 
         ImageButton btnAccount = view.findViewById(R.id.provider_icon);
         btnAccount.setOnClickListener(v -> {
