@@ -12,6 +12,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
@@ -28,6 +29,11 @@ public interface OfferService {
     })
     Call<List<OfferDTO>> getTopFive();
 
+    @POST("offers/{offerId}/buy")
+    Call<Void> buyOffer(
+            @Path("offerId") int offerId,
+            @Query("eventId") int eventId
+    );
     @GET(ClientUtils.ALL_OFFERS)
     @Headers({
             "User-Agent: Mobile-Android",
