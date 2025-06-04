@@ -4,6 +4,7 @@ import android.app.Service;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.Editable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,9 @@ import com.example.eventure.dto.EventDTO;
 import com.example.eventure.dto.NewReservationDTO;
 import com.example.eventure.dto.ReservationDTO;
 
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -25,17 +29,24 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import android.text.TextWatcher;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 
 public class BookServiceDialog extends DialogFragment {
 
     private Integer serviceId;
     private Integer organizerId;
+    private Integer preciseServiceDuration;
     // ui
     private Spinner eventSpinner;
     private DatePicker datePicker;
@@ -79,8 +90,9 @@ public class BookServiceDialog extends DialogFragment {
     }
 
     // dialog
-    public BookServiceDialog(Integer serviceId) {
+    public BookServiceDialog(Integer serviceId, Integer preciseServiceDuration) {
         this.serviceId = serviceId;
+        this.preciseServiceDuration = preciseServiceDuration;
     }
 
     @Nullable
@@ -99,6 +111,40 @@ public class BookServiceDialog extends DialogFragment {
         datePicker.setMinDate(calendar.getTimeInMillis());
         fromTimeInput = view.findViewById(R.id.from_time_input);
         toTimeInput = view.findViewById(R.id.to_time_input);
+        if (preciseServiceDuration != 0) {
+            toTimeInput.setEnabled(false);
+        } else {
+            toTimeInput.setEnabled(true);
+        }
+        // autofill toTimeInput if precise duration of a service is set
+        fromTimeInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (preciseServiceDuration != 0 && !s.toString().isEmpty()) {
+                    // Parse fromTime and add duration
+                    try {
+                        // Assuming the time is in HH:mm format
+                        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
+                        Date fromTime = sdf.parse(s.toString());
+
+                        // Add duration of service
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTime(fromTime);
+                        calendar.add(Calendar.MINUTE, preciseServiceDuration);
+
+                        // Set the new time in toTimeInput
+                        String toTimeString = sdf.format(calendar.getTime());
+                        toTimeInput.setText(toTimeString);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
         bookButton = view.findViewById(R.id.book_button);
         closeIcon = view.findViewById(R.id.close_icon);
 
@@ -159,7 +205,21 @@ public class BookServiceDialog extends DialogFragment {
                             Toast.makeText(getContext(), "Booking was successful!", Toast.LENGTH_SHORT).show();
                             markBookingAsSuccessfulAndClose();
                         } else {
-                            Toast.makeText(getContext(), "Booking for this date and time was unsuccessful. Please choose some other time.", Toast.LENGTH_LONG).show();
+                            String errorMessage = "Booking for this date and time was unsuccessful. Please choose some other time.";
+
+                            try {
+                                if (response.errorBody() != null) {
+                                    String errorBodyString = response.errorBody().string();
+                                    JSONObject jsonObject = new JSONObject(errorBodyString);
+                                    if (jsonObject.has("message")) {
+                                        errorMessage = jsonObject.getString("message");
+                                    }
+                                }
+                            } catch (IOException | JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                            Toast.makeText(getContext(), errorMessage, Toast.LENGTH_LONG).show();
                         }
                     }
 
@@ -168,6 +228,7 @@ public class BookServiceDialog extends DialogFragment {
                         Toast.makeText(getContext(), "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
+
             }
 
         });
