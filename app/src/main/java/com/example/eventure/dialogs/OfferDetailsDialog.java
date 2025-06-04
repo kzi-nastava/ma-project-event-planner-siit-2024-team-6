@@ -175,7 +175,7 @@ public class OfferDetailsDialog extends DialogFragment {
         btnBook.setOnClickListener(v -> {
             if (offer.getType().equals("Service")) {
 
-                BookServiceDialog dialog = new BookServiceDialog(offer.getId());
+                BookServiceDialog dialog = new BookServiceDialog(offer.getId(),offer.getPreciseDuration());
                 dialog.setBookingResultListener(success -> {
                     if (success) {
                         // Booking was successful
