@@ -31,7 +31,7 @@ public class ClientUtils {
     public static final String FILTERED_OFFERS = "offers/search";
     public static final String ALL_EVENT_TYPES = "admins/event-types";
     // Organizer
-    public static final String ORGANIZER_FUTURE_EVENTS = "organizers/{organizerId}/future-events";
+    public static final String ORGANIZER_FUTURE_EVENTS = "organizers/future-events";
     public static final String ADD_RESERVATION = "reservations/";
 
     public static final int PAGE_SIZE = 5;
