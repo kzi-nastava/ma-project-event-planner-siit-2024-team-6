@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.app.Service;
 
@@ -27,8 +28,10 @@ import com.example.eventure.clients.AuthService;
 import com.example.eventure.clients.ClientUtils;
 import com.example.eventure.clients.OfferService;
 import com.example.eventure.dto.NewOfferDTO;
+import com.example.eventure.dto.NewReactionDTO;
 import com.example.eventure.dto.OfferDTO;
 import com.example.eventure.dto.ProviderDTO;
+import com.example.eventure.dto.ReactionDTO;
 import com.example.eventure.model.EventType;
 import com.example.eventure.model.Offer;
 import com.example.eventure.model.PagedResponse;
@@ -332,14 +335,40 @@ public class OfferDetailsDialog extends DialogFragment {
     private void makeReviewUIVisible(View view) {
         TextView reviewLabel = view.findViewById(R.id.review_label);
         reviewLabel.setVisibility(View.VISIBLE);
-        EditText rating = view.findViewById(R.id.review_rating);
-        rating.setVisibility(View.VISIBLE);
+        RatingBar ratingBar = view.findViewById(R.id.review_rating_bar);
+        ratingBar.setVisibility(View.VISIBLE);
         EditText review = view.findViewById(R.id.review_input);
         review.setVisibility(View.VISIBLE);
         Button submit = view.findViewById(R.id.btn_submit_review);
         submit.setVisibility(View.VISIBLE);
         submit.setOnClickListener(v -> {
-            // TODO: Submit review logic
+            String reviewText = review.getText().toString().trim();
+            float rating = ratingBar.getRating();
+
+            if (rating == 0.0f && reviewText.isEmpty()) {
+                Snackbar.make(v, "Please select a rating or enter a review before submitting.", Snackbar.LENGTH_SHORT).show();
+                return;
+            }
+
+            NewReactionDTO reaction = new NewReactionDTO(reviewText, Math.round(rating), null, offer.getId());
+
+
+            Call<ReactionDTO> call = ClientUtils.reactionService.addReaction(reaction);
+            call.enqueue(new Callback<ReactionDTO>() {
+                @Override
+                public void onResponse(Call<ReactionDTO> call, Response<ReactionDTO> response) {
+                    if (response.isSuccessful()) {
+                        Snackbar.make(v, "Reaction submitted successfully!", Snackbar.LENGTH_LONG).show();
+                    } else {
+                        Snackbar.make(v, "Failed to submit reaction.", Snackbar.LENGTH_LONG).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ReactionDTO> call, Throwable t) {
+                    Snackbar.make(v, "Network error: " + t.getMessage(), Snackbar.LENGTH_LONG).show();
+                }
+            });
         });
     }
 }
