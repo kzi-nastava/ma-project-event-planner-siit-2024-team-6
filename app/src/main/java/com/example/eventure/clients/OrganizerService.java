@@ -16,5 +16,5 @@ public interface OrganizerService {
             "User-Agent: Mobile-Android",
             "Content-Type:application/json"
     })
-    Call<List<EventDTO>> getFutureEventsForOrganizer(@Path("organizerId") int organizerId);
+    Call<List<EventDTO>> getFutureEventsForOrganizer();
 }

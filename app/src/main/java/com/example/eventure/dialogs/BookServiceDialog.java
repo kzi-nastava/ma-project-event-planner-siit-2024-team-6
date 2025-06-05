@@ -149,8 +149,7 @@ public class BookServiceDialog extends DialogFragment {
         closeIcon = view.findViewById(R.id.close_icon);
 
         // Fetch events for logged-in organizer
-        organizerId = ClientUtils.getAuthService().getUserId();
-        Call<List<EventDTO>> call = ClientUtils.organizerService.getFutureEventsForOrganizer(organizerId);
+        Call<List<EventDTO>> call = ClientUtils.organizerService.getFutureEventsForOrganizer();
         call.enqueue(new Callback<List<EventDTO>>() {
             @Override
             public void onResponse(Call<List<EventDTO>> call, Response<List<EventDTO>> response) {
