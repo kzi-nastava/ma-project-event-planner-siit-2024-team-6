@@ -117,5 +117,9 @@ public interface OfferService {
             @Query("pageSize") int pageSize
     );
 
+    @GET("offers/{offerId}/purchased")
+    Call<Boolean> isOfferPurchased(
+            @Path("offerId") int offerId
+    );
 
 }
