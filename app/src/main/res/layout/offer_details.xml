@@ -246,13 +246,15 @@
                 android:background="@color/cardview_light_background"
                 android:padding="8dp"
                 android:visibility="gone"/>
-            <EditText
-                android:id="@+id/review_rating"
+            <RatingBar
+                android:id="@+id/review_rating_bar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="Rating"
-                android:inputType="numberDecimal"
+                android:numStars="5"
+                android:stepSize="1.0"
+                android:rating="0"
                 android:layout_marginTop="8dp"
+                android:isIndicator="false"
                 android:visibility="gone"/>
 
             <Button
