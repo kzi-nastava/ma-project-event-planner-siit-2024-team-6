@@ -78,6 +78,7 @@ public class OfferDetailsDialog extends DialogFragment {
 
         setupUI(view);
         populateUI(view);
+        checkForImmediateReview(view);
 
         return view;
     }
@@ -91,6 +92,50 @@ public class OfferDetailsDialog extends DialogFragment {
             getDialog().getWindow().setLayout(width, ViewGroup.LayoutParams.WRAP_CONTENT);
             // Optional: Make background transparent if desired
             getDialog().getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
+    }
+
+    private void checkForImmediateReview(View view){
+        if (offer.getType().equals("Product")){
+            Call<Boolean> call2 = ClientUtils.offerService.isOfferPurchased(offer.getId());
+
+            call2.enqueue(new Callback<Boolean>() {
+                @Override
+                public void onResponse(Call<Boolean> call2, Response<Boolean> response) {
+                    if (response.isSuccessful()) {
+                        Boolean isPurchased = response.body();
+                        if (Boolean.TRUE.equals(isPurchased)) {
+                            makeReviewUIVisible(view);
+                        }
+                    } else {
+                        //
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Boolean> call2, Throwable t) {
+                }
+            });
+        }else{
+            Call<Boolean> call = ClientUtils.reservationService.isOfferReservedByUser(offer.getId());
+
+            call.enqueue(new Callback<Boolean>() {
+                @Override
+                public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                    if (response.isSuccessful()) {
+                        Boolean isReserved = response.body();
+                        if (Boolean.TRUE.equals(isReserved)) {
+                            makeReviewUIVisible(view);
+                        }
+                    } else {
+                        //Toast.makeText(context, "Failed to check reservation.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Boolean> call, Throwable t) {
+                }
+            });
         }
     }
 
