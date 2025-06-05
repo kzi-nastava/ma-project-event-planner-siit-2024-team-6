@@ -5,8 +5,10 @@ import com.example.eventure.dto.ReservationDTO;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 
 public interface ReservationService {
 
@@ -16,4 +18,9 @@ public interface ReservationService {
             "Content-Type: application/json"
     })
     Call<ReservationDTO> addReservation(@Body NewReservationDTO newReservationDTO);
+
+    @GET("reservations/{offerId}/reserved")
+    Call<Boolean> isOfferReservedByUser(
+            @Path("offerId") int offerId
+    );
 }
