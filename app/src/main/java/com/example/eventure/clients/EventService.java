@@ -27,7 +27,7 @@ public interface EventService {
             "Content-Type:application/json",
             "skip: true"
     })
-    Call<PagedResponse<EventDTO>> getPagedEvents(@Query("page") int page, @Query("size") int size);
+    Call<PagedResponse<EventDTO>> getPagedEvents(@Query("page") int page, @Query("size") int size, @Query("sortDir") String sortDir);
     @GET(ClientUtils.FILTERED_EVENTS)
     @Headers({
             "User-Agent: Mobile-Android",
@@ -42,6 +42,7 @@ public interface EventService {
             @Query("startDate") String startDate,
             @Query("endDate") String endDate,
             @Query("page") int page,
-            @Query("pageSize") int pageSize
+            @Query("pageSize") int pageSize,
+            @Query("sortDir") String sortDir
     );
 }
