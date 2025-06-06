@@ -28,6 +28,7 @@ public class ClientUtils {
     public static final String TOP_FIVE_OFFERS = "offers/top-five";
     public static final String ALL_OFFERS = "offers/";
     public static final String ALL_OFFERS_PAGED = "offers/all-elements";
+    public static final String ACCEPTED_OFFERS = "offers/accepted";
     public static final String FILTERED_OFFERS = "offers/search";
     public static final String ALL_EVENT_TYPES = "admins/event-types";
     // Organizer
