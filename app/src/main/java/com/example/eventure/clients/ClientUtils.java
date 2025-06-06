@@ -32,6 +32,7 @@ public class ClientUtils {
     public static final String ALL_EVENT_TYPES = "admins/event-types";
     // Organizer
     public static final String ORGANIZER_FUTURE_EVENTS = "organizers/future-events";
+    public static final String ADD_REACTION = "reactions/";
     public static final String ADD_RESERVATION = "reservations/";
 
     public static final int PAGE_SIZE = 5;
@@ -123,5 +124,7 @@ public class ClientUtils {
     public static final OrganizerService organizerService = retrofit.create(OrganizerService.class);
     public static final ReservationService reservationService = retrofit.create(ReservationService.class);
     public static final LoginService loginService = retrofit.create(LoginService.class);
+
+    public static final ReactionService reactionService = retrofit.create(ReactionService.class);
     //public static final AuthService authService = retrofit.create(AuthService.class);
 }
