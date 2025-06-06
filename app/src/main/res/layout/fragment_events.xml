@@ -104,25 +104,12 @@
                     android:layout_toStartOf="@id/events_filter_icon"
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="4dp" />
-                <!-- Sorting Label -->
-                <TextView
-                    android:id="@+id/sort_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Sort:"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:textColor="@android:color/black"
-                    android:layout_toStartOf="@id/sort_spinner"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="8dp"/>
-
                 <!-- Sorting Spinner -->
                 <Spinner
                     android:id="@+id/sort_spinner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toStartOf="@id/events_filter_icon"
+                    android:layout_toStartOf="@id/filter_text"
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="12dp" />
 

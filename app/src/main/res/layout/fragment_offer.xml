@@ -86,12 +86,13 @@
                     android:id="@+id/products_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Products"
+                    android:text="Offers"
                     android:textSize="30sp"
                     android:textStyle="bold"
                     android:textColor="@android:color/black"
                     android:layout_alignParentStart="true" />
 
+                <!-- Filter Text -->
                 <TextView
                     android:id="@+id/filter_text"
                     android:layout_width="wrap_content"
@@ -104,6 +105,16 @@
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="4dp" />
 
+                <!-- Sorting Spinner -->
+                <Spinner
+                    android:id="@+id/offers_sort_spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@id/filter_text"
+                    android:layout_marginEnd="8dp" />
+
+                <!-- Filter Icon -->
                 <ImageView
                     android:id="@+id/offers_filter_icon"
                     android:layout_width="wrap_content"
@@ -113,6 +124,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:padding="4dp" />
+
             </RelativeLayout>
             <TextView
                 android:id="@+id/emptyOffers"
