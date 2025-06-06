@@ -35,6 +35,10 @@ public class ClientUtils {
     public static final String ADD_REACTION = "reactions/";
     public static final String ADD_RESERVATION = "reservations/";
 
+
+    public static final String DELETE_UPDATE_CATEGORY = "admins/category/{id}";
+    public static final String CREATE_CATEGORY = "admins/category";
+
     public static final int PAGE_SIZE = 5;
 
     private static AuthService authService;

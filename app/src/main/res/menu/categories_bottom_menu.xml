@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/events_menu"
+        android:icon="@drawable/category_icon"
+        android:title="CATEGORIES" />
+
+    <item
+        android:id="@+id/offer_menu"
+        android:icon="@drawable/lightbulb_icon"
+        android:title="SUGGESTIONS" />
+</menu>

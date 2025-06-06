@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -78,6 +79,9 @@ public class HomeActivity extends AppCompatActivity {
                 case "CALENDAR":
                     navController.navigate(R.id.nav_my_calendar); // Navigate to My Offers fragment
                     break;
+                case "CATEGORIES":
+                    navController.navigate(R.id.nav_admin_categories); // Navigate to My Offers fragment
+                    break;
                 default:
                     // Optionally handle unknown fragment names
                     break;
@@ -101,6 +105,11 @@ public class HomeActivity extends AppCompatActivity {
                 navController.navigate(R.id.nav_messages);
                 drawer.closeDrawer(GravityCompat.START);
                 return true;
+            } else if (id == R.id.nav_admin_categories) {
+                Intent intent = new Intent(HomeActivity.this, AdminCategoriesActivity.class);
+                startActivity(intent);
+                drawer.closeDrawer(GravityCompat.START);
+                return true;
             }
 
             drawer.closeDrawer(GravityCompat.START);
@@ -115,6 +124,15 @@ public class HomeActivity extends AppCompatActivity {
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
+
+
+        TextView tvTitle = toolbar.findViewById(R.id.toolbar_title);
+        tvTitle.setOnClickListener(v -> {
+            Intent intent = getIntent();
+            finish();
+            startActivity(intent);
+        });
+
     }
 
     @Override
