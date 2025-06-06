@@ -36,6 +36,7 @@ public class ClientUtils {
 
 
     public static final String DELETE_UPDATE_CATEGORY = "admins/category/{id}";
+    public static final String CREATE_CATEGORY = "admins/category";
 
     public static final int PAGE_SIZE = 5;
 

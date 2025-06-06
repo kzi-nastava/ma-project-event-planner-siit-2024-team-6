@@ -34,7 +34,7 @@ public interface CategoryService {
             @Query("page") int page,
             @Query("size") int size
     );
-    @POST("category")
+    @POST(ClientUtils.CREATE_CATEGORY)
     Call<Category> createCategory(@Body NewCategoryDTO dto);
 
     @PUT(ClientUtils.DELETE_UPDATE_CATEGORY)
