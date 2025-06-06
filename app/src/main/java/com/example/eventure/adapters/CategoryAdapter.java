@@ -116,7 +116,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
                                             categoryList.remove(pos);
                                             notifyItemRemoved(pos);
                                         } else {
-                                            Snackbar.make(holder.itemView, "Delete failed", Snackbar.LENGTH_SHORT).show(); // ❌ invalid
+                                            Snackbar.make(holder.itemView, "Delete failed. There are offers with this category.", Snackbar.LENGTH_SHORT).show(); // ❌ invalid
                                         }
                                     }
 
