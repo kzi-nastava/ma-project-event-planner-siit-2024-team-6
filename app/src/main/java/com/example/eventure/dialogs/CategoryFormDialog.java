@@ -73,6 +73,10 @@ public class CategoryFormDialog extends DialogFragment {
                 nameEditText.setError("Name required");
                 return;
             }
+            if (desc.isEmpty()) {
+                descEditText.setError("Description required");
+                return;
+            }
 
             NewCategoryDTO dto = new NewCategoryDTO(name, desc);
 
