@@ -78,6 +78,9 @@ public class HomeActivity extends AppCompatActivity {
                 case "CALENDAR":
                     navController.navigate(R.id.nav_my_calendar); // Navigate to My Offers fragment
                     break;
+                case "CATEGORIES":
+                    navController.navigate(R.id.nav_admin_categories); // Navigate to My Offers fragment
+                    break;
                 default:
                     // Optionally handle unknown fragment names
                     break;
@@ -99,6 +102,10 @@ public class HomeActivity extends AppCompatActivity {
                 return true;
             } else if (id == R.id.nav_messages) {
                 navController.navigate(R.id.nav_messages);
+                drawer.closeDrawer(GravityCompat.START);
+                return true;
+            } else if (id == R.id.nav_admin_categories) {
+                navController.navigate(R.id.nav_admin_categories);
                 drawer.closeDrawer(GravityCompat.START);
                 return true;
             }
