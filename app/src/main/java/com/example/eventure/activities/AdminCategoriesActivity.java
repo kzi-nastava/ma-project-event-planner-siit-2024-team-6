@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -83,11 +84,19 @@ public class AdminCategoriesActivity extends AppCompatActivity {
         actionBarDrawerToggle.syncState();
 
 
+
+
         // Find profile icon in toolbar
         @SuppressLint("ResourceType") View profileIcon = toolbar.findViewById(R.id.nav_profile);
         profileIcon.setOnClickListener(v -> {
             // Create an Intent to start ProfileActivity
             Intent intent = new Intent(AdminCategoriesActivity.this, ProfileActivity.class);
+            startActivity(intent);
+        });
+
+        TextView tvTitle = toolbar.findViewById(R.id.toolbar_title);
+        tvTitle.setOnClickListener(v -> {
+            Intent intent = new Intent(AdminCategoriesActivity.this, HomeActivity.class);
             startActivity(intent);
         });
 

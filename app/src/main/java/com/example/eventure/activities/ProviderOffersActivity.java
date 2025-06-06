@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.appcompat.widget.SearchView;
 
@@ -93,6 +94,13 @@ public class ProviderOffersActivity extends AppCompatActivity {
             Intent intent = new Intent(ProviderOffersActivity.this, ProfileActivity.class);
             startActivity(intent);
         });
+
+        TextView tvTitle = toolbar.findViewById(R.id.toolbar_title);
+        tvTitle.setOnClickListener(v -> {
+            Intent intent = new Intent(ProviderOffersActivity.this, HomeActivity.class);
+            startActivity(intent);
+        });
+
 
         // Action listener for creating new services/products
         FloatingActionButton fab = findViewById(R.id.fab);
