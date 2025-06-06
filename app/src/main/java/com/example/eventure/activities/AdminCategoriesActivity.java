@@ -76,7 +76,7 @@ public class AdminCategoriesActivity extends AppCompatActivity {
         });
 
         navController = Navigation.findNavController(this, R.id.fragment_nav_content_categories);
-        BottomNavigationView bottomNav = findViewById(R.id.categories_bottom_navigation);
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation_categories);
         NavigationUI.setupWithNavController(bottomNav, navController);
 
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
