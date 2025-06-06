@@ -17,8 +17,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.eventure.R;
 import com.example.eventure.adapters.CategoryAdapter;
 import com.example.eventure.clients.ClientUtils;
+import com.example.eventure.dialogs.CategoryFormDialog;
 import com.example.eventure.model.Category;
 import com.example.eventure.model.PagedResponse;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,11 +62,11 @@ public class AdminCategoryFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recyclerViewCategories);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        adapter = new CategoryAdapter(categoryList, new CategoryAdapter.OnCategoryClickListener() {
+        adapter = new CategoryAdapter(requireContext(), getParentFragmentManager(), categoryList, new CategoryAdapter.OnCategoryClickListener() {
             @Override
             public void onEdit(Category category) {
                 Toast.makeText(getContext(), "Edit: " + category.getName(), Toast.LENGTH_SHORT).show();
-                // TODO: open dialog for editing
+                openCategoryFormDialog(category);
             }
 
             @Override
@@ -131,4 +133,33 @@ public class AdminCategoryFragment extends Fragment {
             }
         });
     }
+    private void openCategoryFormDialog(@Nullable Category category) {
+        CategoryFormDialog dialog = new CategoryFormDialog(category);
+        dialog.setCategoryFormListener(new CategoryFormDialog.CategoryFormListener() {
+            @Override
+            public void onCategoryCreated(Category newCategory) {
+                categoryList.add(newCategory);
+                adapter.notifyItemInserted(categoryList.size() - 1);
+                Snackbar.make(requireView(), "Category created", Snackbar.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCategoryUpdated(Category updatedCategory) {
+                int index = -1;
+                for (int i = 0; i < categoryList.size(); i++) {
+                    if (categoryList.get(i).getId() == updatedCategory.getId()) {
+                        index = i;
+                        break;
+                    }
+                }
+                if (index != -1) {
+                    categoryList.set(index, updatedCategory);
+                    adapter.notifyItemChanged(index);
+                    Snackbar.make(requireView(), "Category updated", Snackbar.LENGTH_SHORT).show();
+                }
+            }
+        });
+        dialog.show(getParentFragmentManager(), "CategoryFormDialog");
+    }
+
 }
