@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.eventure.R;
 import com.example.eventure.adapters.CategorySuggestionAdapter;
 import com.example.eventure.clients.ClientUtils;
+import com.example.eventure.dialogs.EditCategorySuggestionDialog;
 import com.example.eventure.model.CategorySuggestion;
 import com.example.eventure.model.PagedResponse;
 import com.google.android.material.snackbar.Snackbar;
@@ -70,7 +71,13 @@ public class CategorySuggestionsFragment extends Fragment {
 
             @Override
             public void onEditClicked(CategorySuggestion suggestion, int position) {
-                // TODO: open edit dialog here
+                EditCategorySuggestionDialog dialog = new EditCategorySuggestionDialog();
+                Bundle args = new Bundle();
+                args.putString("name", suggestion.getName());
+                args.putString("description", suggestion.getDescription());
+                dialog.setArguments(args);
+                dialog.show(getParentFragmentManager(), "EditSuggestionDialog");
+
             }
         });
 
