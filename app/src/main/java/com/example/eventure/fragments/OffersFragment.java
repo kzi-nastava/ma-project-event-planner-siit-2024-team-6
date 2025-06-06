@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -82,7 +83,7 @@ public class OffersFragment extends Fragment {
     private Boolean currentIsProduct = true;
     private List<String> eventTypes = new ArrayList<>();
     private List<String> categories = new ArrayList<>();
-
+    private String sortDir = "asc";
     //Search
     private String searchInput;
     public OffersFragment() {
@@ -195,6 +196,33 @@ public class OffersFragment extends Fragment {
 
         ImageView filterIcon = rootView.findViewById(R.id.offers_filter_icon);
         filterIcon.setOnClickListener(v -> showFilterDialog(inflater));
+        //Sorting
+        Spinner offersSortSpinner = rootView.findViewById(R.id.offers_sort_spinner);
+
+        ArrayAdapter<CharSequence> adapter = new ArrayAdapter<>(
+                getContext(),
+                android.R.layout.simple_spinner_item,
+                new String[]{"Price (asc)", "Price (desc)"}
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        offersSortSpinner.setAdapter(adapter);
+        offersSortSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                sortDir = position == 0 ? "asc" : "desc";
+                currentPage = 0;
+                offerAdapter.clearOffers();
+                if (isFilterMode) {
+                    fetchFilteredOffers(searchInput,searchInput,currentMinPrice,currentMaxPrice,currentIsOnSale,currentCategory,currentEventType,currentIsService,currentIsProduct,currentPage);
+                } else {
+                    fetchOffersWithPagination(currentPage);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
 
         return rootView;
     }
@@ -206,7 +234,7 @@ public class OffersFragment extends Fragment {
         isLoading = true;  // Set loading state
         Log.d("OffersTag", "Fetching page: " + page);
 
-        offerService.getPagedOffers(page, 10).enqueue(new Callback<PagedResponse<OfferDTO>>() {
+        offerService.getAcceptedOffers(page, ClientUtils.PAGE_SIZE, sortDir).enqueue(new Callback<PagedResponse<OfferDTO>>() {
             @Override
             public void onResponse(Call<PagedResponse<OfferDTO>> call, Response<PagedResponse<OfferDTO>> response) {
                 isLoading = false;  // Reset loading state
@@ -431,7 +459,8 @@ public class OffersFragment extends Fragment {
                 isService,
                 isProduct,
                 page,
-                ClientUtils.PAGE_SIZE
+                ClientUtils.PAGE_SIZE,
+                sortDir
         ).enqueue(new Callback<PagedResponse<OfferDTO>>() {
             @Override
             public void onResponse(Call<PagedResponse<OfferDTO>> call, Response<PagedResponse<OfferDTO>> response) {
