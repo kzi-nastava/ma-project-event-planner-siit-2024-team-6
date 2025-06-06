@@ -20,6 +20,7 @@ import com.example.eventure.clients.ClientUtils;
 import com.example.eventure.dialogs.CategoryFormDialog;
 import com.example.eventure.model.Category;
 import com.example.eventure.model.PagedResponse;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
@@ -79,6 +80,12 @@ public class AdminCategoryFragment extends Fragment {
 
         setupScrollListener();
         loadCategories();
+
+        FloatingActionButton fab = view.findViewById(R.id.fab);
+        fab.setOnClickListener(v -> {
+            openCategoryFormDialog(null);
+        });
+
     }
 
     private void loadCategories() {
