@@ -39,6 +39,8 @@
         </activity>
         <activity android:name=".activities.ProviderOffersActivity"
             android:exported="false"/>
+        <activity android:name=".activities.AdminCategoriesActivity"
+            android:exported="false"/>
         <activity
             android:name=".activities.SplashScreenActivity"
             android:exported="true"

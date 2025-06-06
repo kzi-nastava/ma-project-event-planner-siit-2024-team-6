@@ -105,7 +105,8 @@ public class HomeActivity extends AppCompatActivity {
                 drawer.closeDrawer(GravityCompat.START);
                 return true;
             } else if (id == R.id.nav_admin_categories) {
-                navController.navigate(R.id.nav_admin_categories);
+                Intent intent = new Intent(HomeActivity.this, AdminCategoriesActivity.class);
+                startActivity(intent);
                 drawer.closeDrawer(GravityCompat.START);
                 return true;
             }
