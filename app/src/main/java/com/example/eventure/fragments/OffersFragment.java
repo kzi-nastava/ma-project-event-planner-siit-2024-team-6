@@ -1,5 +1,10 @@
 package com.example.eventure.fragments;
 
+import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 
 import androidx.appcompat.widget.SearchView;
@@ -66,6 +71,7 @@ public class OffersFragment extends Fragment {
     private OfferAdapter offerAdapter;
     private TextView emptyOffers;
     private Button loadMoreButton;
+    private Spinner offersSortSpinner;
 
     // pagination params
     private boolean isLoading = false;
@@ -86,6 +92,13 @@ public class OffersFragment extends Fragment {
     private String sortDir = "asc";
     //Search
     private String searchInput;
+    //Shaking sensor
+    private SensorManager sensorManager;
+    private Sensor accelerometer;
+    private SensorEventListener sensorEventListener;
+
+
+
     public OffersFragment() {
         // Required empty public constructor
     }
@@ -197,7 +210,7 @@ public class OffersFragment extends Fragment {
         ImageView filterIcon = rootView.findViewById(R.id.offers_filter_icon);
         filterIcon.setOnClickListener(v -> showFilterDialog(inflater));
         //Sorting
-        Spinner offersSortSpinner = rootView.findViewById(R.id.offers_sort_spinner);
+        offersSortSpinner = rootView.findViewById(R.id.offers_sort_spinner);
 
         ArrayAdapter<CharSequence> adapter = new ArrayAdapter<>(
                 getContext(),
@@ -222,6 +235,35 @@ public class OffersFragment extends Fragment {
             @Override
             public void onNothingSelected(AdapterView<?> parent) {}
         });
+
+
+        //Sensor
+        sensorManager = (SensorManager) getContext().getSystemService(Context.SENSOR_SERVICE);
+        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
+        sensorEventListener = new SensorEventListener() {
+            private static final float SHAKE_THRESHOLD = 12.0f; // tweak as needed
+            private long lastShakeTime = 0;
+
+            @Override
+            public void onSensorChanged(SensorEvent event) {
+                float x = event.values[0];
+                float y = event.values[1];
+                float z = event.values[2];
+                double acceleration = Math.sqrt(x * x + y * y + z * z) - SensorManager.GRAVITY_EARTH;
+
+                if (acceleration > SHAKE_THRESHOLD) {
+                    long currentTime = System.currentTimeMillis();
+                    if (currentTime - lastShakeTime > 500) {  // debounce 500ms
+                        lastShakeTime = currentTime;
+                        toggleSortDirection();  // your method to toggle sorting & reload data
+                    }
+                }
+            }
+
+            @Override
+            public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+        };
 
 
         return rootView;
@@ -589,6 +631,34 @@ public class OffersFragment extends Fragment {
                 && noOnSaleChecked && typeNotChanged;
     }
 
+    private void toggleSortDirection() {
+        // Toggle the sortDir value
+        if ("asc".equals(sortDir)) {
+            sortDir = "desc";
+        } else {
+            sortDir = "asc";
+        }
+
+        // Update spinner selection accordingly (assuming spinner is offersSortSpinner)
+        if (offersSortSpinner != null) {
+            int position = sortDir.equals("asc") ? 0 : 1;
+            offersSortSpinner.setSelection(position);
+        }
+
+        // Reset to first page
+        currentPage = 0;
+
+        // Clear existing offers in adapter
+        offerAdapter.clearOffers();
+
+        // Reload offers according to filter mode and new sorting
+        if (isFilterMode) {
+            fetchFilteredOffers(searchInput, searchInput, currentMinPrice, currentMaxPrice, currentIsOnSale, currentCategory, currentEventType, currentIsService, currentIsProduct, currentPage);
+        } else {
+            fetchOffersWithPagination(currentPage);
+        }
+    }
+
     private String formatDate(Long millis) {
         if (millis == null) return null;
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
@@ -607,6 +677,9 @@ public class OffersFragment extends Fragment {
         Log.e("MethodsTag", "OffersFragment onResume called");
 
         super.onResume();
+        if (accelerometer != null) {
+            sensorManager.registerListener(sensorEventListener, accelerometer, SensorManager.SENSOR_DELAY_UI);
+        }
         // Logic to execute when the fragment is interactable
     }
 
@@ -615,6 +688,8 @@ public class OffersFragment extends Fragment {
         Log.e("MethodsTag", "OffersFragment onPause called");
 
         super.onPause();
+        sensorManager.unregisterListener(sensorEventListener);
+
         // Save changes or pause actions
     }
 
