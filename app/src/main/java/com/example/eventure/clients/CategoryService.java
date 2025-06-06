@@ -37,10 +37,10 @@ public interface CategoryService {
     @POST("category")
     Call<Category> createCategory(@Body NewCategoryDTO dto);
 
-    @PUT(ClientUtils.ADD_UPDATE_CATEGORY)
+    @PUT(ClientUtils.DELETE_UPDATE_CATEGORY)
     Call<Category> updateCategory(@Path("id") int id, @Body NewCategoryDTO dto);
 
-    @DELETE(ClientUtils.ADD_UPDATE_CATEGORY)
+    @DELETE(ClientUtils.DELETE_UPDATE_CATEGORY)
     Call<ResponseBody> deleteCategory(@Path("id") int id);
 
 }
