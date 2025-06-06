@@ -23,5 +23,9 @@ public interface CategoryService {
     @GET("offers/categories")
     Call<List<String>> getCategories();
 
-
+    @GET("admins/categories")
+    Call<PagedResponse<Category>> getPagedCategories(
+            @Query("page") int page,
+            @Query("size") int size
+    );
 }
