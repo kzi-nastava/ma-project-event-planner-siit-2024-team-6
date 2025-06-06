@@ -34,6 +34,8 @@ public class ClientUtils {
     // Organizer
     public static final String ORGANIZER_FUTURE_EVENTS = "organizers/future-events";
     public static final String ADD_REACTION = "reactions/";
+    public static final String REACTIONS = "reactions/";
+    public static final String PENDING_REACTIONS = "reactions/pending";
     public static final String ADD_RESERVATION = "reservations/";
 
 
