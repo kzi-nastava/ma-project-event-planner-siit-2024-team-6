@@ -46,7 +46,7 @@ public class AdminCategoriesActivity extends AppCompatActivity {
 
         drawer = findViewById(R.id.drawer_categories_layout);
         navigationView = findViewById(R.id.sidebar_view);
-        navController = Navigation.findNavController(this, R.id.fragment_nav_content_main_home);
+        navController = Navigation.findNavController(this, R.id.fragment_nav_content_categories);
 
         navigationView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
@@ -75,8 +75,14 @@ public class AdminCategoriesActivity extends AppCompatActivity {
             return true;
         });
 
+        navController = Navigation.findNavController(this, R.id.fragment_nav_content_categories);
         BottomNavigationView bottomNav = findViewById(R.id.categories_bottom_navigation);
         NavigationUI.setupWithNavController(bottomNav, navController);
+
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            Log.d("NavigationDebug", "Navigated to: " + destination.getLabel());
+        });
+
 
         actionBarDrawerToggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
