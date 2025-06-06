@@ -41,6 +41,8 @@
             android:exported="false"/>
         <activity android:name=".activities.AdminCategoriesActivity"
             android:exported="false"/>
+        <activity android:name=".activities.AdminCommentsActivity"
+            android:exported="false"/>
         <activity
             android:name=".activities.SplashScreenActivity"
             android:exported="true"
