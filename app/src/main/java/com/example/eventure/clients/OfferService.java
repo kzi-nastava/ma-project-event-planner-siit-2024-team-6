@@ -49,6 +49,13 @@ public interface OfferService {
             "skip: true"
     })
     Call<PagedResponse<OfferDTO>> getPagedOffers(@Query("page") int page, @Query("size") int size);
+    @GET(ClientUtils.ACCEPTED_OFFERS)
+    @Headers({
+            "User-Agent: Mobile-Android",
+            "Content-Type:application/json",
+            "skip: true"
+    })
+    Call<PagedResponse<OfferDTO>> getAcceptedOffers(@Query("page") int page, @Query("size") int size, @Query("sortDir") String sortDir);
     @Headers({
             "User-Agent: Mobile-Android",
             "Content-Type:application/json"
@@ -114,7 +121,8 @@ public interface OfferService {
             @Query("isService") Boolean isService,
             @Query("isProduct") Boolean isProduct,
             @Query("page") int page,
-            @Query("pageSize") int pageSize
+            @Query("pageSize") int pageSize,
+            @Query("sortDir") String sortDir
     );
 
     @GET("offers/{offerId}/purchased")

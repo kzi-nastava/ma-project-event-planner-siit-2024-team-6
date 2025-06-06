@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -75,6 +76,8 @@ public class EventsFragment extends Fragment {
     private String currentFilterStartDate = null;
     private String currentFilterEndDate = null;
     private List<String> eventTypes = new ArrayList<>();
+    private String sortDir = "asc";
+
 
     //Search
     private String searchInput;
@@ -173,6 +176,34 @@ public class EventsFragment extends Fragment {
 
         ImageView filterIcon = rootView.findViewById(R.id.events_filter_icon);
         filterIcon.setOnClickListener(v -> showFilterDialog(inflater));
+        //Sorting
+        Spinner sortSpinner = rootView.findViewById(R.id.sort_spinner);
+        List<String> sortOptions = new ArrayList<>();
+        sortOptions.add("Date (asc)");
+        sortOptions.add("Date (desc)");
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                getContext(),
+                android.R.layout.simple_spinner_item,
+                sortOptions
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sortSpinner.setAdapter(adapter);
+
+        sortSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                sortDir = position == 0 ? "asc" : "desc";  // 0 = Asc, 1 = Desc
+                currentPage = 0;
+                eventAdapter.clearEvents();
+                if (isFilterMode) {
+                    fetchFilteredEvents(searchInput, searchInput, searchInput, currentFilterType, currentFilterStartDate, currentFilterEndDate, currentPage);
+                } else {
+                    fetchAllEventsWithPagination(currentPage);
+                }
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
 
         return rootView;
     }
@@ -183,7 +214,7 @@ public class EventsFragment extends Fragment {
         isLoading = true; // Set loading state
         Log.d("EventsTag", "Fetching page: " + page);
 
-        eventService.getPagedEvents(page, ClientUtils.PAGE_SIZE).enqueue(new Callback<PagedResponse<EventDTO>>() {
+        eventService.getPagedEvents(page, ClientUtils.PAGE_SIZE, sortDir).enqueue(new Callback<PagedResponse<EventDTO>>() {
             @Override
             public void onResponse(Call<PagedResponse<EventDTO>> call, Response<PagedResponse<EventDTO>> response) {
                 isLoading = false; // Reset loading state
@@ -366,7 +397,7 @@ public class EventsFragment extends Fragment {
     }
     private void fetchFilteredEvents(String name, String description, String place, String eventType, String startDate, String endDate, int page) {
         isLoading = true; // Prevent multiple calls at once
-        eventService.getFilteredEvents(name, description, place, eventType, startDate, endDate, page, ClientUtils.PAGE_SIZE)
+        eventService.getFilteredEvents(name, description, place, eventType, startDate, endDate, page, ClientUtils.PAGE_SIZE, sortDir)
                 .enqueue(new Callback<PagedResponse<EventDTO>>() {
                     @Override
                     public void onResponse(Call<PagedResponse<EventDTO>> call, Response<PagedResponse<EventDTO>> response) {
