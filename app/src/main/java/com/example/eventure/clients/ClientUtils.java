@@ -37,8 +37,13 @@ public class ClientUtils {
     public static final String ADD_RESERVATION = "reservations/";
 
 
+    public static final String CATEGORIES = "admins/categories";
     public static final String DELETE_UPDATE_CATEGORY = "admins/category/{id}";
     public static final String CREATE_CATEGORY = "admins/category";
+    public static final String APPROVE_CATEGORY_SUGGETION = "admins/suggestion/approve/{id}";
+    public static final String REJECT_CATEGORY_SUGGETION = "admins/suggestion/reject/{id}";
+    public static final String CATEGORY_SUGGESTIONS = "admins/suggestions";
+    public static final String UPDATE_CATEGORY_SUGGESTION = "admins/suggestion/{id}";
 
     public static final int PAGE_SIZE = 5;
 
