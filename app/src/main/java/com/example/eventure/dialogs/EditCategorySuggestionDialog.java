@@ -155,7 +155,7 @@ public class EditCategorySuggestionDialog extends DialogFragment {
             public void onResponse(Call<List<String>> call, Response<List<String>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     List<String> categories = new ArrayList<>();
-                    categories.add("Create New");
+                    categories.add("Select an Existing Category");
                     categories.addAll(response.body());
 
                     ArrayAdapter<String> adapter = new ArrayAdapter<>(
