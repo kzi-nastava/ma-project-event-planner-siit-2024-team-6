@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,6 +30,7 @@ public class CategorySuggestionsFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private CategorySuggestionAdapter adapter;
+    private TextView message = null;
     private List<CategorySuggestion> categorySuggestions;
 
     @Nullable
@@ -40,6 +42,8 @@ public class CategorySuggestionsFragment extends Fragment {
 
         recyclerView = view.findViewById(R.id.categorySuggestionRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        message = view.findViewById(R.id.no_suggetions_message);
+        message.setVisibility(View.GONE);
 
         getPagedSuggestions(view); // This will fetch and assign categorySuggestions
 
@@ -56,7 +60,9 @@ public class CategorySuggestionsFragment extends Fragment {
                         if (response.isSuccessful()) {
                             categorySuggestions.remove(position);
                             adapter.notifyItemRemoved(position);
+                            messageCheck();
                             Snackbar.make(view, "Successfully approved the suggestion.", Snackbar.LENGTH_SHORT).show();
+                            getParentFragmentManager().setFragmentResult("category_updated", new Bundle());
                         } else {
                             Snackbar.make(view, "Failed to approve the suggestion.", Snackbar.LENGTH_SHORT).show();
                         }
@@ -77,6 +83,13 @@ public class CategorySuggestionsFragment extends Fragment {
                 args.putString("description", suggestion.getDescription());
                 args.putInt("suggestionId", suggestion.getId());
                 dialog.setArguments(args);
+                dialog.setEditSuggestionListener(updatedSuggestion -> {
+                    categorySuggestions.remove(position);
+                    adapter.notifyItemRemoved(position);
+                    messageCheck();
+                    Snackbar.make(recyclerView, "Suggestion edited and removed.", Snackbar.LENGTH_SHORT).show();
+                    getParentFragmentManager().setFragmentResult("category_updated", new Bundle());
+                });
                 dialog.show(getParentFragmentManager(), "EditSuggestionDialog");
 
             }
@@ -96,6 +109,7 @@ public class CategorySuggestionsFragment extends Fragment {
                 } else {
                     Snackbar.make(view, "Failed to get suggestions", Snackbar.LENGTH_SHORT).show();
                 }
+                messageCheck();
             }
 
             @Override
@@ -103,5 +117,13 @@ public class CategorySuggestionsFragment extends Fragment {
                 Snackbar.make(view, "Error: " + t.getMessage(), Snackbar.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void messageCheck(){
+        if(categorySuggestions.isEmpty()){
+            message.setVisibility(View.VISIBLE);
+        }else{
+            message.setVisibility(View.GONE);
+        }
     }
 }
