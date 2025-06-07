@@ -110,6 +110,10 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(intent);
                 drawer.closeDrawer(GravityCompat.START);
                 return true;
+            } else if (id == R.id.nav_admin_manage_comments) {
+                Intent intent = new Intent(HomeActivity.this, AdminCommentsActivity.class);
+                startActivity(intent);
+                return true;
             }
 
             drawer.closeDrawer(GravityCompat.START);
