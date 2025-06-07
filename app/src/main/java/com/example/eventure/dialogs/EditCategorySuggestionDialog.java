@@ -21,6 +21,8 @@ import androidx.fragment.app.DialogFragment;
 
 import com.example.eventure.R;
 import com.example.eventure.clients.ClientUtils;
+import com.example.eventure.dto.NewCategoryDTO;
+import com.example.eventure.model.CategorySuggestion;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
@@ -34,6 +36,7 @@ public class EditCategorySuggestionDialog extends DialogFragment {
     private Spinner spinner;
     private EditText editTextName, editTextDescription;
     private Button btnSubmit, btnCancel;
+    private int suggestionId;
 
     @Nullable
     @Override
@@ -53,6 +56,7 @@ public class EditCategorySuggestionDialog extends DialogFragment {
         if (args != null) {
             String name = args.getString("name", "");
             String description = args.getString("description", "");
+            suggestionId = args.getInt("suggestionId",-1);
             editTextName.setText(name);
             editTextDescription.setText(description);
         }
@@ -65,7 +69,7 @@ public class EditCategorySuggestionDialog extends DialogFragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selected = (String) parent.getItemAtPosition(position);
-                boolean isNew = selected.equalsIgnoreCase("Create New");
+                boolean isNew = selected.equalsIgnoreCase("Select an Existing Category");
 
                 editTextName.setEnabled(isNew);
                 editTextDescription.setEnabled(isNew);
@@ -78,8 +82,67 @@ public class EditCategorySuggestionDialog extends DialogFragment {
         btnCancel.setOnClickListener(v -> dismiss());
 
         btnSubmit.setOnClickListener(v -> {
-            // Handle submission
+            String selectedCategory = (String) spinner.getSelectedItem();
+            String name = editTextName.getText().toString().trim();
+            String description = editTextDescription.getText().toString().trim();
+
+            boolean isNew = selectedCategory.equalsIgnoreCase("Select an Existing Category");
+
+            if (this.suggestionId == -1) {
+                Toast.makeText(getContext(), "Missing suggestion ID", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (!isNew) {
+                // 👉 User picked existing category → reject suggestion
+                Call<CategorySuggestion> call = ClientUtils.categoryService.rejectSuggestion(suggestionId, selectedCategory);
+
+                call.enqueue(new Callback<CategorySuggestion>() {
+                    @Override
+                    public void onResponse(Call<CategorySuggestion> call, Response<CategorySuggestion> response) {
+                        if (response.isSuccessful()) {
+                            Snackbar.make(requireView(), "Successfully rejected the suggestion.", Snackbar.LENGTH_LONG).show();
+                            dismiss();
+                        } else {
+                            Snackbar.make(requireView(), "Failed to reject the suggestion.", Snackbar.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<CategorySuggestion> call, Throwable t) {
+                        Snackbar.make(requireView(), "error: "+t.getMessage(), Snackbar.LENGTH_LONG).show();
+                    }
+                });
+
+            } else {
+                // 👉 New name/description must be provided
+                if (TextUtils.isEmpty(name) || TextUtils.isEmpty(description)) {
+                    Snackbar.make(requireView(), "Name and description cannot be empty", Snackbar.LENGTH_LONG).show();
+                    return;
+                }
+
+                NewCategoryDTO dto = new NewCategoryDTO(name, description); // Make sure you have this DTO class
+                Call<CategorySuggestion> call = ClientUtils.categoryService.updateSuggestion(suggestionId, dto);
+
+                call.enqueue(new Callback<CategorySuggestion>() {
+                    @Override
+                    public void onResponse(Call<CategorySuggestion> call, Response<CategorySuggestion> response) {
+                        if (response.isSuccessful()) {
+                            Snackbar.make(requireView(), "Suggestion updated. Successfully created a new category.", Snackbar.LENGTH_LONG).show();
+                            dismiss();
+                        } else {
+                            Snackbar.make(requireView(), "Failed to update the suggestion.", Snackbar.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<CategorySuggestion> call, Throwable t) {
+                        Snackbar.make(requireView(), "error: "+t.getMessage(), Snackbar.LENGTH_LONG).show();
+                    }
+                });
+            }
         });
+
 
         return view;
     }
