@@ -75,6 +75,7 @@ public class CategorySuggestionsFragment extends Fragment {
                 Bundle args = new Bundle();
                 args.putString("name", suggestion.getName());
                 args.putString("description", suggestion.getDescription());
+                args.putInt("suggestionId", suggestion.getId());
                 dialog.setArguments(args);
                 dialog.show(getParentFragmentManager(), "EditSuggestionDialog");
 
