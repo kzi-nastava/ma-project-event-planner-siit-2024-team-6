@@ -50,7 +50,7 @@ public class EditServiceDialog extends DialogFragment {
 
     // Declare UI components
     private ImageView closeIcon;
-    private EditText proposedCategoryInput, serviceNameInput, serviceDescriptionInput,
+    private EditText serviceNameInput, serviceDescriptionInput,
             serviceSpecificsInput, servicePriceInput, serviceDiscountInput,
             bookingDeadlineInput, cancellationDeadlineInput,
             fixedDurationInput, minDurationInput, maxDurationInput;
@@ -58,7 +58,7 @@ public class EditServiceDialog extends DialogFragment {
     private CheckBox visibilityCheckbox, availabilityCheckbox;
     private RadioGroup durationRadioGroup, bookingConfirmationRadioGroup;
     private RadioButton fixedDurationRadio, minMaxDurationRadio, autoConfirmationRadio, manualConfirmationRadio;
-    private Button addPicturesButton, saveButton;
+    private Button addPicturesButton, saveButton, proposedCetgoryButton;
 
     // Service data to edit
     private String currentServiceName, currentDescription, currentSpecifics;
@@ -169,9 +169,9 @@ public class EditServiceDialog extends DialogFragment {
         View view = inflater.inflate(R.layout.dialog_create_edit_service, container, false);
 
         // Initialize views
-        closeIcon = view.findViewById(R.id.close_icon);
-        proposedCategoryInput = view.findViewById(R.id.proposed_category_input);
+        closeIcon = view.findViewById(R.id.close_icon);;
         serviceNameInput = view.findViewById(R.id.service_name_input);
+        proposedCetgoryButton = view.findViewById(R.id.propose_category_button);
         serviceDescriptionInput = view.findViewById(R.id.service_description_input);
         serviceSpecificsInput = view.findViewById(R.id.service_specifics_input);
         servicePriceInput = view.findViewById(R.id.service_price_input);
@@ -199,7 +199,7 @@ public class EditServiceDialog extends DialogFragment {
 
         categoryLabel.setVisibility(View.GONE);
         serviceCategorySpinner.setVisibility(View.GONE);
-        proposedCategoryInput.setVisibility(View.GONE);
+        proposedCetgoryButton.setVisibility(View.GONE);
 
         loadEventTypes();
 

@@ -30,6 +30,7 @@ import com.example.eventure.adapters.PhotoAdapter;
 import com.example.eventure.clients.ClientUtils;
 import com.example.eventure.dto.CategorySuggestionDTO;
 import com.example.eventure.dto.EventTypeDTO;
+import com.example.eventure.dto.NewCategoryDTO;
 import com.example.eventure.dto.NewOfferDTO;
 import com.example.eventure.dto.OfferDTO;
 import com.example.eventure.model.Category;
@@ -52,7 +53,7 @@ public class CreateServiceDialog extends DialogFragment {
 
     // Declare UI components
     private ImageView closeIcon;
-    private EditText eventTypesInput, proposedCategoryInput, serviceNameInput, serviceDescriptionInput,
+    private EditText eventTypesInput, serviceNameInput, serviceDescriptionInput,
             serviceSpecificsInput, servicePriceInput, serviceDiscountInput,
             bookingDeadlineInput, cancellationDeadlineInput,
             fixedDurationInput, minDurationInput, maxDurationInput;
@@ -60,7 +61,7 @@ public class CreateServiceDialog extends DialogFragment {
     private CheckBox visibilityCheckbox, availabilityCheckbox;
     private RadioGroup durationRadioGroup, bookingConfirmationRadioGroup;
     private RadioButton fixedDurationRadio, minMaxDurationRadio, autoConfirmationRadio, manualConfirmationRadio;
-    private Button addPicturesButton, submitButton;
+    private Button addPicturesButton, submitButton, proposeCategoryButton;
     private TextView bookingLabel, categoryLabel;
     private RecyclerView photosRecyclerView;
     private PhotoAdapter photoAdapter;
@@ -72,6 +73,8 @@ public class CreateServiceDialog extends DialogFragment {
     private List<EventTypeDTO> eventTypes = new ArrayList<>();
 
     private List<String> categoryList = new ArrayList<>();
+
+    private NewCategoryDTO propsed = null;
 
     private final Map<String, EventTypeDTO> eventTypeMap = new HashMap<>();
 
@@ -159,7 +162,7 @@ public class CreateServiceDialog extends DialogFragment {
 
     private void initializeViews(View view) {
         closeIcon = view.findViewById(R.id.close_icon);
-        proposedCategoryInput = view.findViewById(R.id.proposed_category_input);
+        proposeCategoryButton = view.findViewById(R.id.propose_category_button);
         serviceNameInput = view.findViewById(R.id.service_name_input);
         serviceDescriptionInput = view.findViewById(R.id.service_description_input);
         serviceSpecificsInput = view.findViewById(R.id.service_specifics_input);
@@ -188,6 +191,32 @@ public class CreateServiceDialog extends DialogFragment {
     }
 
     private void setupListeners() {
+        proposeCategoryButton.setOnClickListener(v -> {
+            LayoutInflater inflater = LayoutInflater.from(getContext());
+            View dialogView = inflater.inflate(R.layout.dialog_propose_category, null);
+
+            EditText nameInput = dialogView.findViewById(R.id.category_name_input);
+            EditText descInput = dialogView.findViewById(R.id.category_description_input);
+
+            new AlertDialog.Builder(getContext())
+                    .setTitle("Propose New Category")
+                    .setView(dialogView)
+                    .setPositiveButton("Submit", (dialog, which) -> {
+                        String name = nameInput.getText().toString().trim();
+                        String desc = descInput.getText().toString().trim();
+
+                        if (name.isEmpty()) {
+                            Snackbar.make(requireView(), "Category name is required.", Snackbar.LENGTH_LONG).show();
+                        } else {
+                            propsed = new NewCategoryDTO(name, desc);
+                            proposeCategoryButton.setEnabled(false);
+                            Snackbar.make(requireView(), "Proposed: " + name, Snackbar.LENGTH_LONG).show();
+                        }
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
+        });
+
         closeIcon.setOnClickListener(v -> dismiss());
 
         addPicturesButton.setOnClickListener(v -> addPhotoUrl());
@@ -237,10 +266,9 @@ public class CreateServiceDialog extends DialogFragment {
             String updatedServiceName = serviceNameInput.getText().toString().trim();
             String updatedDescription = serviceDescriptionInput.getText().toString().trim();
             String updatedSpecifics = serviceSpecificsInput.getText().toString().trim();
-            String proposedCategory = proposedCategoryInput.getText().toString().trim();
             String updatedCategory = null;
 
-            if(proposedCategory.isEmpty()){
+            if(propsed == null){
                 if (serviceCategorySpinner.getSelectedItem().equals("Select a category")) {
                     Snackbar.make(requireView(), "Please select or propose a new category", Snackbar.LENGTH_LONG).show();
                     return;
@@ -332,16 +360,12 @@ public class CreateServiceDialog extends DialogFragment {
 
             // Create or update the Offer object
             NewOfferDTO newOffer = new NewOfferDTO();
-            if(!proposedCategory.isEmpty()){
-                CategorySuggestionDTO dto = new CategorySuggestionDTO();
-                dto.setStatus(Status.PENDING);
-                dto.setSuggestion(proposedCategory);
-                newOffer.setCategorySuggestionDTO(dto);
+            newOffer.setCategorySuggestion(propsed);
+            newOffer.setCategory(updatedCategory);
+            if(propsed != null){
                 newOffer.setStatus(Status.PENDING);
             }else{
-                newOffer.setCategory(updatedCategory);
                 newOffer.setStatus(Status.ACCEPTED);
-                newOffer.setCategorySuggestionDTO(null);
             }
             newOffer.setEventTypes(ets);
             newOffer.setName(updatedServiceName);
