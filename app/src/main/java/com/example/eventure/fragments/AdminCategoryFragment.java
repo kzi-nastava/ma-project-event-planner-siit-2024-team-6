@@ -60,6 +60,11 @@ public class AdminCategoryFragment extends Fragment {
                               @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        getParentFragmentManager().setFragmentResultListener("category_updated", this, (requestKey, result) -> {
+            refreshCategories();
+        });
+
+
         recyclerView = view.findViewById(R.id.recyclerViewCategories);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -87,6 +92,16 @@ public class AdminCategoryFragment extends Fragment {
         });
 
     }
+
+
+    private void refreshCategories() {
+        currentPage = 0;
+        isLastPage = false;
+        categoryList.clear();
+        adapter.notifyDataSetChanged(); // Clear the list in UI
+        loadCategories();               // Load from page 0 again
+    }
+
 
     private void loadCategories() {
         if (isLoading || isLastPage) return;
