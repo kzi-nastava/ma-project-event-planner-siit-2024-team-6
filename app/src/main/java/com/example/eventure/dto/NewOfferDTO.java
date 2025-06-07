@@ -15,7 +15,7 @@ public class NewOfferDTO {
     private Boolean isAvailable;
     private Boolean isDeleted;
     private String category;
-    private CategorySuggestionDTO categorySuggestionDTO;
+    private NewCategoryDTO categorySuggestion;
     private List<EventTypeDTO> eventTypes;
     private String type; // product or service
 
@@ -30,12 +30,12 @@ public class NewOfferDTO {
 
     // Getters and Setters
 
-    public CategorySuggestionDTO getCategorySuggestionDTO() {
-        return categorySuggestionDTO;
+    public NewCategoryDTO getCategorySuggestion() {
+        return categorySuggestion;
     }
 
-    public void setCategorySuggestionDTO(CategorySuggestionDTO dto) {
-        categorySuggestionDTO = dto;
+    public void setCategorySuggestion(NewCategoryDTO dto) {
+        categorySuggestion = dto;
     }
 
     public Status getStatus() {
