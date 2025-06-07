@@ -71,12 +71,12 @@
                 android:id="@+id/service_category_spinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:scrollbarSize="16dp"/>
-            <EditText
-                android:id="@+id/proposed_category_input"
+                android:scrollbarSize="20dp"/>
+            <Button
+                android:id="@+id/propose_category_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Propose a new category (optional)"
+                android:text="Propose a New Category"
                 android:layout_marginTop="8dp" />
 
             <!-- Service Name -->
@@ -121,6 +121,7 @@
                 android:id="@+id/service_specifics_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textSize="17dp"
                 android:hint="Enter specifics" />
 
             <TextView

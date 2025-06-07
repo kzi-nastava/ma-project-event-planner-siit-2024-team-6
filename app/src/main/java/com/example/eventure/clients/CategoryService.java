@@ -2,6 +2,7 @@ package com.example.eventure.clients;
 
 import com.example.eventure.dto.NewCategoryDTO;
 import com.example.eventure.model.Category;
+import com.example.eventure.model.CategorySuggestion;
 import com.example.eventure.model.Offer;
 import com.example.eventure.model.PagedResponse;
 
@@ -29,7 +30,7 @@ public interface CategoryService {
     @GET("offers/categories")
     Call<List<String>> getCategories();
 
-    @GET("admins/categories")
+    @GET(ClientUtils.CATEGORIES)
     Call<PagedResponse<Category>> getPagedCategories(
             @Query("page") int page,
             @Query("size") int size
@@ -42,5 +43,17 @@ public interface CategoryService {
 
     @DELETE(ClientUtils.DELETE_UPDATE_CATEGORY)
     Call<ResponseBody> deleteCategory(@Path("id") int id);
+
+    @GET(ClientUtils.CATEGORY_SUGGESTIONS)
+    Call<PagedResponse<CategorySuggestion>> getCategorySuggestions(@Query("page") int page, @Query("size") int size);
+
+    @PUT(ClientUtils.APPROVE_CATEGORY_SUGGETION)
+    Call<CategorySuggestion> approveSuggestion(@Path("id") int id);
+
+    @PUT(ClientUtils.UPDATE_CATEGORY_SUGGESTION)
+    Call<CategorySuggestion> updateSuggestion(@Path("id") int id, @Body NewCategoryDTO dto);
+
+    @PUT(ClientUtils.REJECT_CATEGORY_SUGGETION)
+    Call<CategorySuggestion> rejectSuggestion(@Path("id") int id, @Query("categoryName") String categoryName);
 
 }

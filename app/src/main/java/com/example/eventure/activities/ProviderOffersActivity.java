@@ -71,7 +71,7 @@ public class ProviderOffersActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, HomeActivity.class);
                 intent.putExtra("FRAGMENT_NAME", fragment);
                 startActivity(intent);
-                drawer.closeDrawer(GravityCompat.START);
+                finish();
                 return true;
             }
             drawer.closeDrawer(GravityCompat.START);
@@ -99,6 +99,7 @@ public class ProviderOffersActivity extends AppCompatActivity {
         tvTitle.setOnClickListener(v -> {
             Intent intent = new Intent(ProviderOffersActivity.this, HomeActivity.class);
             startActivity(intent);
+            finish();
         });
 
 

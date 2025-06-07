@@ -46,7 +46,7 @@ public class AdminCategoriesActivity extends AppCompatActivity {
 
         drawer = findViewById(R.id.drawer_categories_layout);
         navigationView = findViewById(R.id.sidebar_view);
-        navController = Navigation.findNavController(this, R.id.fragment_nav_content_main_home);
+        navController = Navigation.findNavController(this, R.id.fragment_nav_content_categories);
 
         navigationView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
@@ -68,15 +68,21 @@ public class AdminCategoriesActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, HomeActivity.class);
                 intent.putExtra("FRAGMENT_NAME", fragment);
                 startActivity(intent);
-                drawer.closeDrawer(GravityCompat.START);
+                finish();
                 return true;
             }
             drawer.closeDrawer(GravityCompat.START);
             return true;
         });
 
-        BottomNavigationView bottomNav = findViewById(R.id.categories_bottom_navigation);
+        navController = Navigation.findNavController(this, R.id.fragment_nav_content_categories);
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation_categories);
         NavigationUI.setupWithNavController(bottomNav, navController);
+
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            Log.d("NavigationDebug", "Navigated to: " + destination.getLabel());
+        });
+
 
         actionBarDrawerToggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -92,6 +98,7 @@ public class AdminCategoriesActivity extends AppCompatActivity {
             // Create an Intent to start ProfileActivity
             Intent intent = new Intent(AdminCategoriesActivity.this, ProfileActivity.class);
             startActivity(intent);
+            finish();
         });
 
         TextView tvTitle = toolbar.findViewById(R.id.toolbar_title);

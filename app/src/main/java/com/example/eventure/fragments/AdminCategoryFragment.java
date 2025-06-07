@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -44,6 +45,7 @@ public class AdminCategoryFragment extends Fragment {
     private final int pageSize = 10;
     private boolean isLoading = false;
     private boolean isLastPage = false;
+    private TextView message = null;
 
     public AdminCategoryFragment() {}
 
@@ -60,6 +62,12 @@ public class AdminCategoryFragment extends Fragment {
                               @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        getParentFragmentManager().setFragmentResultListener("category_updated", this, (requestKey, result) -> {
+            refreshCategories();
+        });
+
+        message = view.findViewById(R.id.no_categories_message);
+        message.setVisibility(View.GONE);
         recyclerView = view.findViewById(R.id.recyclerViewCategories);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -73,7 +81,7 @@ public class AdminCategoryFragment extends Fragment {
             @Override
             public void onDelete(Category category) {
                 Toast.makeText(getContext(), "Delete: " + category.getName(), Toast.LENGTH_SHORT).show();
-                // TODO: confirm & delete
+                refreshCategories();
             }
         });
         recyclerView.setAdapter(adapter);
@@ -88,6 +96,16 @@ public class AdminCategoryFragment extends Fragment {
 
     }
 
+
+    private void refreshCategories() {
+        currentPage = 0;
+        isLastPage = false;
+        categoryList.clear();
+        adapter.notifyDataSetChanged(); // Clear the list in UI
+        loadCategories();               // Load from page 0 again
+    }
+
+
     private void loadCategories() {
         if (isLoading || isLastPage) return;
         isLoading = true;
@@ -101,7 +119,7 @@ public class AdminCategoryFragment extends Fragment {
                     List<Category> newCategories = response.body().getContent();
                     categoryList.addAll(newCategories);
                     adapter.notifyDataSetChanged();
-
+                    messageCheck();
                     currentPage++;
                     isLastPage = currentPage >= response.body().getTotalPages();
                 } else {
@@ -169,4 +187,11 @@ public class AdminCategoryFragment extends Fragment {
         dialog.show(getParentFragmentManager(), "CategoryFormDialog");
     }
 
+    private void messageCheck(){
+        if(categoryList.isEmpty()){
+            message.setVisibility(View.VISIBLE);
+        }else{
+            message.setVisibility(View.GONE);
+        }
+    }
 }

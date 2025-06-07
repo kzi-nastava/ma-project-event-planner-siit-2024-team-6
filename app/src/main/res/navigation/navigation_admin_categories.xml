@@ -4,13 +4,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation"
-    app:startDestination="@id/categories_menu">
+    app:startDestination="@id/categoryFragment">
 
     <fragment
-        android:id="@+id/categories_menu"
+        android:id="@+id/categoryFragment"
         android:name="com.example.eventure.fragments.AdminCategoryFragment"
         android:label="categories"
         tools:layout="@layout/fragment_admin_category"
         app:popUpToInclusive="true" />
+
+    <fragment
+        android:id="@+id/categorySuggestionsFragment"
+        android:name="com.example.eventure.fragments.CategorySuggestionsFragment"
+        android:label="Category Suggestions"
+        tools:layout="@layout/fragment_admin_category_suggestions" />
 
 </navigation>
