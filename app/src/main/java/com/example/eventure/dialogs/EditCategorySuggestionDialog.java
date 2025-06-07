@@ -38,6 +38,16 @@ public class EditCategorySuggestionDialog extends DialogFragment {
     private Button btnSubmit, btnCancel;
     private int suggestionId;
 
+    public interface EditSuggestionListener {
+        void onSuggestionEdited(CategorySuggestion updatedSuggestion);
+    }
+    private EditSuggestionListener listener;
+
+    public void setEditSuggestionListener(EditSuggestionListener listener) {
+        this.listener = listener;
+    }
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -102,6 +112,10 @@ public class EditCategorySuggestionDialog extends DialogFragment {
                     public void onResponse(Call<CategorySuggestion> call, Response<CategorySuggestion> response) {
                         if (response.isSuccessful()) {
                             Snackbar.make(requireView(), "Successfully rejected the suggestion.", Snackbar.LENGTH_LONG).show();
+                            if (listener != null && response.body() != null) {
+                                listener.onSuggestionEdited(response.body());
+                                dismiss();
+                            }
                             dismiss();
                         } else {
                             Snackbar.make(requireView(), "Failed to reject the suggestion.", Snackbar.LENGTH_LONG).show();
@@ -129,6 +143,10 @@ public class EditCategorySuggestionDialog extends DialogFragment {
                     public void onResponse(Call<CategorySuggestion> call, Response<CategorySuggestion> response) {
                         if (response.isSuccessful()) {
                             Snackbar.make(requireView(), "Suggestion updated. Successfully created a new category.", Snackbar.LENGTH_LONG).show();
+                            if (listener != null && response.body() != null) {
+                                listener.onSuggestionEdited(response.body());
+                                dismiss();
+                            }
                             dismiss();
                         } else {
                             Snackbar.make(requireView(), "Failed to update the suggestion.", Snackbar.LENGTH_LONG).show();
