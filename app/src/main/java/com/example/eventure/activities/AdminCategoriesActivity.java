@@ -68,7 +68,7 @@ public class AdminCategoriesActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, HomeActivity.class);
                 intent.putExtra("FRAGMENT_NAME", fragment);
                 startActivity(intent);
-                drawer.closeDrawer(GravityCompat.START);
+                finish();
                 return true;
             }
             drawer.closeDrawer(GravityCompat.START);
@@ -98,6 +98,7 @@ public class AdminCategoriesActivity extends AppCompatActivity {
             // Create an Intent to start ProfileActivity
             Intent intent = new Intent(AdminCategoriesActivity.this, ProfileActivity.class);
             startActivity(intent);
+            finish();
         });
 
         TextView tvTitle = toolbar.findViewById(R.id.toolbar_title);
