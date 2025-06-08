@@ -38,6 +38,11 @@ public class ClientUtils {
     public static final String PENDING_REACTIONS = "reactions/pending";
     public static final String ADD_RESERVATION = "reservations/";
 
+    //Reports
+    public static final String REPORTS = "report";
+    public static final String APPROVE_REPORT = "report/{id}/approve";
+    public static final String REJECT_REPORT = "report/{id}";
+
 
     public static final String CATEGORIES = "admins/categories";
     public static final String DELETE_UPDATE_CATEGORY = "admins/category/{id}";
@@ -138,5 +143,6 @@ public class ClientUtils {
     public static final LoginService loginService = retrofit.create(LoginService.class);
 
     public static final ReactionService reactionService = retrofit.create(ReactionService.class);
+    public static final ReportService reportService = retrofit.create(ReportService.class);
     //public static final AuthService authService = retrofit.create(AuthService.class);
 }
