@@ -43,6 +43,8 @@
             android:exported="false"/>
         <activity android:name=".activities.AdminCommentsActivity"
             android:exported="false"/>
+        <activity android:name=".activities.AdminReportsActivity"
+            android:exported="false"/>
         <activity
             android:name=".activities.SplashScreenActivity"
             android:exported="true"

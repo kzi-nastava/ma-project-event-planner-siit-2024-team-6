@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -49,6 +50,13 @@ public class CompanyDetailsDialog extends DialogFragment {
         }
 
         setupUI(view);
+
+        Button btnReport = view.findViewById(R.id.btn_report);
+        btnReport.setOnClickListener(v -> {
+            ReportDialog reportDialog = ReportDialog.newInstance(provider.getId());
+            reportDialog.show(getParentFragmentManager(), "report_dialog");
+        });
+
         return view;
     }
 

@@ -28,6 +28,8 @@ import com.example.eventure.clients.LoginService;
 import com.example.eventure.dto.LoginDTO;
 import com.example.eventure.dto.LoginResponseDTO;
 
+import org.json.JSONObject;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -66,31 +68,37 @@ public class LoginFragment extends Fragment {
             loginDTO.setEmail(email);
             loginDTO.setPassword(password);
 
-            ClientUtils.loginService.login(loginDTO).enqueue(new Callback<>() {
+            ClientUtils.loginService.login(loginDTO).enqueue(new Callback<LoginResponseDTO>() {
                 @Override
                 public void onResponse(Call<LoginResponseDTO> call, Response<LoginResponseDTO> response) {
-                    if (response.code() == 200){
+                    if (response.isSuccessful() && response.body() != null) {
                         AuthService authService = new AuthService(getContext());
                         authService.login(response.body().getToken());
-                        Log.d("AuthTag","Login successful, role  "+authService.getRole());
+                        Log.d("AuthTag", "Login successful, role: " + authService.getRole());
                         Intent intent = new Intent(requireContext(), HomeActivity.class);
                         startActivity(intent);
-
-                    }else{
-                        Log.d("AuthTag","Meesage recieved: "+response.code());
+                    } else if (response.code() == 403) {
+                        try {
+                            String errorString = response.errorBody().string();
+                            JSONObject jsonObject = new JSONObject(errorString);
+                            String message = jsonObject.optString("message", "You are suspended. Please try again later.");
+                            Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Toast.makeText(getContext(), "You are suspended. Please try again later.", Toast.LENGTH_LONG).show();
+                        }
+                    } else {
+                        Log.d("AuthTag", "Message received: " + response.code());
                         Toast.makeText(getContext(), "Please enter correct email and password", Toast.LENGTH_SHORT).show();
-
                     }
                 }
 
                 @Override
                 public void onFailure(Call<LoginResponseDTO> call, Throwable t) {
-                    Log.d("AuthTag", t.getMessage() != null?t.getMessage():"error");
-
+                    Log.d("AuthTag", t.getMessage() != null ? t.getMessage() : "error");
+                    Toast.makeText(getContext(), "Network error. Please try again.", Toast.LENGTH_SHORT).show();
                 }
             });
-
-
 
         });
 
