@@ -27,6 +27,11 @@
             android:title="Comments"
             android:icon="@drawable/comment_dots_solid" />
 
+        <item
+            android:id="@+id/nav_admin_manage_reports"
+            android:title="Reports"
+            android:icon="@drawable/flag_solid" />
+
 
         <item
             android:title=""
