@@ -95,7 +95,8 @@ public class AdminCommentsActivity extends AppCompatActivity {
                 startActivity(new Intent(this, HomeActivity.class).putExtra("FRAGMENT_NAME", "CALENDAR"));
             }  else if (id == R.id.nav_admin_categories) {
                 startActivity(new Intent(this, AdminCategoriesActivity.class));
-            } else if (id == R.id.nav_admin_categories) {
+            } else if (id == R.id.nav_admin_manage_reports) {
+                startActivity(new Intent(this, AdminReportsActivity.class));
             }
 
             drawer.closeDrawer(GravityCompat.START);
@@ -131,7 +132,9 @@ public class AdminCommentsActivity extends AppCompatActivity {
                         commentAdapter.addComments(newComments);
                     }
                     currentPage = page;
-                    isLastPage = newComments.size() < size;
+                    if( commentAdapter.getItemCount() == response.body().getTotalElements() ){
+                        isLastPage = true;
+                    }
                     btnLoadMore.setVisibility(isLastPage ? View.GONE : View.VISIBLE);
                 } else {
                     Toast.makeText(AdminCommentsActivity.this, "Failed to load comments", Toast.LENGTH_SHORT).show();

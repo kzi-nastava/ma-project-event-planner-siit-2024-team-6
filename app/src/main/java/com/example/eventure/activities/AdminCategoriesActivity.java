@@ -63,6 +63,10 @@ public class AdminCategoriesActivity extends AppCompatActivity {
                 fragment = "FAVOURITE_PRODUCTS";
             } else if (id == R.id.nav_my_calendar) {
                 fragment = "CALENDAR";
+            }  else if (id == R.id.nav_admin_manage_comments) {
+                startActivity(new Intent(this,AdminCommentsActivity.class));
+            } else if (id == R.id.nav_admin_manage_reports) {
+                startActivity(new Intent(this, AdminReportsActivity.class));
             }
             if (fragment != null) {
                 Intent intent = new Intent(this, HomeActivity.class);
