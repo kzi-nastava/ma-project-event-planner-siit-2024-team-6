@@ -43,6 +43,11 @@ public class ClientUtils {
     public static final String APPROVE_REPORT = "report/{id}/approve";
     public static final String REJECT_REPORT = "report/{id}";
 
+    //Notifications
+    public static final String NOTIFICATIONS = "notifications/";
+    public static final String RECEIVER_NOTIFICATIONS = "notifications/receiver/{receiverId}";
+
+
 
     public static final String CATEGORIES = "admins/categories";
     public static final String DELETE_UPDATE_CATEGORY = "admins/category/{id}";
@@ -144,5 +149,6 @@ public class ClientUtils {
 
     public static final ReactionService reactionService = retrofit.create(ReactionService.class);
     public static final ReportService reportService = retrofit.create(ReportService.class);
+    public static final NotificationService notificationService = retrofit.create(NotificationService.class);
     //public static final AuthService authService = retrofit.create(AuthService.class);
 }
