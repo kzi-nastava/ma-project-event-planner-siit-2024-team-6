@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="12dp"
+    android:layout_marginBottom="12dp"
+    card_view:cardCornerRadius="12dp"
+    card_view:cardElevation="3dp"
+    card_view:cardBackgroundColor="#E9D9F5"> <!-- Light purple -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Timestamp (less visible) -->
+        <TextView
+            android:id="@+id/tvNotificationTimestamp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2 min ago"
+            android:textSize="12sp"
+            android:textColor="#888888"
+            android:layout_marginBottom="4dp" />
+
+        <!-- Main notification text -->
+        <TextView
+            android:id="@+id/tvNotificationText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="You received a new comment on your event."
+            android:textSize="16sp"
+            android:textColor="#222222"
+            android:fontFamily="sans-serif-medium" />
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
