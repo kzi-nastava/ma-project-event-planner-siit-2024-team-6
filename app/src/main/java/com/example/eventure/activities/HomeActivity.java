@@ -103,7 +103,8 @@ public class HomeActivity extends AppCompatActivity {
                 return true;
             } else if (id == R.id.nav_messages) {
                 navController.navigate(R.id.nav_messages);
-                drawer.closeDrawer(GravityCompat.START);
+                Intent intent = new Intent(HomeActivity.this, ChatActivity.class);
+                startActivity(intent);
                 return true;
             } else if (id == R.id.nav_admin_categories) {
                 Intent intent = new Intent(HomeActivity.this, AdminCategoriesActivity.class);

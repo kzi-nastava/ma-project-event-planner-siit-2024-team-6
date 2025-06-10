@@ -82,7 +82,7 @@ public class AdminCommentsActivity extends AppCompatActivity {
             int id = item.getItemId();
 
             if (id == R.id.nav_messages) {
-                startActivity(new Intent(this, HomeActivity.class).putExtra("FRAGMENT_NAME", "MESSAGES"));
+                startActivity(new Intent(this, ChatActivity.class));
             } else if (id == R.id.nav_notifications) {
                 startActivity(new Intent(this, HomeActivity.class).putExtra("FRAGMENT_NAME", "NOTIFICATIONS"));
             } else if (id == R.id.nav_favorite_events) {

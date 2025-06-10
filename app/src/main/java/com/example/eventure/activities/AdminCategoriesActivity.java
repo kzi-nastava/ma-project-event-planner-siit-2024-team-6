@@ -52,7 +52,8 @@ public class AdminCategoriesActivity extends AppCompatActivity {
             int id = item.getItemId();
             String fragment = null;
             if (id == R.id.nav_messages) {
-                fragment = "MESSAGES";
+                Intent intent = new Intent(AdminCategoriesActivity.this, ChatActivity.class);
+                startActivity(intent);
             } else if (id == R.id.nav_notifications) {
                 fragment = "NOTIFICATIONS";
             } else if (id == R.id.nav_favorite_events) {
