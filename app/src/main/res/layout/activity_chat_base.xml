@@ -44,11 +44,17 @@
                 android:textStyle="bold"
                 android:textColor="@android:color/white"/>
 
+
         </androidx.appcompat.widget.Toolbar>
 
 
 
     </com.google.android.material.appbar.AppBarLayout>
+    <!-- activity_chat.xml -->
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
     <include layout="@layout/activity_chat_content" />
 

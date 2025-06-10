@@ -32,7 +32,7 @@ public class ChatsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_messages_center, container, false);
         context = getActivity();
 
-        recyclerView = view.findViewById(R.id.recycler_messages);
+        recyclerView = view.findViewById(R.id.recycler_view_chats);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
         loadChats(view);
