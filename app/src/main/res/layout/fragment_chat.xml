@@ -2,7 +2,8 @@
     android:orientation="vertical"
     android:background="#F8F9FF"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:paddingTop="60dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -11,10 +12,24 @@
         android:padding="10dp">
 
         <ImageView
+            android:id="@+id/back_button"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentStart="true"
+            android:src="@drawable/arrow_left_icon"
+            android:contentDescription="Back"
+            android:layout_centerVertical="true"
+            android:padding="8dp"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <ImageView
             android:id="@+id/chat_image"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_alignParentStart="true" />
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/back_button"
+            android:layout_marginStart="8dp" />
 
         <TextView
             android:id="@+id/chat_name"
@@ -25,20 +40,74 @@
             android:textSize="18sp"
             android:layout_toEndOf="@id/chat_image"
             android:layout_marginStart="8dp"
+            android:layout_centerVertical="true"
             android:text="Tina Vista" />
 
-        <TextView
-            android:layout_alignParentEnd="true"
-            android:text="Block"
-            android:textColor="#FF0000"
-            android:layout_marginEnd="8dp"
+        <LinearLayout
+            android:id="@+id/buttons_layout"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:orientation="vertical"
+            android:gravity="end"
+            android:layout_marginEnd="8dp">
+
+            <TextView
+                android:id="@+id/block_button"
+                android:text="Block"
+                android:textColor="#FF0000"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="4dp" />
+
+            <TextView
+                android:id="@+id/report_button"
+                android:text="Report"
+                android:textColor="#FF0000"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="4dp"
+                android:layout_marginTop="4dp" />
+
+        </LinearLayout>
     </RelativeLayout>
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/chat_recycler"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
+
+    <!-- Input field + send button container -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:background="@color/blue"
+        android:gravity="center_vertical">
+
+        <EditText
+            android:id="@+id/input_message"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Type a message"
+            android:background="@color/white"
+            android:padding="12dp"
+            android:maxLines="4"
+            android:minLines="1"
+            android:inputType="textMultiLine" />
+
+        <Button
+            android:id="@+id/button_send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Send"
+            android:textAlignment="center"
+            android:backgroundTint="@color/purple"
+            android:layout_marginStart="8dp" />
+    </LinearLayout>
 </LinearLayout>
