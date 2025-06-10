@@ -1,0 +1,17 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:background="#9163A9"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView android:text="messages"
+        android:textSize="24sp"
+        android:padding="16dp"
+        android:textColor="@color/purple"
+        android:layout_height=""/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_messages"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</LinearLayout>
