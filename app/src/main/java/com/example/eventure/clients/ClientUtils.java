@@ -144,5 +144,7 @@ public class ClientUtils {
 
     public static final ReactionService reactionService = retrofit.create(ReactionService.class);
     public static final ReportService reportService = retrofit.create(ReportService.class);
+
+    public static final ChatService chatService = retrofit.create(ChatService.class);
     //public static final AuthService authService = retrofit.create(AuthService.class);
 }
