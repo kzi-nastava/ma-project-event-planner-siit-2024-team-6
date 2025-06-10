@@ -121,16 +121,30 @@ public class ChatFragment extends Fragment {
 
     @SuppressLint("CheckResult")
     private void connectWebSocket(int userId) {
-        stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, "http://localhost:8080/socket");
+        stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP,  "http://smt/socket");
 
         stompClient.lifecycle().subscribe(lifecycleEvent -> {
             switch (lifecycleEvent.getType()) {
                 case OPENED:
                     Log.d("STOMP", "Connection opened");
+
+                    stompClient.topic("/socket-publisher/messages/" + userId)
+                            .subscribe(topicMessage -> {
+                                String json = topicMessage.getPayload();
+                                Message newMessage = new Gson().fromJson(json, Message.class);
+                                getActivity().runOnUiThread(() -> {
+                                    messageAdapter.addMessage(newMessage);
+                                    chatRecycler.scrollToPosition(messageAdapter.getItemCount() - 1);
+                                });
+                            }, throwable -> {
+                                Log.e("STOMP", "Subscribe error", throwable);
+                            });
                     break;
+
                 case ERROR:
                     Log.e("STOMP", "Error", lifecycleEvent.getException());
                     break;
+
                 case CLOSED:
                     Log.d("STOMP", "Connection closed");
                     break;
@@ -139,18 +153,6 @@ public class ChatFragment extends Fragment {
 
         stompClient.connect();
 
-        stompClient.topic("/socket-publisher/messages/" + userId)
-                .subscribe(topicMessage -> {
-                    String json = topicMessage.getPayload();
-                    // parse json to Message object, update UI
-                    Message newMessage = new Gson().fromJson(json, Message.class);
-                    getActivity().runOnUiThread(() -> {
-                        messageAdapter.addMessage(newMessage);
-                        chatRecycler.scrollToPosition(messageAdapter.getItemCount() - 1);
-                    });
-                }, throwable -> {
-                    Log.e("STOMP", "Subscribe error", throwable);
-                });
     }
 
     @Override
