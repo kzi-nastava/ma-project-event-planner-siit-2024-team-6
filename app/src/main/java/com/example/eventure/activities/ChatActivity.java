@@ -57,7 +57,12 @@ public class ChatActivity extends AppCompatActivity {
         navigationView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
             String fragment = null;
-            if (id == R.id.nav_messages) {
+            if (id == R.id.nav_my_offers) {
+                Intent intent = new Intent(ChatActivity.this, ProviderOffersActivity.class);
+                startActivity(intent);
+                drawer.closeDrawer(GravityCompat.START);
+                return true;
+            } else if (id == R.id.nav_messages) {
                 fragment = "MESSAGES";
             } else if (id == R.id.nav_notifications) {
                 fragment = "NOTIFICATIONS";
