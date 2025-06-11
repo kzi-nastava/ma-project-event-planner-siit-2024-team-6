@@ -33,7 +33,9 @@ import com.example.eventure.viewmodel.ProviderOfferViewModel;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.slider.RangeSlider;
+import com.google.android.material.snackbar.Snackbar;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,12 +53,14 @@ public class ProviderServicesFragment extends Fragment {
     private Spinner categorySpinner;
     private TextView emptyView;
 
+    private View root;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_proivder_services, container, false);
-
+        root = rootView;
         // Initialize RecyclerView
         recyclerView = rootView.findViewById(R.id.services_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -211,8 +215,22 @@ public class ProviderServicesFragment extends Fragment {
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
                     offerViewModel.refresh(); // Refresh the list after deletion
+                    showSnackbar("Deletion successful");
                 } else {
-                    Log.e("DELETE_OFFER", "FAILED");
+                    String errorMsg = "Failed to delete offer.";
+                    if (response.code() == 400) {
+                        try {
+                            String errorBody = response.errorBody() != null ? response.errorBody().string() : "No error body";
+                            errorMsg = "Future reservations exist for this offer. Deletion unavailable. ";
+                        } catch (IOException e) {
+                            errorMsg = "Error reading error body";
+                            Log.e("DELETE_OFFER", "Error reading error body", e);
+                        }
+                    } else {
+                        errorMsg = "Failed with code: " +  + response.code();
+                        Log.e("DELETE_OFFER", "Failed with code: " + response.code());
+                    }
+                    showSnackbar(errorMsg);
                 }
             }
 
@@ -222,6 +240,11 @@ public class ProviderServicesFragment extends Fragment {
             }
         });
     }
+
+    private void showSnackbar(String message) {
+        Snackbar.make(this.root, message, Snackbar.LENGTH_LONG).show();
+    }
+
 
     public void searchServices(String query) {
         progressBar.setVisibility(View.VISIBLE);
