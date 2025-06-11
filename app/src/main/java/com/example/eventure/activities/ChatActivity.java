@@ -18,6 +18,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.eventure.R;
+import com.example.eventure.clients.AuthService;
 import com.example.eventure.fragments.ChatFragment;
 import com.example.eventure.fragments.ChatsFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -33,6 +34,12 @@ public class ChatActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AuthService as = new AuthService(getBaseContext());
+        if(!as.isLoggedIn()){
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+            return;
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
         getSupportFragmentManager().beginTransaction()
