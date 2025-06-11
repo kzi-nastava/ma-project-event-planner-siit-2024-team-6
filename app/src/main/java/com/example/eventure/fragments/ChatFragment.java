@@ -121,7 +121,8 @@ public class ChatFragment extends Fragment {
 
     @SuppressLint("CheckResult")
     private void connectWebSocket(int userId) {
-        stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP,  "http://smt/socket");
+        stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, "ws://10.0.2.2:8080/socket");
+
 
         stompClient.lifecycle().subscribe(lifecycleEvent -> {
             switch (lifecycleEvent.getType()) {
@@ -173,7 +174,6 @@ public class ChatFragment extends Fragment {
                         messageAdapter.addMessage(sentMessage);
                         scrollToBottom();
                     }
-                    Snackbar.make(requireView(), "Message sent!", Snackbar.LENGTH_SHORT).show();
                 } else {
                     Snackbar.make(requireView(), "Failed to send message.", Snackbar.LENGTH_SHORT).show();
                 }
