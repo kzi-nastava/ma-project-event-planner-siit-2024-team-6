@@ -1,7 +1,8 @@
 package com.example.eventure.clients;
 
-import com.example.eventure.dto.EventDTO;
+import com.example.eventure.dto.NewOfferDTO;
 import com.example.eventure.dto.OfferDTO;
+import com.example.eventure.dto.ProviderDTO;
 import com.example.eventure.model.Offer;
 import com.example.eventure.model.PagedResponse;
 
@@ -11,6 +12,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
@@ -27,6 +29,11 @@ public interface OfferService {
     })
     Call<List<OfferDTO>> getTopFive();
 
+    @POST("offers/{offerId}/buy")
+    Call<Void> buyOffer(
+            @Path("offerId") int offerId,
+            @Query("eventId") int eventId
+    );
     @GET(ClientUtils.ALL_OFFERS)
     @Headers({
             "User-Agent: Mobile-Android",
@@ -42,6 +49,13 @@ public interface OfferService {
             "skip: true"
     })
     Call<PagedResponse<OfferDTO>> getPagedOffers(@Query("page") int page, @Query("size") int size);
+    @GET(ClientUtils.ACCEPTED_OFFERS)
+    @Headers({
+            "User-Agent: Mobile-Android",
+            "Content-Type:application/json",
+            "skip: true"
+    })
+    Call<PagedResponse<OfferDTO>> getAcceptedOffers(@Query("page") int page, @Query("size") int size, @Query("sortDir") String sortDir);
     @Headers({
             "User-Agent: Mobile-Android",
             "Content-Type:application/json"
@@ -53,26 +67,67 @@ public interface OfferService {
             "User-Agent: Mobile-Android",
             "Content-Type:application/json"
     })
-    @PUT("providers/{providerId}/{offerId}")
-    Call<Offer> editProviderService(@Path("providerId") int pId, @Path("offerId") int oId, @Body OfferDTO offer);
+    @PUT("providers/{offerId}")
+    Call<Offer> editProviderService( @Path("offerId") int oId, @Body NewOfferDTO offer);
 
-    @POST("providers/{providerId}")
-    Call<Offer> createProviderService(@Path("providerId") int pId, @Body OfferDTO offer);
+    @GET("offers/{offerId}/provider")
+    Call<ProviderDTO> getProviderByOfferId(@Path("offerId") int offerId);
+
+    @POST("offers/{offerId}/add-favour")
+    Call<Void> addOfferToFavourites(
+            @Path("offerId") int offerId
+    );
+
+    @POST("offers/{offerId}/remove-favour")
+    Call<Void> removeOfferFromFavourites(
+            @Path("offerId") int offerId
+    );
+    @GET("offers/{offerId}/is-favourited")
+    Call<Boolean> isOfferFavourited(@Path("offerId") int offerId);
+
+    @POST("providers/")
+    Call<Offer> createProviderService(@Body NewOfferDTO offer);
 
     @DELETE("providers/{offerId}")
     Call<Void> deleteProviderService(@Path("offerId") int id);
 
-    @GET("providers/{providerId}/search")
-    Call<PagedResponse<Offer>> getSearchedService(@Path("providerId") int id, @Query("name") String name,  @Query("page") int page, @Query("size") int size);
-    @GET("providers/{providerId}/services-filter")
+    @GET("offers/search-services")
+    Call<PagedResponse<Offer>> getSearchedService( @Query("name") String name,  @Query("page") int page, @Query("pageSize") int size);
+    @GET("offers/search-services")
     Call<PagedResponse<Offer>> getFilteredServices(
-            @Path("providerId") int providerId,
-            @Query("categories") List<String> categories,
-            @Query("eventTypes") List<String> eventTypes,
+            @Query("category") String category,
+            @Query("eventType") String eventType,
+            @Query("isOnSale") Boolean isOnSale,
             @Query("isAvailable") Boolean isAvailable,
-            @Query("price") Double price,
+            @Query("maxPrice") Double maxPrice,
             @Query("page") int page,
-            @Query("size") int size
+            @Query("pageSize") int size
+    );
+
+    @GET(ClientUtils.FILTERED_OFFERS)
+    @Headers({
+            "User-Agent: Mobile-Android",
+            "Content-Type:application/json",
+            "skip: true"
+    })
+    Call<PagedResponse<OfferDTO>> getFilteredOffers(
+            @Query("name") String name,
+            @Query("description") String description,
+            @Query("minPrice") Double minPrice,
+            @Query("maxPrice") Double maxPrice,
+            @Query("isOnSale") Boolean isOnSale,
+            @Query("category") String category,
+            @Query("eventType") String eventType,
+            @Query("isService") Boolean isService,
+            @Query("isProduct") Boolean isProduct,
+            @Query("page") int page,
+            @Query("pageSize") int pageSize,
+            @Query("sortDir") String sortDir
+    );
+
+    @GET("offers/{offerId}/purchased")
+    Call<Boolean> isOfferPurchased(
+            @Path("offerId") int offerId
     );
 
 }

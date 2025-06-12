@@ -5,6 +5,7 @@ import com.example.eventure.model.Status;
 import java.util.List;
 
 public class OfferDTO {
+    private int id;
     private Status status;
     private String name;
     private String description;
@@ -29,6 +30,10 @@ public class OfferDTO {
     private boolean isReservationAutoApproved;
 
     // Getters and Setters
+
+    public int getId(){return this.id;}
+
+    public void setId(int id){this.id = id;}
 
     public CategorySuggestionDTO getCategorySuggestionDTO() {
         return categorySuggestionDTO;

@@ -106,4 +106,12 @@
     app:popUpTo="@+id/events_menu"
     app:popUpToInclusive="true" />
 
+    <fragment
+        android:id="@+id/nav_admin_categories"
+        android:name="com.example.eventure.fragments.AdminCategoryFragment"
+        android:label="categories"
+        tools:layout="@layout/fragment_admin_category"
+        app:popUpTo="@+id/categories_menu"
+        app:popUpToInclusive="true" />
+
 </navigation>

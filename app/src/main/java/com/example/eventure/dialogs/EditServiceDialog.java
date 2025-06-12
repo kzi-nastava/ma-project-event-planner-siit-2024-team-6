@@ -29,13 +29,16 @@ import com.example.eventure.R;
 import com.example.eventure.adapters.PhotoAdapter;
 import com.example.eventure.clients.EventTypeService;
 import com.example.eventure.dto.EventTypeDTO;
+import com.example.eventure.dto.NewOfferDTO;
 import com.example.eventure.dto.OfferDTO;
 import com.example.eventure.model.EventType;
 import com.example.eventure.model.Offer;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -47,7 +50,7 @@ public class EditServiceDialog extends DialogFragment {
 
     // Declare UI components
     private ImageView closeIcon;
-    private EditText proposedCategoryInput, serviceNameInput, serviceDescriptionInput,
+    private EditText serviceNameInput, serviceDescriptionInput,
             serviceSpecificsInput, servicePriceInput, serviceDiscountInput,
             bookingDeadlineInput, cancellationDeadlineInput,
             fixedDurationInput, minDurationInput, maxDurationInput;
@@ -55,7 +58,7 @@ public class EditServiceDialog extends DialogFragment {
     private CheckBox visibilityCheckbox, availabilityCheckbox;
     private RadioGroup durationRadioGroup, bookingConfirmationRadioGroup;
     private RadioButton fixedDurationRadio, minMaxDurationRadio, autoConfirmationRadio, manualConfirmationRadio;
-    private Button addPicturesButton, saveButton;
+    private Button addPicturesButton, saveButton, proposedCetgoryButton;
 
     // Service data to edit
     private String currentServiceName, currentDescription, currentSpecifics;
@@ -73,8 +76,9 @@ public class EditServiceDialog extends DialogFragment {
 
     private OnOfferUpdatedListener listener;
 
-    private List<EventType> eventTypes = new ArrayList<>();
+    private List<String> eventTypes = new ArrayList<>();
 
+    private final Map<String, EventTypeDTO> eventTypeMap = new HashMap<>();
     public interface OnOfferUpdatedListener {
         void onOfferUpdated();
     }
@@ -95,7 +99,11 @@ public class EditServiceDialog extends DialogFragment {
         args.putString("serviceName", o.getName());
         args.putString("description", o.getDescription());
         args.putDouble("price", o.getPrice());
-        args.putDouble("discount", o.getSale());
+        if (o.getSale() == null){
+            args.putDouble("discount", 0.0);
+        }else{
+            args.putDouble("discount", o.getSale());
+        }
         args.putString("specifics", o.getSpecifics());
         args.putInt("minDuration", o.getMinDuration());
         args.putInt("maxDuration", o.getMaxDuration());
@@ -161,9 +169,9 @@ public class EditServiceDialog extends DialogFragment {
         View view = inflater.inflate(R.layout.dialog_create_edit_service, container, false);
 
         // Initialize views
-        closeIcon = view.findViewById(R.id.close_icon);
-        proposedCategoryInput = view.findViewById(R.id.proposed_category_input);
+        closeIcon = view.findViewById(R.id.close_icon);;
         serviceNameInput = view.findViewById(R.id.service_name_input);
+        proposedCetgoryButton = view.findViewById(R.id.propose_category_button);
         serviceDescriptionInput = view.findViewById(R.id.service_description_input);
         serviceSpecificsInput = view.findViewById(R.id.service_specifics_input);
         servicePriceInput = view.findViewById(R.id.service_price_input);
@@ -191,9 +199,12 @@ public class EditServiceDialog extends DialogFragment {
 
         categoryLabel.setVisibility(View.GONE);
         serviceCategorySpinner.setVisibility(View.GONE);
-        proposedCategoryInput.setVisibility(View.GONE);
+        proposedCetgoryButton.setVisibility(View.GONE);
 
         loadEventTypes();
+
+        // Set up listeners
+        setupListeners();
 
         // Populate fields with current data
         populateFields();
@@ -206,8 +217,7 @@ public class EditServiceDialog extends DialogFragment {
         photosRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         photosRecyclerView.setAdapter(photoAdapter);
 
-        // Set up listeners
-        setupListeners();
+
 
         return view;
     }
@@ -226,7 +236,7 @@ public class EditServiceDialog extends DialogFragment {
             fixedDurationRadio.setChecked(false);
             minMaxDurationRadio.setChecked(true);
             autoConfirmationRadio.setChecked(false);
-            manualConfirmationRadio.setChecked(false);
+            manualConfirmationRadio.setChecked(true);
             fixedDurationInput.setText("");
             minDurationInput.setText(String.valueOf(currentMinDuration));
             maxDurationInput.setText(String.valueOf(currentMaxDuration));
@@ -340,14 +350,42 @@ public class EditServiceDialog extends DialogFragment {
 
             List<EventTypeDTO> ets = getSelectedEventTypes();
             // Validate required fields
-            if (photoUrls.isEmpty() || ets.isEmpty() || (updatedFixedDuration == 0 && (updatedMaxDuration == 0 || updatedMinDuration == 0)) || (updatedMinDuration == 0 && updatedMaxDuration == 0 && updatedFixedDuration == 0) || updatedCancellationDeadline <= 0 || updatedBookingDeadline <= 0 || updatedServiceName.isEmpty() || updatedDescription.isEmpty() || updatedSpecifics.isEmpty() || updatedDiscount < 0 || updatedPrice <= 0) {
-                Snackbar.make(requireView(), "Please fill in all required fields.", Snackbar.LENGTH_LONG).show();
+            if (photoUrls.isEmpty()) {
+                showSnackbar("At least one photo is required.");
+                return;
+            }
+            if (ets.isEmpty()) {
+                showSnackbar("Please select at least one event type.");
+                return;
+            }
+            if (updatedFixedDuration == 0 && (updatedMinDuration == 0 || updatedMaxDuration == 0)) {
+                showSnackbar("Please enter valid durations.");
+                return;
+            }
+            if (updatedBookingDeadline <= 0 || updatedCancellationDeadline <= 0) {
+                showSnackbar("Please enter valid deadlines.");
+                return;
+            }
+            if (updatedServiceName.isEmpty() || updatedDescription.isEmpty() || updatedSpecifics.isEmpty()) {
+                showSnackbar("Text fields cannot be empty.");
+                return;
+            }
+            if (updatedPrice <= 0) {
+                showSnackbar("Price must be greater than 0.");
+                return;
+            }
+            if (updatedDiscount < 0) {
+                showSnackbar("Discount cannot be negative.");
+                return;
+            }
+            if (updatedMinDuration > updatedMaxDuration) {
+                showSnackbar("Minimum duration cannot be greater than maximum duration.");
                 return;
             }
 
 
             // Create or update the Offer object
-            OfferDTO updatedOffer = new OfferDTO();
+            NewOfferDTO updatedOffer = new NewOfferDTO();
             updatedOffer.setName(updatedServiceName);
             updatedOffer.setEventTypes(ets);
             updatedOffer.setDescription(updatedDescription);
@@ -365,7 +403,8 @@ public class EditServiceDialog extends DialogFragment {
             updatedOffer.setPhotos(photoUrls);
 
             // Simulate saving or updating the data (replace with actual logic)
-           ClientUtils.offerService.editProviderService(1, offer, updatedOffer).enqueue(new Callback<Offer>() {
+            saveButton.setEnabled(false);
+            ClientUtils.offerService.editProviderService(offer, updatedOffer).enqueue(new Callback<Offer>() {
                 @Override
                 public void onResponse(Call<Offer> call, Response<Offer> response) {
                     if (response.isSuccessful()) {
@@ -375,9 +414,12 @@ public class EditServiceDialog extends DialogFragment {
                             listener.onOfferUpdated();
                         }
                         // Dismiss the dialog
+                        showSnackbar("The service successfully updated");
                         dismiss();
                     } else {
-                        Log.e("CreateOffer", "Failed to create offer: " + response.code());
+                        Log.e("UpdateOffer", "Failed to update offer: " + response.code());
+                        showSnackbar("Failed to update the service");
+                        saveButton.setEnabled(true);
                     }
                 }
 
@@ -419,24 +461,23 @@ public class EditServiceDialog extends DialogFragment {
         eventTypesContainer.removeAllViews(); // Clear any existing views
         eventTypes.clear();
 
-        ClientUtils.eventTypeService.findAll().enqueue(new Callback<List<EventType>>() {
+        ClientUtils.eventTypeService.getAll().enqueue(new Callback<List<EventTypeDTO>>() {
             @Override
-            public void onResponse(Call<List<EventType>> call, Response<List<EventType>> response) {
+            public void onResponse(Call<List<EventTypeDTO>> call, Response<List<EventTypeDTO>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    eventTypes = response.body();
-                    Log.d("EventType", eventTypes.toString());
+                    eventTypes.clear();
+                    for (EventTypeDTO eventType : response.body()) {
+                        eventTypes.add(eventType.getName());
+                        eventTypeMap.put(eventType.getName(), eventType);
 
-                    // Populate the checkboxes after the data is fetched
-                    for (EventType eventType : eventTypes) {
                         CheckBox checkBox = new CheckBox(getContext());
                         checkBox.setText(eventType.getName());
-                        checkBox.setTag(eventType);
-
-                        // Check the checkbox if it's in the currentEventTypes
-                        if (currentEventTypes != null && currentEventTypes.contains(eventType.getName())) {
-                            checkBox.setChecked(true);
+                        checkBox.setTag(eventType.getName());
+                        for (String s: currentEventTypes){
+                            if (eventType.getName().equals(s)){
+                                checkBox.setChecked(true);
+                            }
                         }
-
                         eventTypesContainer.addView(checkBox);
                     }
                 } else {
@@ -445,7 +486,7 @@ public class EditServiceDialog extends DialogFragment {
             }
 
             @Override
-            public void onFailure(Call<List<EventType>> call, Throwable t) {
+            public void onFailure(Call<List<EventTypeDTO>> call, Throwable t) {
                 Log.e("EventTypeError", "Error: " + t.getMessage());
                 Toast.makeText(getContext(), "Failed to load event types", Toast.LENGTH_SHORT).show();
             }
@@ -453,32 +494,21 @@ public class EditServiceDialog extends DialogFragment {
     }
 
     private List<EventTypeDTO> getSelectedEventTypes() {
-        List<String> selectedEventTypes = new ArrayList<>();
+        List<EventTypeDTO> selected = new ArrayList<>();
 
         for (int i = 0; i < eventTypesContainer.getChildCount(); i++) {
             View view = eventTypesContainer.getChildAt(i);
-            if (view instanceof CheckBox) {
-                CheckBox checkBox = (CheckBox) view;
-                if (checkBox.isChecked()) {
-                    selectedEventTypes.add(checkBox.getText().toString());
-                }
-            }
-        }
-        List<EventTypeDTO> events = new ArrayList<>();
-
-        for(String name: selectedEventTypes){
-            for(EventType e: eventTypes){
-                if(e.getName().equals(name)){
-                    EventTypeDTO eDto = new EventTypeDTO();
-                    eDto.setName(e.getName());
-                    eDto.setDescription(eDto.getDescription());
-                    eDto.setIsDeleted(false);
-                    events.add(eDto);
-                }
+            if (view instanceof CheckBox && ((CheckBox) view).isChecked()) {
+                String eventTypeName = (String) view.getTag();
+                EventTypeDTO e = eventTypeMap.get(eventTypeName);
+                selected.add(e);
             }
         }
 
-        return events;
+        return selected;
+    }
+    private void showSnackbar(String message) {
+        Snackbar.make(requireView(), message, Snackbar.LENGTH_LONG).show();
     }
 
 }

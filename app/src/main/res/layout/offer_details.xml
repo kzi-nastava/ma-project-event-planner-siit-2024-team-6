@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent">
+    
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#F6F6FA">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginBottom="0dp"
+                android:background="@color/blue">
+                <!-- Close Icon -->
+                <!-- Exit Button in top-right -->
+                <ImageButton
+                    android:id="@+id/btn_exit"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_gravity="end|top"
+                    android:layout_alignParentEnd="true"
+                    android:background="?android:selectableItemBackgroundBorderless"
+                    android:src="@drawable/close_icon"
+                    app:tint="@color/white" />
+            </RelativeLayout>
+
+
+            <!-- Image Carousel -->
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/image_carousel"
+                android:layout_width="match_parent"
+                android:layout_height="250dp" />
+
+
+            <!-- Provider & Favorite -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="8dp">
+
+                <!-- Icon + Provider Info in a row -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <ImageButton
+                        android:id="@+id/provider_icon"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/account_circle"
+                        android:contentDescription="Provider Icon"
+                        android:layout_marginEnd="8dp" />
+
+                    <TextView
+                        android:id="@+id/provider_info"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Provider"
+                        android:textSize="20sp" />
+                </LinearLayout>
+
+                <!-- Favorite Button -->
+                <ImageButton
+                    android:id="@+id/btn_favorite"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="?android:selectableItemBackgroundBorderless"
+                    android:src="@drawable/heart_icon"
+                    android:contentDescription="Add to favorites" />
+            </LinearLayout>
+
+
+            <!-- Title -->
+            <TextView
+                android:id="@+id/offer_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:text="Exclusive Event Catering Services"
+                android:textSize="26sp"
+                android:textStyle="bold"
+                android:paddingTop="16dp" />
+
+            <!-- Details Section (About, Category, etc.) -->
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Details and Specifics"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:textSize="20dp"
+                android:paddingTop="12dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/details_text"
+                android:textSize="18dp"
+                android:textStyle="italic"
+                android:text="Tailored menus with gourmet options..."
+                android:paddingTop="4dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Event types"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:paddingTop="12dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/event_types_text"
+                android:text=""
+                android:textSize="18dp"
+                android:textStyle="italic"
+                android:paddingTop="4dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Category"
+                android:textStyle="bold"
+                android:textSize="20dp"
+                android:paddingTop="12dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/category_text"
+                android:text="Event and Celebration Services"
+                android:paddingTop="4dp"
+                android:textStyle="italic"
+                android:textSize="18dp"/>
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Price"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:paddingTop="12dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/price_text"
+                android:text="1000"
+                android:textSize="18dp"
+                android:paddingTop="4dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/duration_label"
+                android:text="Service duration"
+                android:textStyle="bold"
+                android:textSize="20dp"
+                android:paddingTop="12dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/duration_text"
+                android:text="10-15min"
+                android:textSize="18dp"
+                android:paddingTop="4dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/deadline_text"
+                android:textStyle="bold"
+                android:textSize="18dp"
+                android:text="Cancelation deadline: "
+                android:paddingTop="4dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/availability_text"
+                android:text="vla"
+                android:paddingTop="12dp"
+                android:textStyle="italic"
+                android:textColor="@color/pink" />
+
+            <!-- Action Buttons (narrower and centered) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginTop="12dp"
+                android:weightSum="2">
+
+                <Button
+                    android:id="@+id/btn_book"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Book it!"
+                    android:backgroundTint="#C18A8A"
+                    android:textColor="#fff"
+                    android:layout_marginEnd="8dp"/>
+
+                <Button
+                    android:id="@+id/btn_contact"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Contact us"
+                    android:backgroundTint="#2E3D59"
+                    android:textColor="#fff"/>
+            </LinearLayout>
+
+            <!-- Rating & Review -->
+
+            <TextView
+                android:layout_width="match_parent"
+                android:id="@+id/review_label"
+                android:layout_height="wrap_content"
+                android:text="Write your review here!"
+                android:textStyle="italic"
+                android:paddingTop="12dp"
+                android:visibility="gone"/>
+            <EditText
+                android:id="@+id/review_input"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:hint="Opinion..."
+                android:gravity="top"
+                android:background="@color/cardview_light_background"
+                android:padding="8dp"
+                android:visibility="gone"/>
+            <RatingBar
+                android:id="@+id/review_rating_bar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:numStars="5"
+                android:stepSize="1.0"
+                android:rating="0"
+                android:layout_marginTop="8dp"
+                android:isIndicator="false"
+                android:visibility="gone"/>
+
+            <Button
+                android:id="@+id/btn_submit_review"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Submit review"
+                android:layout_gravity="end"
+                android:layout_marginTop="8dp"
+                android:visibility="gone"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/reportCard"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    card_view:cardCornerRadius="12dp"
+    card_view:cardElevation="4dp"
+    android:background="@android:color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Reporter and Reported user info (moved to top) -->
+        <TextView
+            android:id="@+id/tvReported"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Reported user: reportedUsername"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="14sp" />
+        <TextView
+            android:id="@+id/tvReporter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Reported by: reporterUsername"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="14sp" />
+
+        <!-- Reason with bold label (moved below) -->
+        <TextView
+            android:id="@+id/tvReportReason"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Reason: Report reason goes here"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            android:textStyle="normal"
+            android:layout_marginTop="8dp" />
+
+        <!-- Buttons row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal"
+            android:gravity="end">
+
+            <Button
+                android:id="@+id/btnSuspend"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Suspend"
+                android:drawablePadding="8dp"
+                android:backgroundTint="@color/purple"
+                android:textColor="@android:color/white"
+                android:layout_marginEnd="8dp" />
+
+            <Button
+                android:id="@+id/btnReject"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Reject"
+                android:drawablePadding="8dp"
+                android:backgroundTint="@color/blue"
+                android:textColor="@android:color/white" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

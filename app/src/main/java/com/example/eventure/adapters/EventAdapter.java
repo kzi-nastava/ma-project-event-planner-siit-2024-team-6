@@ -51,6 +51,10 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         events.addAll(newEvents);
         notifyItemRangeInserted(previousSize, newEvents.size());
     }
+    public void clearEvents() {
+        this.events.clear();
+        notifyDataSetChanged();
+    }
 
     static class EventViewHolder extends RecyclerView.ViewHolder {
         TextView eventTitle, eventLocation, eventDate;

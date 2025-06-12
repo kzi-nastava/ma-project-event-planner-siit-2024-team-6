@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -59,37 +60,40 @@ public class HomeActivity extends AppCompatActivity {
 
         String fragmentName = getIntent().getStringExtra("FRAGMENT_NAME");
         if (fragmentName != null) {
-            switch (fragmentName) {
-                case "FAVOURITE_EVENTS":
-                    navController.navigate(R.id.nav_favorite_events); // Navigate to My Offers fragment
-                    break;
-                case "NOTIFICATIONS":
-                    navController.navigate(R.id.nav_notifications); // Navigate to Notifications fragment
-                    break;
-                case "MESSAGES":
-                    navController.navigate(R.id.nav_messages); // Navigate to Messages fragment
-                    break;
-                case "FAVOURITE_SERVICES":
-                    navController.navigate(R.id.nav_favorite_services); // Navigate to My Offers fragment
-                    break;
-                case "FAVOURITE_PRODUCTS":
-                    navController.navigate(R.id.nav_favorite_products); // Navigate to My Offers fragment
-                    break;
-                case "CALENDAR":
-                    navController.navigate(R.id.nav_my_calendar); // Navigate to My Offers fragment
-                    break;
-                default:
-                    // Optionally handle unknown fragment names
-                    break;
-            }
+            drawer.post(() -> {
+                switch (fragmentName) {
+                    case "FAVOURITE_EVENTS":
+                        navController.navigate(R.id.nav_favorite_events);
+                        break;
+                    case "NOTIFICATIONS":
+                        navController.navigate(R.id.nav_notifications);
+                        break;
+                    case "MESSAGES":
+                        navController.navigate(R.id.nav_messages);
+                        break;
+                    case "FAVOURITE_SERVICES":
+                        navController.navigate(R.id.nav_favorite_services);
+                        break;
+                    case "FAVOURITE_PRODUCTS":
+                        navController.navigate(R.id.nav_favorite_products);
+                        break;
+                    case "CALENDAR":
+                        navController.navigate(R.id.nav_my_calendar);
+                        break;
+                    case "CATEGORIES":
+                        navController.navigate(R.id.nav_admin_categories);
+                        break;
+                }
+            });
         }
+
 
         // Setup navigation item selection manually
         navigationView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
 
             if (id == R.id.nav_my_offers) {
-                Intent intent = new Intent(HomeActivity.this, OffersActivity.class);
+                Intent intent = new Intent(HomeActivity.this, ProviderOffersActivity.class);
                 startActivity(intent);
                 drawer.closeDrawer(GravityCompat.START);
                 return true;
@@ -99,7 +103,21 @@ public class HomeActivity extends AppCompatActivity {
                 return true;
             } else if (id == R.id.nav_messages) {
                 navController.navigate(R.id.nav_messages);
+                Intent intent = new Intent(HomeActivity.this, ChatActivity.class);
+                startActivity(intent);
+                return true;
+            } else if (id == R.id.nav_admin_categories) {
+                Intent intent = new Intent(HomeActivity.this, AdminCategoriesActivity.class);
+                startActivity(intent);
                 drawer.closeDrawer(GravityCompat.START);
+                return true;
+            } else if (id == R.id.nav_admin_manage_comments) {
+                Intent intent = new Intent(HomeActivity.this, AdminCommentsActivity.class);
+                startActivity(intent);
+                return true;
+            } else if (id == R.id.nav_admin_manage_reports) {
+                Intent intent = new Intent(HomeActivity.this, AdminReportsActivity.class);
+                startActivity(intent);
                 return true;
             }
 
@@ -115,6 +133,15 @@ public class HomeActivity extends AppCompatActivity {
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
+
+
+        TextView tvTitle = toolbar.findViewById(R.id.toolbar_title);
+        tvTitle.setOnClickListener(v -> {
+            Intent intent = getIntent();
+            finish();
+            startActivity(intent);
+        });
+
     }
 
     @Override
@@ -160,7 +187,7 @@ public class HomeActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
         Log.d("ShopApp", "HomeActivity onResume()");
     }

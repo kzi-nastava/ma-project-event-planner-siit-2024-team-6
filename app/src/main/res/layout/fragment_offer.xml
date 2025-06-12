@@ -15,7 +15,29 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+            <!-- Search -->
+            <LinearLayout
+                android:background="@color/blue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@id/toolbar"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
 
+                <androidx.appcompat.widget.SearchView
+                    android:id="@+id/offers_search"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/border_background"
+                    android:backgroundTint="@color/white"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginTop="10dp"
+                    android:theme="@style/Theme.Eventure"
+                    android:layout_marginBottom="8dp"
+                    app:searchIcon="@drawable/search_icon"/>
+            </LinearLayout>
             <!-- Carousel with Arrows -->
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -64,12 +86,13 @@
                     android:id="@+id/products_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Products"
+                    android:text="Offers"
                     android:textSize="30sp"
                     android:textStyle="bold"
                     android:textColor="@android:color/black"
                     android:layout_alignParentStart="true" />
 
+                <!-- Filter Text -->
                 <TextView
                     android:id="@+id/filter_text"
                     android:layout_width="wrap_content"
@@ -78,12 +101,22 @@
                     android:textSize="20sp"
                     android:textStyle="bold"
                     android:textColor="@android:color/black"
-                    android:layout_toStartOf="@id/products_filter_icon"
+                    android:layout_toStartOf="@id/offers_filter_icon"
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="4dp" />
 
+                <!-- Sorting Spinner -->
+                <Spinner
+                    android:id="@+id/offers_sort_spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@id/filter_text"
+                    android:layout_marginEnd="8dp" />
+
+                <!-- Filter Icon -->
                 <ImageView
-                    android:id="@+id/products_filter_icon"
+                    android:id="@+id/offers_filter_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/filter_icon"
@@ -91,8 +124,17 @@
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:padding="4dp" />
-            </RelativeLayout>
 
+            </RelativeLayout>
+            <TextView
+                android:id="@+id/emptyOffers"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="No offers found."
+                android:gravity="center"
+                android:visibility="gone"
+                android:textSize="18sp"
+                android:padding="16dp"/>
             <!-- RecyclerView for Product Cards -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/productRecyclerView"

@@ -17,15 +17,42 @@ import com.example.eventure.BuildConfig;
 
 public class ClientUtils {
     public static final String SERVICE_API_PATH = "http://" + BuildConfig.IP_ADDR + ":8080/api/"; // For Android emulator
+    //Events
     public static final String LOGIN = "users/login";
     public static final String TOP_FIVE_EVENTS = "events/top-five";
     public static final String ALL_EVENTS = "events/";
     public static final String ALL_EVENTS_PAGED = "events/all-elements";
+    public static final String FILTERED_EVENTS = "events/search";
+
+    //Offers
     public static final String TOP_FIVE_OFFERS = "offers/top-five";
     public static final String ALL_OFFERS = "offers/";
     public static final String ALL_OFFERS_PAGED = "offers/all-elements";
+    public static final String ACCEPTED_OFFERS = "offers/accepted";
+    public static final String FILTERED_OFFERS = "offers/search";
+    public static final String ALL_EVENT_TYPES = "admins/event-types";
+    // Organizer
+    public static final String ORGANIZER_FUTURE_EVENTS = "organizers/future-events";
+    public static final String ADD_REACTION = "reactions/";
+    public static final String REACTIONS = "reactions/";
+    public static final String PENDING_REACTIONS = "reactions/pending";
+    public static final String ADD_RESERVATION = "reservations/";
+
+    //Reports
+    public static final String REPORTS = "report";
+    public static final String APPROVE_REPORT = "report/{id}/approve";
+    public static final String REJECT_REPORT = "report/{id}";
 
 
+    public static final String CATEGORIES = "admins/categories";
+    public static final String DELETE_UPDATE_CATEGORY = "admins/category/{id}";
+    public static final String CREATE_CATEGORY = "admins/category";
+    public static final String APPROVE_CATEGORY_SUGGETION = "admins/suggestion/approve/{id}";
+    public static final String REJECT_CATEGORY_SUGGETION = "admins/suggestion/reject/{id}";
+    public static final String CATEGORY_SUGGESTIONS = "admins/suggestions";
+    public static final String UPDATE_CATEGORY_SUGGESTION = "admins/suggestion/{id}";
+
+    public static final int PAGE_SIZE = 5;
 
     private static AuthService authService;
     public static void initializeAuthService(Context context) {
@@ -75,7 +102,7 @@ public class ClientUtils {
                     if (authService.isLoggedIn()) {
                         Log.d("AuthTag", "Adding token to request: " + originalRequest.url());
                         okhttp3.Request newRequest = originalRequest.newBuilder()
-                                .addHeader("Authorization", "Bearer " + token)
+                                .addHeader("X-Auth-Token", "Bearer " + token)
                                 .build();
                         return chain.proceed(newRequest);
                     }
@@ -87,7 +114,7 @@ public class ClientUtils {
                     okhttp3.Request request = chain.request();
 
                     // Check and log if the Authorization header is present
-                    String authorizationHeader = request.header("Authorization");
+                    String authorizationHeader = request.header("X-Auth-Token");
                     if (authorizationHeader != null) {
                         Log.d("AuthTag", "Authorization Token attached: " + authorizationHeader);
                     } else {
@@ -111,6 +138,13 @@ public class ClientUtils {
     public static final EventService eventService = retrofit.create(EventService.class);
     public static final OfferService offerService = retrofit.create(OfferService.class);
     public static final CategoryService categoryService = retrofit.create(CategoryService.class);
+    public static final OrganizerService organizerService = retrofit.create(OrganizerService.class);
+    public static final ReservationService reservationService = retrofit.create(ReservationService.class);
     public static final LoginService loginService = retrofit.create(LoginService.class);
+
+    public static final ReactionService reactionService = retrofit.create(ReactionService.class);
+    public static final ReportService reportService = retrofit.create(ReportService.class);
+
+    public static final ChatService chatService = retrofit.create(ChatService.class);
     //public static final AuthService authService = retrofit.create(AuthService.class);
 }
