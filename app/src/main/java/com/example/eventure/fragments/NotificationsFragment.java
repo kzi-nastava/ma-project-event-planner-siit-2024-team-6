@@ -79,7 +79,7 @@ public class NotificationsFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recycler_view_notifications);
         btnLoadMore = view.findViewById(R.id.loadMoreNotifications);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
+        receiverId = ClientUtils.getAuthService().getUserId();
         notificationsList = new ArrayList<>();
         adapter = new NotificationAdapter(notificationsList);
         recyclerView.setAdapter(adapter);
