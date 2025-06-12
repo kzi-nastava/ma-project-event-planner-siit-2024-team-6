@@ -23,7 +23,7 @@ fun getIpAddress(): String? {
 
 android {
     namespace = "com.example.eventure"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.eventure"
