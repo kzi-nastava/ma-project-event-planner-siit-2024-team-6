@@ -23,6 +23,7 @@ import com.example.eventure.R;
 import com.example.eventure.adapters.NotificationAdapter;
 import com.example.eventure.clients.ClientUtils;
 import com.example.eventure.clients.NotificationService;
+import com.example.eventure.clients.NotificationSocketManager;
 import com.example.eventure.dto.NotificationDTO;
 import com.example.eventure.model.PagedResponse;
 import com.google.gson.Gson;
@@ -48,8 +49,6 @@ public class NotificationsFragment extends Fragment {
     private final int pageSize = ClientUtils.PAGE_SIZE;
     private boolean isLastPage = false;
     private boolean isLoading = false;
-
-    private StompClient stompClient;
 
 
 
@@ -80,8 +79,7 @@ public class NotificationsFragment extends Fragment {
             }
         });
 
-        loadNotifications(0, pageSize);  // initial load
-        connectWebSocket(receiverId);
+        loadNotifications(0, pageSize);
 
     }
 
@@ -136,57 +134,37 @@ public class NotificationsFragment extends Fragment {
     }
 
 
-    @SuppressLint("CheckResult")
-    private void connectWebSocket(int userId) {
-        stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, "ws://10.0.2.2:8080/socket");
-
-        stompClient.lifecycle().subscribe(lifecycleEvent -> {
-            switch (lifecycleEvent.getType()) {
-                case OPENED:
-                    Log.d("STOMP", "Notification socket connected");
-
-                    stompClient.topic("/socket-publisher/notifications/" + userId)
-                            .subscribe(topicMessage -> {
-                                String json = topicMessage.getPayload();
-                                Log.d("STOMP", "Received JSON: " + json);
-                                NotificationDTO newNotification = new Gson().fromJson(json, NotificationDTO.class);
-                                requireActivity().runOnUiThread(() -> {
-                                    adapter.addNotificationAtTop(newNotification);
-                                    recyclerView.scrollToPosition(0);
-                                });
-
-                            }, throwable -> Log.e("STOMP", "Notification subscribe error", throwable));
-                    break;
-
-                case ERROR:
-                    Log.e("STOMP", "Notification socket error", lifecycleEvent.getException());
-                    break;
-
-                case CLOSED:
-                    Log.d("STOMP", "Notification socket closed");
-                    break;
-            }
-        });
-
-        stompClient.connect();
-    }
 
     @Override
     public void onResume() {
         super.onResume();
-        // Hide bottom nav when this fragment is visible
+
         if (getActivity() != null) {
             View bottomNav = getActivity().findViewById(R.id.bottom_navigation);
             if (bottomNav != null) {
                 bottomNav.setVisibility(View.GONE);
             }
         }
+
+        // Register for real-time notification updates
+        NotificationSocketManager.getInstance().setNotificationListener(notification -> {
+            requireActivity().runOnUiThread(() -> {
+                adapter.addNotificationAtTop(notification);
+                recyclerView.scrollToPosition(0);
+            });
+
+        });
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        NotificationSocketManager.getInstance().removeNotificationListener();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        // Show bottom nav when leaving this fragment
         if (getActivity() != null) {
             View bottomNav = getActivity().findViewById(R.id.bottom_navigation);
             if (bottomNav != null) {
@@ -194,9 +172,9 @@ public class NotificationsFragment extends Fragment {
             }
         }
     }
+
     @Override
     public void onDestroyView() {
-        if (stompClient != null) stompClient.disconnect();
         super.onDestroyView();
     }
 
