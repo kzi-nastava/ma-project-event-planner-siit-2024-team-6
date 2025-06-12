@@ -39,6 +39,8 @@ public class NotificationSocketManager {
             switch (event.getType()) {
                 case OPENED:
                     Log.d(TAG, "Socket connected");
+                    Log.d("AuthTag","Socket connected");
+
                     connected = true;
 
                     stompClient.topic("/socket-publisher/notifications/" + userId)
@@ -79,6 +81,7 @@ public class NotificationSocketManager {
         if (stompClient != null) {
             stompClient.disconnect();
             connected = false;
+            Log.d("AuthTag","Disconnected from socket");
         }
     }
 
