@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -44,7 +45,7 @@ public class NotificationsFragment extends Fragment {
     private List<NotificationDTO> notificationsList;
     private Button btnLoadMore;
 
-    private int receiverId;
+    private Integer receiverId;
     private int currentPage = 0;
     private final int pageSize = ClientUtils.PAGE_SIZE;
     private boolean isLastPage = false;
@@ -63,12 +64,22 @@ public class NotificationsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        //navigation restriction (only for logged in users)
+        if (!ClientUtils.getAuthService().isLoggedIn()) {
+            TextView error = view.findViewById(R.id.notificationsError);
+            error.setVisibility(View.VISIBLE);
+            TextView commentsTv = view.findViewById(R.id.tvNotificationsLabel);
+            commentsTv.setVisibility(View.GONE);
+            return;
+        }else{
+            TextView error = view.findViewById(R.id.notificationsError);
+            error.setVisibility(View.GONE);
+        }
 
         recyclerView = view.findViewById(R.id.recycler_view_notifications);
         btnLoadMore = view.findViewById(R.id.loadMoreNotifications);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        receiverId = ClientUtils.getAuthService().getUserId();
         notificationsList = new ArrayList<>();
         adapter = new NotificationAdapter(notificationsList);
         recyclerView.setAdapter(adapter);
