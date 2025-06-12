@@ -6,7 +6,8 @@ public class NotificationDTO {
     private Integer id;
     private String text;
     private Integer receiverId;
-    private LocalDateTime timestamp;
+    private String timestamp;
+    public NotificationDTO(){};
 
     public Integer getId() {
         return id;
@@ -32,11 +33,11 @@ public class NotificationDTO {
         this.receiverId = receiverId;
     }
 
-    public LocalDateTime getTimestamp() {
+    public String getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(LocalDateTime timestamp) {
+    public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
     }
 }

@@ -49,19 +49,23 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
     // Optionally format your timestamp string (adjust parsing depending on your timestamp format)
     private String formatTimestamp(String timestamp) {
-        try {
-            // Example: if timestamp is ISO 8601 string like "2024-06-09T12:34:56Z"
-            SimpleDateFormat sdfInput = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault());
-            Date date = sdfInput.parse(timestamp);
-
-            // Format to something readable like "Jun 9, 12:34 PM"
-            SimpleDateFormat sdfOutput = new SimpleDateFormat("MMM d, h:mm a", Locale.getDefault());
-            return sdfOutput.format(date);
-        } catch (ParseException | NullPointerException e) {
-            e.printStackTrace();
-            return timestamp; // fallback to raw string if parsing fails
+        String[] formats = {
+                "yyyy-MM-dd'T'HH:mm:ss.SSSSSS",
+                "yyyy-MM-dd'T'HH:mm:ss"
+        };
+        for (String format : formats) {
+            try {
+                SimpleDateFormat sdfInput = new SimpleDateFormat(format, Locale.getDefault());
+                Date date = sdfInput.parse(timestamp);
+                if (date != null) {
+                    SimpleDateFormat sdfOutput = new SimpleDateFormat("MMM d, h:mm a", Locale.getDefault());
+                    return sdfOutput.format(date);
+                }
+            } catch (ParseException ignored) {}
         }
+        return timestamp; // fallback raw
     }
+
 
     public void setNotifications(List<NotificationDTO> newNotifications) {
         Log.d("NTag", "setNotifications called");
@@ -74,6 +78,10 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         int startPos = notificationList.size();
         notificationList.addAll(newNotifications);
         notifyItemRangeInserted(startPos, newNotifications.size());
+    }
+    public void addNotificationAtTop(NotificationDTO notification) {
+        notificationList.add(0, notification);
+        notifyItemInserted(0);
     }
 
     @Override

@@ -1,5 +1,10 @@
 package com.example.eventure.fragments;
 
+import static ua.naiksoftware.stomp.dto.LifecycleEvent.Type.CLOSED;
+import static ua.naiksoftware.stomp.dto.LifecycleEvent.Type.ERROR;
+import static ua.naiksoftware.stomp.dto.LifecycleEvent.Type.OPENED;
+
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +25,7 @@ import com.example.eventure.clients.ClientUtils;
 import com.example.eventure.clients.NotificationService;
 import com.example.eventure.dto.NotificationDTO;
 import com.example.eventure.model.PagedResponse;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +33,8 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import ua.naiksoftware.stomp.Stomp;
+import ua.naiksoftware.stomp.StompClient;
 
 public class NotificationsFragment extends Fragment {
 
@@ -40,6 +48,9 @@ public class NotificationsFragment extends Fragment {
     private final int pageSize = ClientUtils.PAGE_SIZE;
     private boolean isLastPage = false;
     private boolean isLoading = false;
+
+    private StompClient stompClient;
+
 
 
     public NotificationsFragment() {}
@@ -70,11 +81,12 @@ public class NotificationsFragment extends Fragment {
         });
 
         loadNotifications(0, pageSize);  // initial load
+        connectWebSocket(receiverId);
+
     }
 
     private void loadNotifications(int page, int size) {
         isLoading = true;
-        Log.d("NTag","USAO");
         Call<PagedResponse<NotificationDTO>> call = ClientUtils.notificationService.getByReceiver(
                 receiverId,
                 page,
@@ -83,21 +95,23 @@ public class NotificationsFragment extends Fragment {
                 "desc"
         );
 
-        call.enqueue(new Callback<>() {
+        call.enqueue(new Callback<PagedResponse<NotificationDTO>>() {
             @Override
             public void onResponse(Call<PagedResponse<NotificationDTO>> call, Response<PagedResponse<NotificationDTO>> response) {
                 isLoading = false;
-
+                if (response.code() == 204) {
+                    Toast.makeText(getContext(), "No notifications available", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 if (response.isSuccessful() && response.body() != null) {
                     List<NotificationDTO> newNotifications = response.body().getContent();
-                    Log.d("NTag","Stigle");
-                    Log.d("NTag",String.valueOf(newNotifications.size()));
 
                     if (page == 0) {
                         adapter.setNotifications(newNotifications);
-                    }else{
+                    } else {
                         adapter.addNotifications(newNotifications);
                     }
+
                     currentPage = page;
 
                     if (adapter.getItemCount() >= response.body().getTotalElements()) {
@@ -106,16 +120,55 @@ public class NotificationsFragment extends Fragment {
 
                     btnLoadMore.setVisibility(isLastPage ? View.GONE : View.VISIBLE);
                 } else {
-                    Toast.makeText(getContext(), "Failed to load notifications", Toast.LENGTH_SHORT).show();
+                    Log.e("NTag", "Step R4: Response error - Code: " + response.code());
                 }
             }
+
             @Override
             public void onFailure(Call<PagedResponse<NotificationDTO>> call, Throwable t) {
                 isLoading = false;
-                Toast.makeText(getContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                Log.e("NotificationsFragment", "Error loading notifications", t);
+                Log.e("NTag", "Step R5: onFailure - " + t.getMessage(), t);
             }
         });
+
+
+        Log.d("NTag", "Step 11: Enqueue called");
+    }
+
+
+    @SuppressLint("CheckResult")
+    private void connectWebSocket(int userId) {
+        stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, "ws://10.0.2.2:8080/socket");
+
+        stompClient.lifecycle().subscribe(lifecycleEvent -> {
+            switch (lifecycleEvent.getType()) {
+                case OPENED:
+                    Log.d("STOMP", "Notification socket connected");
+
+                    stompClient.topic("/socket-publisher/notifications/" + userId)
+                            .subscribe(topicMessage -> {
+                                String json = topicMessage.getPayload();
+                                Log.d("STOMP", "Received JSON: " + json);
+                                NotificationDTO newNotification = new Gson().fromJson(json, NotificationDTO.class);
+                                requireActivity().runOnUiThread(() -> {
+                                    adapter.addNotificationAtTop(newNotification);
+                                    recyclerView.scrollToPosition(0);
+                                });
+
+                            }, throwable -> Log.e("STOMP", "Notification subscribe error", throwable));
+                    break;
+
+                case ERROR:
+                    Log.e("STOMP", "Notification socket error", lifecycleEvent.getException());
+                    break;
+
+                case CLOSED:
+                    Log.d("STOMP", "Notification socket closed");
+                    break;
+            }
+        });
+
+        stompClient.connect();
     }
 
     @Override
@@ -141,5 +194,11 @@ public class NotificationsFragment extends Fragment {
             }
         }
     }
+    @Override
+    public void onDestroyView() {
+        if (stompClient != null) stompClient.disconnect();
+        super.onDestroyView();
+    }
+
 
 }
