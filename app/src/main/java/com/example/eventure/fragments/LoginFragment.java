@@ -16,8 +16,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
-import com.example.eventure.BuildConfig;
+import com.example.eventure.clients.NotificationSocketManager;
 import com.example.eventure.R;
 import com.example.eventure.activities.HomeActivity;
 import com.example.eventure.activities.ProfileActivity;
@@ -75,6 +74,10 @@ public class LoginFragment extends Fragment {
                         AuthService authService = new AuthService(getContext());
                         authService.login(response.body().getToken());
                         Log.d("AuthTag", "Login successful, role: " + authService.getRole());
+
+                        int userId = authService.getUserId();
+                        NotificationSocketManager.getInstance().connect(requireContext().getApplicationContext(), userId);
+
                         Intent intent = new Intent(requireContext(), HomeActivity.class);
                         startActivity(intent);
                     } else if (response.code() == 403) {
