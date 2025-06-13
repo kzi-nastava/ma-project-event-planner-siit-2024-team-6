@@ -20,6 +20,7 @@ public class NotificationSocketManager {
     private StompClient stompClient;
     private boolean connected = false;
     private static final String TAG = "NotificationSocket";
+    private AuthService authService;
 
     private NotificationSocketManager() {}
 
@@ -32,6 +33,7 @@ public class NotificationSocketManager {
 
     public void connect(Context context, int userId) {
         if (connected) return;
+        authService = new AuthService(context);
 
         stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, "ws://10.0.2.2:8080/socket");
 
@@ -49,9 +51,12 @@ public class NotificationSocketManager {
                                 Log.d(TAG, "Received: " + json);
                                 NotificationDTO notification = new Gson().fromJson(json, NotificationDTO.class);
 
-                                // Show Android system notification
-                                NotificationHelper.showNotification(context, notification);
-
+                                if (!authService.isMuted()) {
+                                    // Show Android system notification only if not muted
+                                    NotificationHelper.showNotification(context, notification);
+                                } else {
+                                    Log.d(TAG, "Notifications muted - skipping system notification display");
+                                }
                                 // Optional: Notify active fragment
                                 if (notificationListener != null) {
                                     notificationListener.onNotificationReceived(notification);
