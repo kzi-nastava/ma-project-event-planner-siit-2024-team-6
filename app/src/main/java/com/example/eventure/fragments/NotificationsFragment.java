@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,8 +45,11 @@ public class NotificationsFragment extends Fragment {
     private NotificationAdapter adapter;
     private List<NotificationDTO> notificationsList;
     private Button btnLoadMore;
+    private Switch switchMuteNotifications;
+
 
     private Integer receiverId;
+    private boolean isMuted = false;
     private int currentPage = 0;
     private final int pageSize = ClientUtils.PAGE_SIZE;
     private boolean isLastPage = false;
@@ -70,11 +74,17 @@ public class NotificationsFragment extends Fragment {
             error.setVisibility(View.VISIBLE);
             TextView commentsTv = view.findViewById(R.id.tvNotificationsLabel);
             commentsTv.setVisibility(View.GONE);
+            switchMuteNotifications = view.findViewById(R.id.switchMuteNotifications);
+            switchMuteNotifications.setVisibility(View.GONE);
             return;
-        }else{
-            TextView error = view.findViewById(R.id.notificationsError);
-            error.setVisibility(View.GONE);
         }
+        //muted
+        switchMuteNotifications = view.findViewById(R.id.switchMuteNotifications);
+        isMuted = ClientUtils.getAuthService().isMuted();
+        switchMuteNotifications.setChecked(isMuted);
+        switchMuteNotifications.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            toggleMuteNotifications(isChecked);
+        });
 
         recyclerView = view.findViewById(R.id.recycler_view_notifications);
         btnLoadMore = view.findViewById(R.id.loadMoreNotifications);
@@ -144,6 +154,26 @@ public class NotificationsFragment extends Fragment {
         Log.d("NTag", "Step 11: Enqueue called");
     }
 
+    private void toggleMuteNotifications(boolean isMuted) {
+        ClientUtils.getAuthService().saveMuted(isMuted);
+
+        Call<Void> call = ClientUtils.notificationService.toggleMute(ClientUtils.getAuthService().getUserId(), isMuted);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(getContext(), isMuted ? "Notifications muted" : "Notifications unmuted", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "Failed to update mute setting", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(getContext(), "Network error", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
 
     @Override
