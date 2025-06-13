@@ -24,6 +24,9 @@ public class AuthService {
         this.context = context;
         this.sharedPreferences = context.getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
     }
+    public Context getContext(){
+        return this.context;
+    }
 
     /**
      * Save the JWT token to shared preferences.
@@ -91,6 +94,9 @@ public class AuthService {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.remove(TOKEN_KEY);
         editor.apply();
+
+        // Disconnect from WebSocket (notification socket)
+        NotificationSocketManager.getInstance().disconnect();
 
         if (context instanceof AppCompatActivity) {
             AppCompatActivity activity = (AppCompatActivity) context;

@@ -12,6 +12,11 @@ import retrofit2.http.Query;
 
 public interface EventService {
     @GET(ClientUtils.TOP_FIVE_EVENTS)
+    @Headers({
+            "User-Agent: Mobile-Android",
+            "Content-Type:application/json",
+            "skip: true"
+    })
     Call<List<EventDTO>> getTopFive();
 
     @GET(ClientUtils.ALL_EVENTS)
