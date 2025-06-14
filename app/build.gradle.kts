@@ -85,5 +85,6 @@ dependencies {
     implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation ("com.squareup.retrofit2:converter-scalars:2.9.0")
-
+    implementation ("com.github.bumptech.glide:glide:4.15.1")
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.15.1")
 }

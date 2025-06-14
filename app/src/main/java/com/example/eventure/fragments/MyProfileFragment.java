@@ -20,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.eventure.R;
 import com.example.eventure.activities.LoginActivity;
 import com.example.eventure.clients.ClientUtils;
@@ -95,38 +96,66 @@ public class MyProfileFragment extends Fragment {
         Context context = container.getContext();
 
         LinearLayout row = new LinearLayout(context);
-        row.setOrientation(LinearLayout.HORIZONTAL);
+        row.setOrientation(LinearLayout.VERTICAL);
         row.setLayoutParams(new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
         ));
-        row.setPadding(0, 8, 0, 8);
+        row.setPadding(0, 16, 0, 16);
 
+        // Image preview
+        ImageView imageView = new ImageView(context);
+        imageView.setLayoutParams(new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                500
+        ));
+        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        row.addView(imageView);
+
+        // Input
         EditText photoInput = new EditText(context);
         photoInput.setLayoutParams(new LinearLayout.LayoutParams(
-                0,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                1
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
         ));
         photoInput.setHint("Photo URL");
         photoInput.setText(url);
         photoInput.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FFFFFF")));
+        row.addView(photoInput);
 
+        // Delete button
         Button deleteButton = new Button(context);
-        deleteButton.setText("X");
+        deleteButton.setText("Remove");
         deleteButton.setBackgroundColor(Color.parseColor("#B00020"));
         deleteButton.setTextColor(Color.WHITE);
-        deleteButton.setLayoutParams(new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-        ));
         deleteButton.setOnClickListener(v -> container.removeView(row));
-
-        row.addView(photoInput);
         row.addView(deleteButton);
-        container.addView(row);
-    }
 
+        container.addView(row);
+
+        // Load image from URL
+        if (!url.isEmpty()) {
+            Glide.with(context)
+                    .load(url)
+                    .placeholder(R.drawable.ic_placeholder) // optional
+                    .error(R.drawable.ic_error)             // optional
+                    .into(imageView);
+        }
+
+        // Live update image on URL change
+        photoInput.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                String newUrl = photoInput.getText().toString().trim();
+                if (!newUrl.isEmpty()) {
+                    Glide.with(context)
+                            .load(newUrl)
+                            .placeholder(R.drawable.ic_placeholder)
+                            .error(R.drawable.ic_error)
+                            .into(imageView);
+                }
+            }
+        });
+    }
     private void loadProfile() {
         userService.getProfile().enqueue(new Callback<UserDTO>() {
             @Override
@@ -140,7 +169,11 @@ public class MyProfileFragment extends Fragment {
                     addressInput.setText(user.getAddress());
                     phoneInput.setText(user.getPhoneNumber());
                     photoUrlInput.setText(user.getPhotoUrl());
-
+                    Glide.with(requireContext())
+                            .load(user.getPhotoUrl())
+                            .placeholder(R.drawable.ic_placeholder)
+                            .error(R.drawable.ic_error)
+                            .into(profilePhoto);
                     // Disable non-editable fields
                     emailInput.setEnabled(false);
                     roleInput.setEnabled(false);

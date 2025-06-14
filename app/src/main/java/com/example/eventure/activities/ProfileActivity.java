@@ -13,6 +13,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 
 import com.example.eventure.R;
 import com.example.eventure.clients.ClientUtils;
@@ -49,7 +50,7 @@ public class ProfileActivity extends AppCompatActivity {
         } else {
             navController.navigate(R.id.nav_profile); // ProfileStartFragment
         }
-    }
+
 //        drawer = findViewById(R.id.drawer_layout);
 //        navigationView = findViewById(R.id.nav_view);
 //        navController = Navigation.findNavController(this, R.id.fragment_nav_content_main);
@@ -85,7 +86,7 @@ public class ProfileActivity extends AppCompatActivity {
 //
 //        NavigationUI.setupWithNavController(navigationView, navController);
 //        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-//     }
+     }
 
 
     // In ProfileActivity.java
