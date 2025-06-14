@@ -5,6 +5,7 @@ import com.example.eventure.dto.OfferDTO;
 import com.example.eventure.dto.ProviderDTO;
 import com.example.eventure.model.Offer;
 import com.example.eventure.model.PagedResponse;
+import com.example.eventure.model.PriceListItem;
 
 import java.util.List;
 
@@ -28,6 +29,9 @@ public interface OfferService {
             "skip: true"
     })
     Call<List<OfferDTO>> getTopFive();
+
+    @GET(ClientUtils.PRICE_LIST)
+    Call<List<PriceListItem>> getPriceList();
 
     @POST("offers/{offerId}/buy")
     Call<Void> buyOffer(
