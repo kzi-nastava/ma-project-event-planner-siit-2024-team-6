@@ -122,6 +122,8 @@ public class AdminCommentsActivity extends AppCompatActivity {
                 startActivity(new Intent(this, AdminCategoriesActivity.class));
             } else if (id == R.id.nav_admin_manage_reports) {
                 startActivity(new Intent(this, AdminReportsActivity.class));
+            } else if (id == R.id.nav_price_list){
+                startActivity(new Intent(this, AdminReportsActivity.class));
             }
 
             drawer.closeDrawer(GravityCompat.START);

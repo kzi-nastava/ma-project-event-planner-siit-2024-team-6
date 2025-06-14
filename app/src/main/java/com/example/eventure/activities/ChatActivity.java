@@ -80,6 +80,8 @@ public class ChatActivity extends AppCompatActivity {
                 startActivity(new Intent(this, AdminReportsActivity.class));
             } else if (id == R.id.nav_admin_categories){
                 startActivity(new Intent(this, AdminCategoriesActivity.class));
+            } else if (id == R.id.nav_price_list){
+                startActivity(new Intent(this, AdminReportsActivity.class));
             }
             if (fragment != null) {
                 Intent intent = new Intent(this, HomeActivity.class);
