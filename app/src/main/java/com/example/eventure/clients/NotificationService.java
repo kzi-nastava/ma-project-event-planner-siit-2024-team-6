@@ -25,4 +25,10 @@ public interface NotificationService {
             @Query("sortBy") String sortBy,
             @Query("sortDir") String sortDir
     );
+
+    @PUT(ClientUtils.MUTE)
+    Call<Void> toggleMute(
+            @Path("userId") Integer userId,
+            @Query("mute") boolean mute
+    );
 }

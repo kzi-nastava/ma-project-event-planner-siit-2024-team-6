@@ -52,6 +52,7 @@ public class ClientUtils {
     //Notifications
     public static final String NOTIFICATIONS = "notifications/";
     public static final String RECEIVER_NOTIFICATIONS = "notifications/receiver/{receiverId}";
+    public static final String MUTE = "users/mute/{userId}";
 
 
 

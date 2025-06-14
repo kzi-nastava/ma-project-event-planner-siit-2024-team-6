@@ -73,7 +73,8 @@ public class LoginFragment extends Fragment {
                     if (response.isSuccessful() && response.body() != null) {
                         AuthService authService = new AuthService(getContext());
                         authService.login(response.body().getToken());
-                        Log.d("AuthTag", "Login successful, role: " + authService.getRole());
+                        authService.saveMuted(response.body().isMuted());
+                        Log.d("AuthTag", "Login successful, role: " + authService.getRole()+" ,muted: "+authService.isMuted());
 
                         int userId = authService.getUserId();
                         NotificationSocketManager.getInstance().connect(requireContext().getApplicationContext(), userId);

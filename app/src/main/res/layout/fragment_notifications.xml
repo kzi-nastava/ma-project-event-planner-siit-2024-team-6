@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".fragments.NotificationsFragment">
+
     <TextView
         android:id="@+id/notificationsError"
         android:layout_width="match_parent"
@@ -13,18 +14,38 @@
         android:textStyle="bold"
         android:textSize="20sp"
         android:gravity="center"
-        android:padding="10dp"/>
-    <TextView
-        android:id="@+id/tvNotificationsLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Notifications"
-        android:textStyle="bold"
-        android:textSize="30sp"
         android:padding="10dp"
-        android:textColor="@color/darkGrey"
-        android:layout_marginTop="8dp"
-        android:layout_marginStart="16dp"/>
+        android:visibility="gone"/>
+
+    <!-- Horizontal layout for label and switch -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="8dp"
+        android:paddingBottom="30dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tvNotificationsLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Notifications"
+            android:textStyle="bold"
+            android:textSize="30sp"
+            android:textColor="@color/darkGrey"
+            android:layout_weight="1"/>
+
+        <Switch
+            android:id="@+id/switchMuteNotifications"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mute"
+            android:textSize="20dp"
+            android:layout_marginRight="18dp"/>
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_notifications"
