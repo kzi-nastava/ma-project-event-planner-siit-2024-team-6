@@ -1,66 +1,302 @@
 package com.example.eventure.fragments;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
-
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.eventure.R;
+import com.example.eventure.activities.LoginActivity;
+import com.example.eventure.clients.ClientUtils;
+import com.example.eventure.clients.UserService;
+import com.example.eventure.dto.ProviderDTO;
+import com.example.eventure.dto.UserDTO;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link MyProfileFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class MyProfileFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private EditText emailInput, roleInput, nameInput, lastnameInput, addressInput, phoneInput, photoUrlInput;
+    private EditText companyEmailInput, companyAddressInput, descriptionInput, openingTimeInput, closingTimeInput, companyPhotosInput;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private Button submitButton, changePasswordButton, logoutButton, deactivateButton;
+    private ImageView profilePhoto;
+    private TextView photoTitle;
+    private LinearLayout photoContainer;
+    private Button addPhotoButton;
 
-    public MyProfileFragment() {
-        // Required empty public constructor
-    }
+    private UserService userService;
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment MyProfileFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static MyProfileFragment newInstance(String param1, String param2) {
-        MyProfileFragment fragment = new MyProfileFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    public MyProfileFragment() {}
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_my_profile, container, false);
+        logoutButton = view.findViewById(R.id.logout_button);
+
+        emailInput = view.findViewById(R.id.email_input);
+        roleInput = view.findViewById(R.id.role_input);
+        nameInput = view.findViewById(R.id.name_input);
+        lastnameInput = view.findViewById(R.id.lastname_input);
+        addressInput = view.findViewById(R.id.address_input);
+        phoneInput = view.findViewById(R.id.phone_input);
+        photoUrlInput = view.findViewById(R.id.photo_url_input);
+        profilePhoto = view.findViewById(R.id.profile_photo);
+        companyEmailInput = view.findViewById(R.id.company_email_input);
+        companyAddressInput = view.findViewById(R.id.company_address_input);
+        descriptionInput = view.findViewById(R.id.description_input);
+        openingTimeInput = view.findViewById(R.id.opening_time_input);
+        closingTimeInput = view.findViewById(R.id.closing_time_input);
+        companyPhotosInput = view.findViewById(R.id.company_photos_input); // Новый
+
+        submitButton = view.findViewById(R.id.submit_button);
+        changePasswordButton = view.findViewById(R.id.change_password_button);
+        logoutButton = view.findViewById(R.id.logout_button);
+        deactivateButton = view.findViewById(R.id.deactivate_button);
+
+        userService = ClientUtils.retrofit.create(UserService.class);
+        photoContainer = view.findViewById(R.id.company_photos_container);
+        addPhotoButton = view.findViewById(R.id.add_photo_button);
+        photoTitle = view.findViewById(R.id.company_photos_title);
+
+        photoTitle = view.findViewById(R.id.company_photos_title);
+        photoContainer = view.findViewById(R.id.company_photos_container);
+        addPhotoButton = view.findViewById(R.id.add_photo_button);
+
+
+        loadProfile();
+        setupListeners();
+
+        return view;
+    }
+    private void addPhotoInput(String url, LinearLayout container) {
+        Context context = container.getContext();
+
+        LinearLayout row = new LinearLayout(context);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        row.setLayoutParams(new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        ));
+        row.setPadding(0, 8, 0, 8);
+
+        EditText photoInput = new EditText(context);
+        photoInput.setLayoutParams(new LinearLayout.LayoutParams(
+                0,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                1
+        ));
+        photoInput.setHint("Photo URL");
+        photoInput.setText(url);
+        photoInput.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FFFFFF")));
+
+        Button deleteButton = new Button(context);
+        deleteButton.setText("X");
+        deleteButton.setBackgroundColor(Color.parseColor("#B00020"));
+        deleteButton.setTextColor(Color.WHITE);
+        deleteButton.setLayoutParams(new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        ));
+        deleteButton.setOnClickListener(v -> container.removeView(row));
+
+        row.addView(photoInput);
+        row.addView(deleteButton);
+        container.addView(row);
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_my_profile, container, false);
+    private void loadProfile() {
+        userService.getProfile().enqueue(new Callback<UserDTO>() {
+            @Override
+            public void onResponse(Call<UserDTO> call, Response<UserDTO> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    UserDTO user = response.body();
+
+                    emailInput.setText(user.getEmail());
+                    nameInput.setText(user.getName());
+                    lastnameInput.setText(user.getLastname());
+                    addressInput.setText(user.getAddress());
+                    phoneInput.setText(user.getPhoneNumber());
+                    photoUrlInput.setText(user.getPhotoUrl());
+
+                    // Disable non-editable fields
+                    emailInput.setEnabled(false);
+                    roleInput.setEnabled(false);
+                    companyEmailInput.setEnabled(false);
+
+                    roleInput.setText(user.getUserType());
+
+                    // Provider-specific fields
+                    if ("Provider".equalsIgnoreCase(user.getUserType())) {
+                        companyEmailInput.setVisibility(View.VISIBLE);
+                        companyEmailInput.setText(user.getCompanyEmail());
+
+                        companyAddressInput.setVisibility(View.VISIBLE);
+                        descriptionInput.setVisibility(View.VISIBLE);
+                        openingTimeInput.setVisibility(View.VISIBLE);
+                        closingTimeInput.setVisibility(View.VISIBLE);
+                        companyPhotosInput.setVisibility(View.GONE); // скрываем старое поле (если ещё не удалено из layout)
+
+                        companyAddressInput.setText(user.getCompanyAddress());
+                        descriptionInput.setText(user.getDescription());
+                        openingTimeInput.setText(user.getOpeningTime());
+                        closingTimeInput.setText(user.getClosingTime());
+
+                        // 👇 Вот сюда вставь
+                        photoTitle.setVisibility(View.VISIBLE);
+                        photoContainer.setVisibility(View.VISIBLE);
+                        addPhotoButton.setVisibility(View.VISIBLE);
+
+                        // Очистим контейнер и добавим поля
+                        photoContainer.removeAllViews();
+                        for (String photoUrl : user.getCompanyPhotos()) {
+                            addPhotoInput(photoUrl, photoContainer);
+                        }
+
+                        addPhotoButton.setOnClickListener(v -> addPhotoInput("", photoContainer));
+                    }
+
+                } else {
+                    Toast.makeText(getContext(), "Failed to load profile", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserDTO> call, Throwable t) {
+                Toast.makeText(getContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void setupListeners() {
+        submitButton.setOnClickListener(v -> {
+            submitButton.setEnabled(false);
+
+            Map<String, Object> updated = new HashMap<>();
+            updated.put("name", nameInput.getText().toString());
+            updated.put("lastname", lastnameInput.getText().toString());
+            updated.put("address", addressInput.getText().toString());
+            updated.put("phoneNumber", phoneInput.getText().toString());
+            updated.put("photoUrl", photoUrlInput.getText().toString());
+
+            if ("Provider".equalsIgnoreCase(roleInput.getText().toString())) {
+                Log.d("MyProfile", "User is provider, showing provider fields.");
+
+                updated.put("companyAddress", companyAddressInput.getText().toString());
+                updated.put("description", descriptionInput.getText().toString());
+                updated.put("openingTime", openingTimeInput.getText().toString());
+                updated.put("closingTime", closingTimeInput.getText().toString());
+                LinearLayout photoContainer = requireView().findViewById(R.id.company_photos_container);
+                List<String> photoUrls = new ArrayList<>();
+                for (int i = 0; i < photoContainer.getChildCount(); i++) {
+                    View row = photoContainer.getChildAt(i);
+                    if (row instanceof LinearLayout) {
+                        EditText input = (EditText) ((LinearLayout) row).getChildAt(0);
+                        String text = input.getText().toString().trim();
+                        if (!text.isEmpty()) {
+                            photoUrls.add(text);
+                        }
+                    }
+                }
+                updated.put("companyPhotos", photoUrls);
+            }
+            userService.updateProfile(updated).enqueue(new Callback<UserDTO>() {
+                @Override
+                public void onResponse(Call<UserDTO> call, Response<UserDTO> response) {
+                    submitButton.setEnabled(true);
+                    if (response.isSuccessful()) {
+                        Toast.makeText(getContext(), "Changes saved successfully!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getContext(), "Update failed. Please try again.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<UserDTO> call, Throwable t) {
+                    submitButton.setEnabled(true);
+                    Toast.makeText(getContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+
+        changePasswordButton.setOnClickListener(v -> {
+            ChangePasswordFragment dialog = new ChangePasswordFragment();
+            dialog.show(getParentFragmentManager(), "ChangePasswordDialog");
+        });
+        deactivateButton.setOnClickListener(v -> {
+            deactivateButton.setEnabled(false); // чтобы нельзя было нажимать повторно
+
+            userService.deleteAccount().enqueue(new Callback<UserDTO>() {
+                @Override
+                public void onResponse(Call<UserDTO> call, Response<UserDTO> response) {
+                    if (response.isSuccessful()) {
+                        // Успешно удалён — теперь logout
+                        ClientUtils.getAuthService().logout();
+
+                        requireActivity()
+                                .getSharedPreferences("AppPrefs", Context.MODE_PRIVATE)
+                                .edit()
+                                .clear()
+                                .apply();
+
+                        Toast.makeText(getContext(), "Account deleted", Toast.LENGTH_SHORT).show();
+
+                        NavController navController = Navigation.findNavController(requireView());
+                        navController.navigate(R.id.loginFragment);
+                    } else {
+                        deactivateButton.setEnabled(true);
+                        Toast.makeText(getContext(), "Failed to delete account", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<UserDTO> call, Throwable t) {
+                    deactivateButton.setEnabled(true);
+                    Toast.makeText(getContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+
+        logoutButton.setOnClickListener(v -> {
+            // Очистка SharedPreferences
+            requireActivity()
+                    .getSharedPreferences("AppPrefs", Context.MODE_PRIVATE)
+                    .edit()
+                    .clear()
+                    .apply();
+
+            // Логаут на сервере (если надо)
+
+            ClientUtils.getAuthService().logout();
+            NavController navController = Navigation.findNavController(requireView());
+            // Замена текущего фрагмента на LoginFragment
+            navController.navigate(R.id.loginFragment);
+
+        });
+
+
     }
 }
+

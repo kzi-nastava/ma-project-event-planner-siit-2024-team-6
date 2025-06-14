@@ -10,7 +10,7 @@ import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 import java.util.Arrays;
 
-public class Provider implements Parcelable, Serializable {
+public class Provider extends User implements Parcelable, Serializable{
     @SerializedName("id")
     @Expose
     private int id;
