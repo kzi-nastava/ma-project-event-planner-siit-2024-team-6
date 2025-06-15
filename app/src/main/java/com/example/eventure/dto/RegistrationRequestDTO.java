@@ -18,6 +18,9 @@ public class RegistrationRequestDTO {
 
     private String role;
 
+    public RegistrationRequestDTO() {
+    }
+
     public RegistrationRequestDTO(String email, String password, String photoUrl, String name, String lastname, String address, String phoneNumber, String companyEmail, String companyName, String companyAddress, String description, String companyPhoto, String openingTime, String closingTime, String role) {
         this.email = email;
         this.password = password;
