@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -46,6 +47,25 @@ public class AdminReportsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reports);  // create this layout similar to activity_comments.xml
 
+        //navigation restriction (only for admin)
+        if (!ClientUtils.getAuthService().isLoggedIn()) {
+            TextView error = findViewById(R.id.reportsError);
+            error.setVisibility(View.VISIBLE);
+            TextView reportsTv = findViewById(R.id.tvReportsLabel);
+            reportsTv.setVisibility(View.GONE);
+            return;
+        }else{
+            if(!ClientUtils.getAuthService().getRole().equals("ROLE_ADMIN")){
+                TextView error = findViewById(R.id.reportsError);
+                error.setVisibility(View.VISIBLE);
+                TextView reportsTv = findViewById(R.id.tvReportsLabel);
+                reportsTv.setVisibility(View.GONE);
+                return;
+            }
+        }
+
+        TextView error = findViewById(R.id.reportsError);
+        error.setVisibility(View.GONE);
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitleTextAppearance(this, R.style.ToolbarTitleTextStyle);
         toolbar.setContentInsetStartWithNavigation(70);

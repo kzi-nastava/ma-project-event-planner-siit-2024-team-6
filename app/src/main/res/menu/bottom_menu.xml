@@ -8,6 +8,6 @@
     <item
         android:id="@+id/offer_menu"
         android:icon="@drawable/pas_icon"
-        android:title="Products" />
+        android:title="Offers" />
 
 </menu>

@@ -15,6 +15,13 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import com.example.eventure.BuildConfig;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
+import org.json.JSONObject;
+import org.json.JSONException;
+import android.os.Handler;
+import android.os.Looper;
+import android.widget.Toast;
+
+
 public class ClientUtils {
     public static final String SERVICE_API_PATH = "http://" + BuildConfig.IP_ADDR + ":8080/api/"; // For Android emulator
     //Events
@@ -42,6 +49,12 @@ public class ClientUtils {
     public static final String REPORTS = "report";
     public static final String APPROVE_REPORT = "report/{id}/approve";
     public static final String REJECT_REPORT = "report/{id}";
+
+    //Notifications
+    public static final String NOTIFICATIONS = "notifications/";
+    public static final String RECEIVER_NOTIFICATIONS = "notifications/receiver/{receiverId}";
+    public static final String MUTE = "users/mute/{userId}";
+
 
 
     public static final String CATEGORIES = "admins/categories";
@@ -80,6 +93,7 @@ public class ClientUtils {
                 .readTimeout(120, TimeUnit.SECONDS)
                 .writeTimeout(120, TimeUnit.SECONDS)
                 .addInterceptor(interceptor)
+                // interceptor for adding token to requests
                 .addInterceptor(chain -> {
                     okhttp3.Request originalRequest = chain.request();
                     String skipHeader = originalRequest.header("skip");
@@ -109,6 +123,37 @@ public class ClientUtils {
                     Log.d("AuthTag", "No token available or user is not logged in");
                     return chain.proceed(originalRequest);
                 })
+                // interceptor checking if response is token expired
+                .addInterceptor(chain -> {
+                    okhttp3.Request request = chain.request();
+                    okhttp3.Response response = chain.proceed(request);
+
+                    if (response.code() == 401) {
+                        okhttp3.ResponseBody responseBody = response.peekBody(Long.MAX_VALUE);
+                        String responseBodyString = responseBody.string();
+
+                        try {
+                            JSONObject jsonObject = new JSONObject(responseBodyString);
+                            if (jsonObject.has("error")) {
+                                String errorMessage = jsonObject.getString("error");
+                                if ("Token expired".equals(errorMessage)) {
+                                    // Token expired, logout and navigate to login
+                                    authService.logout();
+                                    new Handler(Looper.getMainLooper()).post(() -> {
+                                        Toast.makeText(authService.getContext(),
+                                                "Session expired. Please login again to access all features.",
+                                                Toast.LENGTH_LONG).show();
+                                    });
+                                }
+                            }
+                        } catch (JSONException e) {
+                            Log.e("AuthInterceptor", "Failed to parse error response JSON", e);
+                        }
+                    }
+
+                    return response;
+                })
+
                 .addInterceptor(chain -> {
                     // Get the outgoing request
                     okhttp3.Request request = chain.request();
@@ -145,6 +190,7 @@ public class ClientUtils {
 
     public static final ReactionService reactionService = retrofit.create(ReactionService.class);
     public static final ReportService reportService = retrofit.create(ReportService.class);
+    public static final NotificationService notificationService = retrofit.create(NotificationService.class);
 
     public static final ChatService chatService = retrofit.create(ChatService.class);
     //public static final AuthService authService = retrofit.create(AuthService.class);

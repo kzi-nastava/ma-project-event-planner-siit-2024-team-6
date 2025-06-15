@@ -17,12 +17,16 @@ public class AuthService {
 
     private static final String SHARED_PREFS = "auth_prefs";
     private static final String TOKEN_KEY = "user";
+    private static final String MUTED_KEY = "muted";
     private final SharedPreferences sharedPreferences;
     private Context context;
 
     public AuthService(Context context) {
         this.context = context;
         this.sharedPreferences = context.getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
+    }
+    public Context getContext(){
+        return this.context;
     }
 
     /**
@@ -32,6 +36,15 @@ public class AuthService {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(TOKEN_KEY, token);
         editor.apply();
+    }
+    public void saveMuted(boolean muted) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(MUTED_KEY, muted);
+        editor.apply();
+    }
+
+    public boolean isMuted() {
+        return sharedPreferences.getBoolean(MUTED_KEY, false);
     }
 
     public String getRole() {
@@ -90,7 +103,11 @@ public class AuthService {
     public void logout() {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.remove(TOKEN_KEY);
+        editor.remove(MUTED_KEY);
         editor.apply();
+
+        // Disconnect from WebSocket (notification socket)
+        NotificationSocketManager.getInstance().disconnect();
 
         if (context instanceof AppCompatActivity) {
             AppCompatActivity activity = (AppCompatActivity) context;

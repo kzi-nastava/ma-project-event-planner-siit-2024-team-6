@@ -61,15 +61,6 @@
                 android:layout_height="wrap_content"
                 android:padding="4dp" />
 
-            <TextView
-                android:id="@+id/report_button"
-                android:text="Report"
-                android:textColor="#FF0000"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="4dp"
-                android:layout_marginTop="4dp" />
-
         </LinearLayout>
     </RelativeLayout>
 

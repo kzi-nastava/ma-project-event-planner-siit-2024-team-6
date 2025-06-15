@@ -24,4 +24,7 @@ public interface ChatService {
             @Path("chatId") int chatId,
             @Body NewMessageDTO message // pass "Bearer <token>"
     );
+    @POST("chats/{chatId}/block")
+    Call<Void> blockChat(@Path("chatId") int chatId);
+
 }

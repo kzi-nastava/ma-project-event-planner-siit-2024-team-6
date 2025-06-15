@@ -116,7 +116,36 @@ public class ChatFragment extends Fragment {
         });
         AuthService authService = new AuthService(getContext());
         connectWebSocket(authService.getUserId());
+
+        TextView blockButton = view.findViewById(R.id.block_button);
+        blockButton.setOnClickListener(v -> {
+            blockChat(chatId);
+        });
+
         return view;
+    }
+
+    private void blockChat(int chatId) {
+        ClientUtils.chatService.blockChat(chatId).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(getContext(), "User blocked successfully", Toast.LENGTH_SHORT).show();
+
+                    if (getActivity() != null) {
+                        getActivity().onBackPressed();
+                    }
+
+                } else {
+                    Toast.makeText(getContext(), "Failed to block user", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(getContext(), "Error blocking user: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @SuppressLint("CheckResult")

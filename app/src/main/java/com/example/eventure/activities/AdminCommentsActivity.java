@@ -1,10 +1,13 @@
 package com.example.eventure.activities;
 
+import static androidx.core.content.ContentProviderCompat.requireContext;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -43,6 +46,28 @@ public class AdminCommentsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comments);
+
+        //navigation restriction (only for admin)
+        if (!ClientUtils.getAuthService().isLoggedIn()) {
+            TextView error = findViewById(R.id.commentsError);
+            error.setVisibility(View.VISIBLE);
+            TextView commentsTv = findViewById(R.id.tvCommentsLabel);
+            commentsTv.setVisibility(View.GONE);
+            return;
+        }else{
+            if(!ClientUtils.getAuthService().getRole().equals("ROLE_ADMIN")){
+                TextView error = findViewById(R.id.commentsError);
+                error.setVisibility(View.VISIBLE);
+                TextView commentsTv = findViewById(R.id.tvCommentsLabel);
+                commentsTv.setVisibility(View.GONE);
+                return;
+            }
+        }
+
+
+
+        TextView error = findViewById(R.id.commentsError);
+        error.setVisibility(View.GONE);
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitleTextAppearance(this, R.style.ToolbarTitleTextStyle);
         toolbar.setContentInsetStartWithNavigation(70);

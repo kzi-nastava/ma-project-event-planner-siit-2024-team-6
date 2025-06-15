@@ -27,8 +27,10 @@ import com.example.eventure.adapters.ImageCarouselAdapter;
 import com.example.eventure.clients.AuthService;
 import com.example.eventure.clients.ClientUtils;
 import com.example.eventure.clients.OfferService;
+import com.example.eventure.dto.NewNotificationDTO;
 import com.example.eventure.dto.NewOfferDTO;
 import com.example.eventure.dto.NewReactionDTO;
+import com.example.eventure.dto.NotificationDTO;
 import com.example.eventure.dto.OfferDTO;
 import com.example.eventure.dto.ProviderDTO;
 import com.example.eventure.dto.ReactionDTO;
@@ -404,6 +406,8 @@ public class OfferDetailsDialog extends DialogFragment {
                 public void onResponse(Call<ReactionDTO> call, Response<ReactionDTO> response) {
                     if (response.isSuccessful()) {
                         Snackbar.make(v, "Reaction submitted successfully!", Snackbar.LENGTH_LONG).show();
+                        sendReviewNotification(response.body(), offer.getName(), offer.getId(), v);
+
                     } else {
                         Snackbar.make(v, "Failed to submit reaction.", Snackbar.LENGTH_LONG).show();
                     }
@@ -416,4 +420,60 @@ public class OfferDetailsDialog extends DialogFragment {
             });
         });
     }
+    private void fetchProviderByOfferId(int offerId, Callback<ProviderDTO> callback) {
+        Call<ProviderDTO> call = ClientUtils.offerService.getProviderByOfferId(offerId);
+        call.enqueue(callback);
+    }
+
+    private void sendNotificationToProvider(NewNotificationDTO notification, Callback<NotificationDTO> callback) {
+        Call<NotificationDTO> call = ClientUtils.notificationService.addNotification(notification);
+        call.enqueue(callback);
+    }
+
+    private void sendReviewNotification(ReactionDTO reaction, String offerName, int offerId, View v) {
+        fetchProviderByOfferId(offerId, new Callback<ProviderDTO>() {
+            @Override
+            public void onResponse(Call<ProviderDTO> call, Response<ProviderDTO> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    ProviderDTO provider = response.body();
+                    String notificationText = createNotificationText(reaction, offerName);
+                    NewNotificationDTO notification = new NewNotificationDTO();
+                    notification.setText(notificationText);
+                    notification.setReceiverId(provider.getId());
+
+                    sendNotificationToProvider(notification, new Callback<NotificationDTO>() {
+                        @Override
+                        public void onResponse(Call<NotificationDTO> call, Response<NotificationDTO> notifResponse) {
+                            if (notifResponse.isSuccessful()) {
+                                Snackbar.make(v, "Notification sent to provider.", Snackbar.LENGTH_SHORT).show();
+                            } else {
+                                Snackbar.make(v, "Failed to send notification.", Snackbar.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<NotificationDTO> call, Throwable t) {
+                            Snackbar.make(v, "Error sending notification: " + t.getMessage(), Snackbar.LENGTH_SHORT).show();
+                        }
+                    });
+                } else {
+                    Snackbar.make(v, "Failed to get provider info.", Snackbar.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ProviderDTO> call, Throwable t) {
+                Snackbar.make(v, "Network error getting provider: " + t.getMessage(), Snackbar.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private String createNotificationText(ReactionDTO reaction, String offerName) {
+        int rating = reaction.getRating() != null ? reaction.getRating() : 0;
+        String stars = new String(new char[rating]).replace("\0", "⭐");
+        String comment = reaction.getText() != null && !reaction.getText().isEmpty() ? reaction.getText() : "No comment";
+
+        return "You got a new review for \"" + offerName + "\": Comment: " + comment + " - Rating: " + stars + " (" + rating + "/5)";
+    }
+
 }

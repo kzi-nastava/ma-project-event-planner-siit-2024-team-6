@@ -3,6 +3,7 @@ package com.example.eventure.dto;
 import com.example.eventure.model.Notification;
 import com.example.eventure.model.NotificationType;
 
+
 import java.time.LocalDateTime;
 
 public class NotificationDTO {
@@ -20,5 +21,38 @@ public class NotificationDTO {
         this.receiverId = notification.getReceiver().getId();
         this.timestamp = notification.getTimestamp();
         this.type = notification.getType();
+    private String timestamp;
+    public NotificationDTO(){};
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public Integer getReceiverId() {
+        return receiverId;
+    }
+
+    public void setReceiverId(Integer receiverId) {
+        this.receiverId = receiverId;
+    }
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
     }
 }
