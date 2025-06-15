@@ -21,9 +21,7 @@ public class NotificationDTO {
         this.receiverId = notification.getReceiver().getId();
         this.timestamp = notification.getTimestamp();
         this.type = notification.getType();
-    private String timestamp;
-    public NotificationDTO(){};
-
+    }
     public Integer getId() {
         return id;
     }
@@ -48,11 +46,19 @@ public class NotificationDTO {
         this.receiverId = receiverId;
     }
 
-    public String getTimestamp() {
+    public LocalDateTime getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(String timestamp) {
+    public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public NotificationType getType() {
+        return type;
+    }
+
+    public void setType(NotificationType type) {
+        this.type = type;
     }
 }
