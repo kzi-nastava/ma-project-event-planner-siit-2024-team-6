@@ -1,6 +1,6 @@
 package com.example.eventure.dto;
 
-public class ProviderDTO {
+public class ProviderDTO extends UserDTO{
     private int id;
     private String companyEmail;
     private String companyName;
@@ -36,5 +36,5 @@ public class ProviderDTO {
         return companyPhotos;
     }
 
-    public int getId() {return id;}
+
 }

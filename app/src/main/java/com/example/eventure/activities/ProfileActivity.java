@@ -1,5 +1,7 @@
 package com.example.eventure.activities;
 
+import static androidx.core.content.ContentProviderCompat.requireContext;
+
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -9,9 +11,12 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 
 import com.example.eventure.R;
+import com.example.eventure.clients.ClientUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 
@@ -28,18 +33,23 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
+        setContentView(R.layout.activity_profile);  // или activity_profile_base, в зависимости от твоей конфигурации
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle("EVENTURE");
 
+        // Получаем NavController
+        NavController navController = Navigation.findNavController(this, R.id.fragment_nav_content_main);
+
+        // Проверяем логин
+//        ClientUtils.initializeAuthService(this);
+        if (!ClientUtils.getAuthService().hasTokenExpired() && ClientUtils.getAuthService().isLoggedIn()) {
+            navController.navigate(R.id.myProfileFragment);
+//            Intent intent = new Intent(this, HomeActivity.class);
+//            startActivity(intent);
+        } else {
+            navController.navigate(R.id.nav_profile); // ProfileStartFragment
         }
-        toolbar.setTitleTextAppearance(this, R.style.ToolbarTitleTextStyle);
-        toolbar.setContentInsetStartWithNavigation(70);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
 //        drawer = findViewById(R.id.drawer_layout);
 //        navigationView = findViewById(R.id.nav_view);
@@ -76,9 +86,7 @@ public class ProfileActivity extends AppCompatActivity {
 //
 //        NavigationUI.setupWithNavController(navigationView, navController);
 //        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-
-
-    }
+     }
 
 
     // In ProfileActivity.java

@@ -22,7 +22,11 @@
             android:id="@+id/action_profileStartFragment_to_registerFragment"
             app:destination="@id/registerFragment" />
     </fragment>
-
+    <fragment
+        android:id="@+id/myProfileFragment"
+        android:name="com.example.eventure.fragments.MyProfileFragment"
+        android:label="My Profile"
+        tools:layout="@layout/fragment_my_profile" />
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.example.eventure.fragments.LoginFragment"

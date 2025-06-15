@@ -14,6 +14,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import com.example.eventure.BuildConfig;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
 import org.json.JSONObject;
 import org.json.JSONException;
 import android.os.Handler;
@@ -174,6 +175,7 @@ public class ClientUtils {
 
     public static Retrofit retrofit = new Retrofit.Builder()
             .baseUrl(SERVICE_API_PATH)
+            .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(GsonConverterFactory.create(gson))
             .client(test())
             .build();
@@ -192,4 +194,6 @@ public class ClientUtils {
 
     public static final ChatService chatService = retrofit.create(ChatService.class);
     //public static final AuthService authService = retrofit.create(AuthService.class);
+    public static final UserService userService = ClientUtils.retrofit.create(UserService.class);
+
 }

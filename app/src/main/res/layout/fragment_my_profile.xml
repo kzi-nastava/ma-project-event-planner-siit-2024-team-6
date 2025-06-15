@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.MyProfileFragment"
+    android:background="@color/white">
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="&lt;!-- Company Email (Read-only) -->&#xA;&lt;TextView&#xA;    android:layout_width=&quot;match_parent&quot;&#xA;    android:layout_height=&quot;wrap_content&quot;&#xA;    android:text=&quot;Company Email:&quot;&#xA;    android:textSize=&quot;16sp&quot;&#xA;    android:drawableStart=&quot;@drawable/ic_email&quot;&#xA;    android:drawablePadding=&quot;8dp&quot;&#xA;    android:id=&quot;@+id/company_email_label&quot;&#xA;    android:visibility=&quot;gone&quot; />&#xA;&#xA;&lt;EditText&#xA;    android:layout_width=&quot;match_parent&quot;&#xA;    android:layout_height=&quot;wrap_content&quot;&#xA;    android:id=&quot;@+id/company_email_input&quot;&#xA;    android:hint=&quot;Company email&quot;&#xA;    android:enabled=&quot;false&quot;&#xA;    android:backgroundTint=&quot;#FFFFFF&quot;&#xA;    android:visibility=&quot;gone&quot; />&#xA;&#xA;&lt;!-- Company Address -->&#xA;&lt;EditText&#xA;    android:layout_width=&quot;match_parent&quot;&#xA;    android:layout_height=&quot;wrap_content&quot;&#xA;    android:id=&quot;@+id/company_address_input&quot;&#xA;    android:hint=&quot;Company address&quot;&#xA;    android:backgroundTint=&quot;#FFFFFF&quot;&#xA;    android:visibility=&quot;gone&quot; />&#xA;&#xA;&lt;!-- Description -->&#xA;&lt;EditText&#xA;    android:layout_width=&quot;match_parent&quot;&#xA;    android:layout_height=&quot;wrap_content&quot;&#xA;    android:id=&quot;@+id/description_input&quot;&#xA;    android:hint=&quot;Description&quot;&#xA;    android:backgroundTint=&quot;#FFFFFF&quot;&#xA;    android:visibility=&quot;gone&quot; />&#xA;&#xA;&lt;!-- Opening Time -->&#xA;&lt;EditText&#xA;    android:layout_width=&quot;match_parent&quot;&#xA;    android:layout_height=&quot;wrap_content&quot;&#xA;    android:id=&quot;@+id/opening_time_input&quot;&#xA;    android:hint=&quot;Opening time&quot;&#xA;    android:backgroundTint=&quot;#FFFFFF&quot;&#xA;    android:visibility=&quot;gone&quot; />&#xA;&#xA;&lt;!-- Closing Time -->&#xA;&lt;EditText&#xA;    android:layout_width=&quot;match_parent&quot;&#xA;    android:layout_height=&quot;wrap_content&quot;&#xA;    android:id=&quot;@+id/closing_time_input&quot;&#xA;    android:hint=&quot;Closing time&quot;&#xA;    android:backgroundTint=&quot;#FFFFFF&quot;&#xA;    android:visibility=&quot;gone&quot; />&#xA;" />
+
+    <ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        android:background="#FFFFFF"
+        android:padding="26dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#D3A3B0"
+            android:paddingTop="50dp"
+            android:paddingHorizontal="20dp"
+            android:gravity="center_horizontal">
+            <!-- My Profile Title -->
+            <TextView
+                android:id="@+id/profile_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="My Profile"
+                android:textSize="26sp"
+                android:textStyle="bold"
+                android:textAlignment="center"
+                android:textColor="#000000"
+                android:layout_marginBottom="24dp" />
+            <!-- Email -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Email:"
+                android:textSize="16sp"
+                android:drawableStart="@drawable/ic_email"
+                android:drawablePadding="8dp" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter your email"
+                android:id="@+id/email_input"
+                android:backgroundTint="#FFFFFF" />
+
+            <!-- Role -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Role:"
+                android:textSize="16sp"
+                android:drawableStart="@drawable/ic_role"
+                android:drawablePadding="8dp" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter your role"
+                android:id="@+id/role_input"
+                android:backgroundTint="#FFFFFF" />
+
+            <!-- Name -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Name:"
+                android:textSize="16sp"
+                android:drawableStart="@drawable/profile_icon"
+                android:drawablePadding="8dp" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter your name"
+                android:id="@+id/name_input"
+                android:backgroundTint="#FFFFFF" />
+
+            <!-- Last Name -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Last Name:"
+                android:textSize="16sp"
+                android:drawableStart="@drawable/ic_lastname"
+                android:drawablePadding="8dp" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter your last name"
+                android:id="@+id/lastname_input"
+                android:backgroundTint="#FFFFFF" />
+
+            <!-- Address -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Address:"
+                android:textSize="16sp"
+                android:drawableStart="@drawable/ic_address"
+                android:drawablePadding="8dp" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter your address"
+                android:id="@+id/address_input"
+                android:backgroundTint="#FFFFFF" />
+
+            <!-- Phone Number -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Phone Number:"
+                android:textSize="16sp"
+                android:drawableStart="@drawable/ic_phone"
+                android:drawablePadding="8dp" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter your phone number"
+                android:id="@+id/phone_input"
+                android:backgroundTint="#FFFFFF" />
+
+            <!-- Profile Photo -->
+            <ImageView
+                android:id="@+id/profile_photo"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/ic_user_placeholder"
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter photo URL"
+                android:id="@+id/photo_url_input"
+                android:backgroundTint="#FFFFFF" />
+            <!-- Company Email (Read-only) -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Company Email:"
+                android:textSize="16sp"
+                android:drawableStart="@drawable/ic_email"
+                android:drawablePadding="8dp"
+                android:id="@+id/company_email_label"
+                android:visibility="gone" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/company_email_input"
+                android:hint="Company email"
+                android:enabled="false"
+                android:backgroundTint="#FFFFFF"
+                android:visibility="gone" />
+
+            <!-- Company Address -->
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/company_address_input"
+                android:hint="Company address"
+                android:backgroundTint="#FFFFFF"
+                android:visibility="gone" />
+
+            <!-- Description -->
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/description_input"
+                android:hint="Description"
+                android:backgroundTint="#FFFFFF"
+                android:visibility="gone" />
+
+            <!-- Opening Time -->
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/opening_time_input"
+                android:hint="Opening time"
+                android:backgroundTint="#FFFFFF"
+                android:visibility="gone" />
+
+            <!-- Closing Time -->
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/closing_time_input"
+                android:hint="Closing time"
+                android:backgroundTint="#FFFFFF"
+                android:visibility="gone" />
+            <EditText
+                android:id="@+id/company_photos_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Company Photos"
+                android:visibility="gone" />
+
+
+            <!-- Company Photos Title -->
+            <TextView
+                android:id="@+id/company_photos_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Company Photos:"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#000000"
+                android:layout_marginTop="16dp"
+                android:visibility="gone" />
+
+            <!-- Dynamic list of photo inputs -->
+            <LinearLayout
+                android:id="@+id/company_photos_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone" />
+
+            <!-- Add Photo Button -->
+            <Button
+                android:id="@+id/add_photo_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Photo URL"
+                android:layout_gravity="center"
+                android:layout_marginTop="8dp"
+                android:visibility="gone"
+                android:background="#607D8B"
+                android:textColor="#FFFFFF"/>
+
+            <!-- Action Buttons -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:layout_marginTop="16dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Submit Changes"
+                        android:id="@+id/submit_button"
+                        android:background="#4CAF50"
+                        android:textColor="#FFFFFF" />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Change Password"
+                        android:id="@+id/change_password_button"
+                        android:layout_marginStart="8dp"
+                        android:background="#FF9800"
+                        android:textColor="#FFFFFF" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="8dp">
+
+                    <Button
+                        android:id="@+id/logout_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Logout"
+                        android:background="#2196F3"
+                        android:textColor="#FFFFFF"/>
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Deactivate"
+                        android:id="@+id/deactivate_button"
+                        android:layout_marginStart="8dp"
+                        android:background="#E53935"
+                        android:textColor="#FFFFFF" />
+                </LinearLayout>
+            </LinearLayout>
+
+
+        </LinearLayout>
+    </ScrollView>
+
+</FrameLayout>
