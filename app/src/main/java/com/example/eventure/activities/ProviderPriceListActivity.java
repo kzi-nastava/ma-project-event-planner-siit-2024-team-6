@@ -1,9 +1,13 @@
 package com.example.eventure.activities;
 
 import android.annotation.SuppressLint;
+import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -11,6 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.FileProvider;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -24,10 +29,14 @@ import com.example.eventure.model.PriceListItem;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -50,6 +59,38 @@ public class ProviderPriceListActivity extends AppCompatActivity implements Pric
         toolbar.setContentInsetStartWithNavigation(70);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        Button btnExportPDF = findViewById(R.id.btnExportPdf);
+
+        btnExportPDF.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Context context = v.getContext();
+                Call<ResponseBody> call = ClientUtils.offerService.downloadPriceList();
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            // Save the PDF file
+                            boolean written = writeResponseBodyToDisk(response.body(), context);
+                            if (written) {
+                                openPdfFile(context);
+                            } else {
+                                Snackbar.make(((View) v.getRootView()), "Failed to save PDF", Snackbar.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Snackbar.make(((View) v.getRootView()), "Failed to download PDF", Snackbar.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        Snackbar.make(((View) v.getRootView()), "Error: " + t.getMessage(), Snackbar.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+        });
 
         recyclerView = findViewById(R.id.recyclerViewPrices);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -96,7 +137,6 @@ public class ProviderPriceListActivity extends AppCompatActivity implements Pric
             startActivity(intent);
             finish();
         });
-
 
         @SuppressLint("ResourceType") View profileIcon = toolbar.findViewById(R.id.nav_profile);
         profileIcon.setOnClickListener(v -> {
@@ -191,4 +231,54 @@ public class ProviderPriceListActivity extends AppCompatActivity implements Pric
             }
         });
     }
+    private boolean writeResponseBodyToDisk(ResponseBody body, Context context) {
+        try {
+            File pdfFile = new File(context.getExternalFilesDir(null), "price_list.pdf");
+            InputStream inputStream = body.byteStream();
+            FileOutputStream outputStream = new FileOutputStream(pdfFile);
+
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+
+            outputStream.flush();
+            outputStream.close();
+            inputStream.close();
+
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private void openPdfFile(Context context) {
+        File pdfFile = new File(context.getExternalFilesDir(null), "price_list.pdf");
+
+        if (!pdfFile.exists()) {
+            Toast.makeText(context, "PDF file not found", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Uri pdfUri = FileProvider.getUriForFile(
+                context,
+                context.getPackageName() + ".provider",
+                pdfFile
+        );
+
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(pdfUri, "application/pdf");
+        intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+        try {
+            context.startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(context, "No PDF viewer found", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
 }

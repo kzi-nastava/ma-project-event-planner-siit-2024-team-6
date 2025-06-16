@@ -10,6 +10,7 @@ import com.example.eventure.model.PriceListItem;
 
 import java.util.List;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -38,6 +39,8 @@ public interface OfferService {
             @Path("id") int id,
             @Body NewPriceListItemDTO dto
     );
+    @GET(ClientUtils.EXPORT_PRICE_LIST)
+    Call<ResponseBody> downloadPriceList();
 
     @POST("offers/{offerId}/buy")
     Call<Void> buyOffer(

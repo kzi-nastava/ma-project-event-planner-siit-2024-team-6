@@ -36,6 +36,8 @@ public class ClientUtils {
 
     public static final String PRICE_LIST = "providers/price-list";
     public static final String UPDATE_PRICE_LIST = "providers/price/{id}";
+    public static final String EXPORT_PRICE_LIST = "providers/price-list/export";
+
     public static final String ALL_OFFERS_PAGED = "offers/all-elements";
     public static final String ACCEPTED_OFFERS = "offers/accepted";
     public static final String FILTERED_OFFERS = "offers/search";
@@ -89,6 +91,9 @@ public class ClientUtils {
     public static OkHttpClient test() {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        if(authService == null){
+            Log.e("HGEREE", "NULL");
+        }
 
         return new OkHttpClient.Builder()
                 .connectTimeout(120, TimeUnit.SECONDS)
