@@ -119,6 +119,10 @@ public class HomeActivity extends AppCompatActivity {
                 Intent intent = new Intent(HomeActivity.this, AdminReportsActivity.class);
                 startActivity(intent);
                 return true;
+            } else if(id == R.id.nav_price_list){
+                Intent intent = new Intent(HomeActivity.this, ProviderPriceListActivity.class);
+                startActivity(intent);
+                return true;
             }
 
             drawer.closeDrawer(GravityCompat.START);

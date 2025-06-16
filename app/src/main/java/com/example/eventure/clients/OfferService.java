@@ -1,13 +1,16 @@
 package com.example.eventure.clients;
 
 import com.example.eventure.dto.NewOfferDTO;
+import com.example.eventure.dto.NewPriceListItemDTO;
 import com.example.eventure.dto.OfferDTO;
 import com.example.eventure.dto.ProviderDTO;
 import com.example.eventure.model.Offer;
 import com.example.eventure.model.PagedResponse;
+import com.example.eventure.model.PriceListItem;
 
 import java.util.List;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -28,6 +31,16 @@ public interface OfferService {
             "skip: true"
     })
     Call<List<OfferDTO>> getTopFive();
+
+    @GET(ClientUtils.PRICE_LIST)
+    Call<List<PriceListItem>> getPriceList();
+    @PUT(ClientUtils.UPDATE_PRICE_LIST)
+    Call<PriceListItem> updatePrice(
+            @Path("id") int id,
+            @Body NewPriceListItemDTO dto
+    );
+    @GET(ClientUtils.EXPORT_PRICE_LIST)
+    Call<ResponseBody> downloadPriceList();
 
     @POST("offers/{offerId}/buy")
     Call<Void> buyOffer(

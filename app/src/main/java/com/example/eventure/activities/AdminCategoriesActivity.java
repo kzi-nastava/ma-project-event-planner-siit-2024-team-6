@@ -68,6 +68,8 @@ public class AdminCategoriesActivity extends AppCompatActivity {
                 startActivity(new Intent(this,AdminCommentsActivity.class));
             } else if (id == R.id.nav_admin_manage_reports) {
                 startActivity(new Intent(this, AdminReportsActivity.class));
+            } else if (id == R.id.nav_price_list){
+                startActivity(new Intent(this, AdminReportsActivity.class));
             }
             if (fragment != null) {
                 Intent intent = new Intent(this, HomeActivity.class);
