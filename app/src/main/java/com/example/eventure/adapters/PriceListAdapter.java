@@ -1,9 +1,12 @@
 package com.example.eventure.adapters;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,12 +46,76 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.View
         holder.tvType.setText(item.isService() ? "Service" : "Product");
 
         holder.btnEdit.setOnClickListener(v -> {
-            // Handle edit click here
-            Toast.makeText(context, "Edit clicked for: " + item.getOfferName(), Toast.LENGTH_SHORT).show();
+            Context context = v.getContext();
+            PriceListItem priceItem = priceList.get(holder.getAdapterPosition());
 
-            // TODO: Open your edit dialog/activity here
+            // Call the method to show dialog
+            showEditPriceDialog(context, priceItem, updatedItem -> {
+                // Update the item in your list
+                priceList.set(holder.getAdapterPosition(), updatedItem);
+                notifyItemChanged(holder.getAdapterPosition());
+            });
         });
     }
+
+    public interface OnPriceUpdatedListener {
+        void onPriceUpdated(PriceListItem updatedItem);
+    }
+
+
+    private void showEditPriceDialog(Context context, PriceListItem priceItem, OnPriceUpdatedListener listener) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View dialogView = inflater.inflate(R.layout.dialog_edit_price, null);
+        builder.setView(dialogView);
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        TextView editTitle = dialogView.findViewById(R.id.editPriceTitle);
+        EditText editAmount = dialogView.findViewById(R.id.editPriceAmount);
+        EditText editDiscount = dialogView.findViewById(R.id.editPriceDiscount);
+        Button btnSubmit = dialogView.findViewById(R.id.btnSubmit);
+        Button btnCancel = dialogView.findViewById(R.id.btnCancel);
+
+        editTitle.setText(priceItem.getOfferName());
+        editAmount.setText(String.valueOf(priceItem.getOfferPrice()));
+
+        // Optional: Check if discount already exists
+        if (priceItem.getOfferDiscountPrice() > 0) {
+            editDiscount.setText(String.valueOf(priceItem.getOfferDiscountPrice()));
+        }
+
+        btnSubmit.setOnClickListener(v -> {
+            String newAmountStr = editAmount.getText().toString().trim();
+            String newDiscountStr = editDiscount.getText().toString().trim();
+
+            if (!newAmountStr.isEmpty()) {
+                try {
+                    double newAmount = Double.parseDouble(newAmountStr);
+                    double newDiscount = newDiscountStr.isEmpty() ? 0.0 : Double.parseDouble(newDiscountStr);
+
+                    priceItem.setOfferPrice(newAmount);
+                    priceItem.setOfferDiscountPrice(newDiscount);
+
+                    listener.onPriceUpdated(priceItem);
+                    dialog.dismiss();
+                } catch (NumberFormatException e) {
+                    if (!newAmountStr.matches("\\d+(\\.\\d+)?")) {
+                        editAmount.setError("Invalid price");
+                    }
+                    if (!newDiscountStr.isEmpty() && !newDiscountStr.matches("\\d+(\\.\\d+)?")) {
+                        editDiscount.setError("Invalid discount");
+                    }
+                }
+            } else {
+                if (newAmountStr.isEmpty()) editAmount.setError("Required");
+            }
+        });
+
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+    }
+
 
     @Override
     public int getItemCount() {
@@ -68,4 +135,6 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.View
             btnEdit = itemView.findViewById(R.id.buttonEdit);
         }
     }
+
+
 }
