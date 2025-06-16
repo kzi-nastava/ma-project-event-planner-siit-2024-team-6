@@ -35,6 +35,7 @@ public class ClientUtils {
     public static final String ALL_OFFERS = "offers/";
 
     public static final String PRICE_LIST = "providers/price-list";
+    public static final String UPDATE_PRICE_LIST = "providers/price/{id}";
     public static final String ALL_OFFERS_PAGED = "offers/all-elements";
     public static final String ACCEPTED_OFFERS = "offers/accepted";
     public static final String FILTERED_OFFERS = "offers/search";

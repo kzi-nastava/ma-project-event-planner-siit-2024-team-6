@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.eventure.R;
 import com.example.eventure.adapters.PriceListAdapter;
 import com.example.eventure.clients.ClientUtils;
+import com.example.eventure.dto.NewPriceListItemDTO;
 import com.example.eventure.model.PriceListItem;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
@@ -30,7 +31,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ProviderPriceListActivity extends AppCompatActivity {
+public class ProviderPriceListActivity extends AppCompatActivity implements PriceListAdapter.OnPriceUpdatedListener {
 
     private RecyclerView recyclerView;
     private PriceListAdapter adapter;
@@ -107,6 +108,7 @@ public class ProviderPriceListActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     List<PriceListItem> priceList = response.body();
                     adapter = new PriceListAdapter(ProviderPriceListActivity.this, priceList);
+                    adapter.setOnPriceUpdatedListener(ProviderPriceListActivity.this);
                     recyclerView.setAdapter(adapter);
                     if (adapter.getItemCount() == 0) {
                         noListMessage.setVisibility(View.VISIBLE);
@@ -131,6 +133,41 @@ public class ProviderPriceListActivity extends AppCompatActivity {
                 Snackbar.make(findViewById(android.R.id.content),
                         "Network error: " + t.getMessage(),
                         Snackbar.LENGTH_LONG).show();
+            }
+        });
+
+
+    }
+    @Override
+    public void onPriceUpdated(PriceListItem updatedItem) {
+        // Build your DTO from updatedItem
+        NewPriceListItemDTO dto = new NewPriceListItemDTO(updatedItem.getOfferPrice(), updatedItem.getOfferDiscountPrice());
+        // Call backend to update
+        ClientUtils.offerService.updatePrice(updatedItem.getOfferId(), dto).enqueue(new Callback<PriceListItem>() {
+            @Override
+            public void onResponse(Call<PriceListItem> call, Response<PriceListItem> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    int index = -1;
+                    for (int i = 0; i < adapter.getPriceList().size(); i++) {
+                        if (adapter.getPriceList().get(i).getOfferId() == updatedItem.getOfferId()) {
+                            index = i;
+                            break;
+                        }
+                    }
+
+                    if (index != -1) {
+                        adapter.getPriceList().set(index, updatedItem);
+                        adapter.notifyItemChanged(index);
+                    }
+                    Snackbar.make(findViewById(android.R.id.content), "Price updated successfully", Snackbar.LENGTH_SHORT).show();
+                } else {
+                    Snackbar.make(findViewById(android.R.id.content), "Update failed: " + response.message(), Snackbar.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PriceListItem> call, Throwable t) {
+                Snackbar.make(findViewById(android.R.id.content), "Network error: " + t.getMessage(), Snackbar.LENGTH_LONG).show();
             }
         });
     }

@@ -1,6 +1,7 @@
 package com.example.eventure.clients;
 
 import com.example.eventure.dto.NewOfferDTO;
+import com.example.eventure.dto.NewPriceListItemDTO;
 import com.example.eventure.dto.OfferDTO;
 import com.example.eventure.dto.ProviderDTO;
 import com.example.eventure.model.Offer;
@@ -32,6 +33,11 @@ public interface OfferService {
 
     @GET(ClientUtils.PRICE_LIST)
     Call<List<PriceListItem>> getPriceList();
+    @PUT(ClientUtils.UPDATE_PRICE_LIST)
+    Call<PriceListItem> updatePrice(
+            @Path("id") int id,
+            @Body NewPriceListItemDTO dto
+    );
 
     @POST("offers/{offerId}/buy")
     Call<Void> buyOffer(

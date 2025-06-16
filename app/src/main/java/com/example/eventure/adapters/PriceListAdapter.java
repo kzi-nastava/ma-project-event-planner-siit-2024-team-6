@@ -23,6 +23,15 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.View
 
     private final List<PriceListItem> priceList;
     private final Context context;
+    private OnPriceUpdatedListener priceUpdatedListener;
+
+    public List<PriceListItem> getPriceList(){
+        return this.priceList;
+    }
+
+    public void setOnPriceUpdatedListener(OnPriceUpdatedListener listener) {
+        this.priceUpdatedListener = listener;
+    }
 
     public PriceListAdapter(Context context, List<PriceListItem> priceList) {
         this.context = context;
@@ -98,7 +107,9 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.View
                     priceItem.setOfferPrice(newAmount);
                     priceItem.setOfferDiscountPrice(newDiscount);
 
-                    listener.onPriceUpdated(priceItem);
+                    if (priceUpdatedListener != null) {
+                        priceUpdatedListener.onPriceUpdated(priceItem);
+                    }
                     dialog.dismiss();
                 } catch (NumberFormatException e) {
                     if (!newAmountStr.matches("\\d+(\\.\\d+)?")) {
