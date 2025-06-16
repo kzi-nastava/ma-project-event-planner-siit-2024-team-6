@@ -2,6 +2,7 @@ package com.example.eventure.adapters;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -103,8 +104,13 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.View
                 try {
                     double newAmount = Double.parseDouble(newAmountStr);
                     double newDiscount = newDiscountStr.isEmpty() ? 0.0 : Double.parseDouble(newDiscountStr);
+                    if (newDiscount > 0 && newDiscount >= newAmount) {
+                        editDiscount.setError("Discount must be less than price");
+                        return;
+                    }
 
                     priceItem.setOfferPrice(newAmount);
+                    Log.e("HEREE", newDiscountStr);
                     priceItem.setOfferDiscountPrice(newDiscount);
 
                     if (priceUpdatedListener != null) {

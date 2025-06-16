@@ -24,6 +24,7 @@ import com.example.eventure.model.PriceListItem;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -160,7 +161,16 @@ public class ProviderPriceListActivity extends AppCompatActivity implements Pric
                         adapter.notifyItemChanged(index);
                     }
                     Snackbar.make(findViewById(android.R.id.content), "Price updated successfully", Snackbar.LENGTH_SHORT).show();
-                } else {
+                } else if (response.code() == 400) {
+                    // Show error message from backend
+                    try {
+                        String errorBody = response.errorBody().string();
+                        Snackbar.make(findViewById(android.R.id.content), "Discount price must be lower than regular.", Snackbar.LENGTH_LONG).show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        Snackbar.make(findViewById(android.R.id.content), "Invalid input", Snackbar.LENGTH_LONG).show();
+                    }
+                }  else {
                     Snackbar.make(findViewById(android.R.id.content), "Update failed: " + response.message(), Snackbar.LENGTH_LONG).show();
                 }
             }
