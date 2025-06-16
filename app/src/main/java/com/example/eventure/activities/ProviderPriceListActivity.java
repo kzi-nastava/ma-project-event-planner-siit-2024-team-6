@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -35,6 +36,7 @@ public class ProviderPriceListActivity extends AppCompatActivity {
     private PriceListAdapter adapter;
     private List<PriceListItem> priceList;
     private ActionBarDrawerToggle actionBarDrawerToggle;
+    private TextView noListMessage;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,8 +51,9 @@ public class ProviderPriceListActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.recyclerViewPrices);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        noListMessage = findViewById(R.id.no_list_message);
+        noListMessage.setVisibility(View.GONE);
         loadPriceList();
-
 
         DrawerLayout drawer = findViewById(R.id.drawer_price_list_layout);
         NavigationView navigationView = findViewById(R.id.sidebar_view);
@@ -105,6 +108,13 @@ public class ProviderPriceListActivity extends AppCompatActivity {
                     List<PriceListItem> priceList = response.body();
                     adapter = new PriceListAdapter(ProviderPriceListActivity.this, priceList);
                     recyclerView.setAdapter(adapter);
+                    if (adapter.getItemCount() == 0) {
+                        noListMessage.setVisibility(View.VISIBLE);
+                        recyclerView.setVisibility(View.GONE);
+                    } else {
+                        noListMessage.setVisibility(View.GONE);
+                        recyclerView.setVisibility(View.VISIBLE);
+                    }
                 } else if (response.code() == 401) {
                     Snackbar.make(findViewById(android.R.id.content),
                             "Unauthorized. Please login again.",

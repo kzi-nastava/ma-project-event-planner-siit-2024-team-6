@@ -1,11 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="120dp"
         android:id="@+id/recyclerViewPrices"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="No offers"
+        android:textAlignment="center"
+        android:layout_marginTop="120dp"
+        android:textSize="30dp"
+        android:id="@+id/no_list_message"
+        tools:ignore="MissingConstraints" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
