@@ -63,7 +63,7 @@ public class ChatActivity extends AppCompatActivity {
                 drawer.closeDrawer(GravityCompat.START);
                 return true;
             } else if (id == R.id.nav_messages) {
-                fragment = "MESSAGES";
+                startActivity(new Intent(this,ChatActivity.class));
             } else if (id == R.id.nav_notifications) {
                 fragment = "NOTIFICATIONS";
             } else if (id == R.id.nav_favorite_events) {
@@ -81,7 +81,7 @@ public class ChatActivity extends AppCompatActivity {
             } else if (id == R.id.nav_admin_categories){
                 startActivity(new Intent(this, AdminCategoriesActivity.class));
             } else if (id == R.id.nav_price_list){
-                startActivity(new Intent(this, AdminReportsActivity.class));
+                startActivity(new Intent(this, ProviderPriceListActivity.class));
             }
             if (fragment != null) {
                 Intent intent = new Intent(this, HomeActivity.class);
