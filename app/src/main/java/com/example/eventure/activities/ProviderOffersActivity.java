@@ -51,29 +51,34 @@ public class ProviderOffersActivity extends AppCompatActivity {
         navigationView = findViewById(R.id.sidebar_view);
         navController = Navigation.findNavController(this, R.id.fragment_nav_content_main_home);
 
+        NavigationView navigationView = findViewById(R.id.sidebar_view);
+
+        // Set listener for navigation item clicks
         navigationView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
-            String fragment = null;
+
             if (id == R.id.nav_messages) {
-                fragment = "MESSAGES";
+                startActivity(new Intent(this, ChatActivity.class));
             } else if (id == R.id.nav_notifications) {
-                fragment = "NOTIFICATIONS";
+                startActivity(new Intent(this, HomeActivity.class).putExtra("FRAGMENT_NAME", "NOTIFICATIONS"));
             } else if (id == R.id.nav_favorite_events) {
-                fragment = "FAVOURITE_EVENTS";
+                startActivity(new Intent(this, HomeActivity.class).putExtra("FRAGMENT_NAME", "FAVOURITE_EVENTS"));
             } else if (id == R.id.nav_favorite_services) {
-                fragment = "FAVOURITE_SERVICES";
+                startActivity(new Intent(this, HomeActivity.class).putExtra("FRAGMENT_NAME", "FAVOURITE_SERVICES"));
             } else if (id == R.id.nav_favorite_products) {
-                fragment = "FAVOURITE_PRODUCTS";
+                startActivity(new Intent(this, HomeActivity.class).putExtra("FRAGMENT_NAME", "FAVOURITE_PRODUCTS"));
             } else if (id == R.id.nav_my_calendar) {
-                fragment = "CALENDAR";
+                startActivity(new Intent(this, HomeActivity.class).putExtra("FRAGMENT_NAME", "CALENDAR"));
+            }  else if (id == R.id.nav_admin_categories) {
+                startActivity(new Intent(this, AdminCategoriesActivity.class));
+            } else if (id == R.id.nav_admin_manage_comments) {
+                startActivity(new Intent(this,AdminCommentsActivity.class));
+            } else if (id == R.id.nav_admin_manage_reports){
+                startActivity(new Intent(this,AdminReportsActivity.class));
+            } else if (id == R.id.nav_price_list) {
+                startActivity(new Intent(this,ProviderPriceListActivity.class));
             }
-            if (fragment != null) {
-                Intent intent = new Intent(this, HomeActivity.class);
-                intent.putExtra("FRAGMENT_NAME", fragment);
-                startActivity(intent);
-                finish();
-                return true;
-            }
+
             drawer.closeDrawer(GravityCompat.START);
             return true;
         });

@@ -82,11 +82,21 @@ public class ProviderPriceListActivity extends AppCompatActivity implements Pric
                 startActivity(new Intent(this,AdminCommentsActivity.class));
             } else if (id == R.id.nav_admin_manage_reports){
                 startActivity(new Intent(this,AdminReportsActivity.class));
+            } else if(id == R.id.nav_my_offers){
+                startActivity(new Intent(this,ProviderOffersActivity.class));
             }
 
             drawer.closeDrawer(GravityCompat.START);
             return true;
         });
+
+        TextView tvTitle = toolbar.findViewById(R.id.toolbar_title);
+        tvTitle.setOnClickListener(v -> {
+            Intent intent = new Intent(ProviderPriceListActivity.this, HomeActivity.class);
+            startActivity(intent);
+            finish();
+        });
+
 
         @SuppressLint("ResourceType") View profileIcon = toolbar.findViewById(R.id.nav_profile);
         profileIcon.setOnClickListener(v -> {
