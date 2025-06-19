@@ -11,6 +11,7 @@ import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface EventService {
@@ -73,9 +74,10 @@ public interface EventService {
     Call<Void> removeParticipation(@retrofit2.http.Path("eventId") int eventId);
     @GET("events/participated")
     Call<List<EventDTO>> getParticipatedEvents();
+    @GET("events/{eventId}/is-participating")
+    Call<Boolean> isParticipating(@Path("eventId") int eventId);
     @GET("events/{eventId}/getInfoPDF")
     Call<okhttp3.ResponseBody> getInfoPdf(@retrofit2.http.Path("eventId") int eventId);
-
     @GET("events/{eventId}/getEventStatisticsPDF")
     Call<okhttp3.ResponseBody> getStatisticsPdf(@retrofit2.http.Path("eventId") int eventId);
     @GET("events/event-types")

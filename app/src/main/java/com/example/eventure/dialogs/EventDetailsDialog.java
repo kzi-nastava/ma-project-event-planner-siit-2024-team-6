@@ -1,6 +1,7 @@
 package com.example.eventure.dialogs;
 
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,12 @@ import com.example.eventure.clients.ClientUtils;
 import com.example.eventure.model.Event;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -113,15 +120,17 @@ public class EventDetailsDialog extends DialogFragment {
 
         Button btnJoin = view.findViewById(R.id.btn_join);
         btnJoin.setOnClickListener(v -> {
-            ClientUtils.eventService.participate(event.getId()).enqueue(new Callback<Void>() {
+            ClientUtils.eventService.isParticipating(event.getId()).enqueue(new Callback<Boolean>() {
                 @Override
-                public void onResponse(Call<Void> call, Response<Void> response) {
-                    Snackbar.make(view, "You joined the event!", Snackbar.LENGTH_SHORT).show();
+                public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        updateJoinButton(view, btnJoin, response.body());
+                    }
                 }
 
                 @Override
-                public void onFailure(Call<Void> call, Throwable t) {
-                    Snackbar.make(view, "Join failed!", Snackbar.LENGTH_SHORT).show();
+                public void onFailure(Call<Boolean> call, Throwable t) {
+                    Snackbar.make(view, "Failed to check participation", Snackbar.LENGTH_SHORT).show();
                 }
             });
         });
@@ -131,26 +140,118 @@ public class EventDetailsDialog extends DialogFragment {
             ClientUtils.eventService.getInfoPdf(event.getId()).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    Snackbar.make(view, "PDF download (implement save)", Snackbar.LENGTH_SHORT).show();
+                    if (response.isSuccessful() && response.body() != null) {
+                        boolean success = savePdfToDownloads(response.body(), "event_info_" + event.getId() + ".pdf");
+                        String message = success ? "PDF saved to Downloads" : "Failed to save PDF";
+                        Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show();
+                    } else {
+                        Snackbar.make(view, "PDF download failed", Snackbar.LENGTH_SHORT).show();
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    Snackbar.make(view, "PDF failed", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(view, "Network error while downloading PDF", Snackbar.LENGTH_SHORT).show();
                 }
             });
         });
 
+
         Button btnAgenda = view.findViewById(R.id.btn_download_agenda);
-        btnAgenda.setOnClickListener(v ->
-                Snackbar.make(view, "TODO: Download agenda PDF", Snackbar.LENGTH_SHORT).show());
+        btnAgenda.setOnClickListener(v -> {
+            ClientUtils.organizerService.getAgendaPdf(event.getId()).enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        boolean success = savePdfToDownloads(response.body(), "event_agenda_" + event.getId() + ".pdf");
+                        String message = success ? "Agenda PDF saved to Downloads" : "Failed to save Agenda PDF";
+                        Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show();
+                    } else {
+                        Snackbar.make(view, "Agenda download failed", Snackbar.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Snackbar.make(view, "Network error while downloading agenda", Snackbar.LENGTH_SHORT).show();
+                }
+            });
+        });
+
+    }
+    private boolean savePdfToDownloads(ResponseBody body, String fileName) {
+        try {
+            File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            if (!downloadsDir.exists()) {
+                downloadsDir.mkdirs();
+            }
+            File pdfFile = new File(downloadsDir, fileName);
+
+            InputStream inputStream = body.byteStream();
+            OutputStream outputStream = new FileOutputStream(pdfFile);
+
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+
+            outputStream.flush();
+            outputStream.close();
+            inputStream.close();
+
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private void updateJoinButton(View view, Button btnJoin, boolean isJoined) {
+        if (isJoined) {
+            btnJoin.setText("Cancel Participation");
+            btnJoin.setOnClickListener(v -> {
+                ClientUtils.eventService.removeParticipation(event.getId()).enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        Snackbar.make(view, "You left the event.", Snackbar.LENGTH_SHORT).show();
+                        btnJoin.setText("Join");
+                        updateJoinButton(view, btnJoin, false);
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        Snackbar.make(view, "Cancel failed!", Snackbar.LENGTH_SHORT).show();
+                    }
+                });
+            });
+        } else {
+            btnJoin.setText("Join");
+            btnJoin.setOnClickListener(v -> {
+                ClientUtils.eventService.participate(event.getId()).enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        Snackbar.make(view, "You joined the event!", Snackbar.LENGTH_SHORT).show();
+                        btnJoin.setText("Cancel Participation");
+                        updateJoinButton(view, btnJoin, true);
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        Snackbar.make(view, "Join failed!", Snackbar.LENGTH_SHORT).show();
+                    }
+                });
+            });
+        }
     }
 
     private void populateUI(View view) {
         ((TextView) view.findViewById(R.id.event_title)).setText(event.getName());
         ((TextView) view.findViewById(R.id.event_description)).setText(event.getDescription());
         ((TextView) view.findViewById(R.id.event_place)).setText(event.getPlace());
-        ((TextView) view.findViewById(R.id.event_date)).setText(event.getDate().toString());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy 'u' HH:mm", Locale.getDefault());
+        String formattedDate = event.getDate().format(formatter);
+        ((TextView) view.findViewById(R.id.event_date)).setText(formattedDate);
 
         ViewPager2 imageCarousel = view.findViewById(R.id.event_image_carousel);
         if (event.getPhotos() != null && !event.getPhotos().isEmpty()) {
