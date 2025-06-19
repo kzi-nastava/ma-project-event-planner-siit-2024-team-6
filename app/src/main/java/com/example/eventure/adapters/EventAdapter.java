@@ -6,10 +6,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.eventure.R;
+import com.example.eventure.dialogs.EventDetailsDialog;
 import com.example.eventure.dto.EventDTO;
 import com.example.eventure.model.Event;
 
@@ -86,7 +88,11 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy 'at' HH:mm");
             String formattedDate = event.getDate().format(formatter);
             eventDate.setText(formattedDate);
-
+            itemView.setOnClickListener(v -> {
+                Event fullEvent = new Event(event); // если нужен полный объект, иначе можно передавать напрямую eventDTO
+                EventDetailsDialog dialog = EventDetailsDialog.newInstance(fullEvent);
+                dialog.show(((FragmentActivity)v.getContext()).getSupportFragmentManager(), "EventDetailsDialog");
+            });
         }
     }
 }

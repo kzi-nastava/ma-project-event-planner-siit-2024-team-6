@@ -17,4 +17,7 @@ public interface OrganizerService {
             "Content-Type:application/json"
     })
     Call<List<EventDTO>> getFutureEventsForOrganizer();
+    @GET("organizers/events/{eventId}/getAgendaPDF")
+    Call<okhttp3.ResponseBody> getAgendaPdf(@retrofit2.http.Path("eventId") int eventId);
+
 }
