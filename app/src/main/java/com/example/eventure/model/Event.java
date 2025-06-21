@@ -181,6 +181,20 @@ public class Event implements Parcelable, Serializable {
     public int describeContents() {
         return 0;
     }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        Event event = (Event) obj;
+
+        return name != null && name.equals(event.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return name != null ? name.hashCode() : 0;
+    }
 
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
