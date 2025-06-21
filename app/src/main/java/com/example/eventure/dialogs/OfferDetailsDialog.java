@@ -401,6 +401,35 @@ public class OfferDetailsDialog extends DialogFragment {
         } else {
             populateProductUI(view);
         }
+        RatingBar ratingBar = view.findViewById(R.id.rating_bar);
+        TextView ratingValue = view.findViewById(R.id.rating_value);
+
+        ClientUtils.offerService.getRating(offer.getId()).enqueue(new Callback<Double>() {
+            @Override
+            public void onResponse(Call<Double> call, Response<Double> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    double rating = response.body(); // You can change this to Double if needed
+                    if (rating == 0.0) {
+                        ratingBar.setVisibility(View.GONE);
+                        ratingValue.setText("No ratings yet");
+                    } else {
+                        ratingBar.setRating((float) rating);
+                        ratingBar.setVisibility(View.VISIBLE);
+                        ratingValue.setText("");
+                    }
+                } else {
+                    ratingValue.setText("No rating");
+                    ratingBar.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Double> call, Throwable t) {
+                ratingValue.setText("No rating");
+                ratingBar.setVisibility(View.GONE);
+            }
+        });
+
     }
 
     private void populateProductUI(View view) {

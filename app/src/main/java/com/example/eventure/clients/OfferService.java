@@ -148,6 +148,6 @@ public interface OfferService {
     Call<UserDTO> getProvider(@Path("offerId") int offerId);
 
     @GET("offers/{offerId}/rating")
-    Call<Integer> getRating(@Path("offerId") int offerId);
+    Call<Double> getRating(@Path("offerId") int offerId);
 
 }
