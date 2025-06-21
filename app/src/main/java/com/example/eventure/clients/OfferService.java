@@ -4,6 +4,7 @@ import com.example.eventure.dto.NewOfferDTO;
 import com.example.eventure.dto.NewPriceListItemDTO;
 import com.example.eventure.dto.OfferDTO;
 import com.example.eventure.dto.ProviderDTO;
+import com.example.eventure.dto.UserDTO;
 import com.example.eventure.model.Offer;
 import com.example.eventure.model.PagedResponse;
 import com.example.eventure.model.PriceListItem;
@@ -142,5 +143,8 @@ public interface OfferService {
     Call<Boolean> isOfferPurchased(
             @Path("offerId") int offerId
     );
+
+    @GET("offers/{offerId}/provider")
+    Call<UserDTO> getProvider(@Path("offerId") int offerId);
 
 }

@@ -1,6 +1,7 @@
 package com.example.eventure.dialogs;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -23,6 +24,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.eventure.R;
+import com.example.eventure.activities.ChatActivity;
 import com.example.eventure.adapters.ImageCarouselAdapter;
 import com.example.eventure.clients.AuthService;
 import com.example.eventure.clients.ClientUtils;
@@ -34,6 +36,7 @@ import com.example.eventure.dto.NotificationDTO;
 import com.example.eventure.dto.OfferDTO;
 import com.example.eventure.dto.ProviderDTO;
 import com.example.eventure.dto.ReactionDTO;
+import com.example.eventure.dto.UserDTO;
 import com.example.eventure.model.EventType;
 import com.example.eventure.model.Offer;
 import com.example.eventure.model.PagedResponse;
@@ -50,8 +53,9 @@ public class OfferDetailsDialog extends DialogFragment {
 
     private Offer offer;
     private ImageButton btnFavorite;
-    private Button btnBook;
+    private Button btnBook, btnContact;
     private boolean isFavorited;
+    private UserDTO provider;
 
     public static OfferDetailsDialog newInstance(Offer offer) {
         OfferDetailsDialog fragment = new OfferDetailsDialog();
@@ -81,9 +85,30 @@ public class OfferDetailsDialog extends DialogFragment {
         setupUI(view);
         populateUI(view);
         checkForImmediateReview(view);
-
+        loadProviderInfo(view);
         return view;
     }
+
+    private void loadProviderInfo(View view){
+        Call<UserDTO> call = ClientUtils.offerService.getProvider(offer.getId());
+        call.enqueue(new Callback<UserDTO>() {
+            @Override
+            public void onResponse(Call<UserDTO> call, Response<UserDTO> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    provider = response.body();
+                } else {
+                    Snackbar.make(view, "Cannot access provider's info.", Snackbar.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserDTO> call, Throwable t) {
+                Snackbar.make(view, "Error: "+t.getMessage(), Snackbar.LENGTH_SHORT).show();
+                t.printStackTrace();
+            }
+        });
+    }
+
 
     @Override
     public void onStart() {
@@ -288,6 +313,39 @@ public class OfferDetailsDialog extends DialogFragment {
                 public void onFailure(Call<ProviderDTO> call, Throwable t) {
                     Snackbar.make(requireView(), "Network error. Please try again.", Snackbar.LENGTH_LONG).show();
                     Log.e("OfferDetailsDialog", "Failed to fetch provider: " + t.getMessage());
+                }
+            });
+        });
+
+        btnContact = view.findViewById(R.id.btn_contact);
+        btnContact.setOnClickListener(v -> {
+            if (!ClientUtils.getAuthService().isLoggedIn()) {
+                Snackbar.make(view, "You must be logged in to contact the organizer.", Snackbar.LENGTH_SHORT).show();
+                return;
+            }
+            if(provider == null){
+                Snackbar.make(view, "Cannot access provider's info. Try again later.", Snackbar.LENGTH_SHORT).show();
+                return;
+            }
+            ClientUtils.chatService.findChat(provider.getId()).enqueue(new Callback<Integer>() {
+                @Override
+                public void onResponse(Call<Integer> call, Response<Integer> response) {
+                    if (response.isSuccessful()) {
+                        int chatId = response.body();
+                        Intent intent = new Intent(getContext(), ChatActivity.class);
+                        intent.putExtra("chatId", chatId);
+                        intent.putExtra("userName", provider.getName() + " "+ provider.getLastname());
+                        intent.putExtra("userImage", provider.getPhotoUrl());
+                        startActivity(intent);
+                    } else {
+                        Snackbar.make(view, "Cannot access a chat with yourself.", Snackbar.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Integer> call, Throwable t) {
+                    Snackbar.make(view, "Error: "+t.getMessage(), Snackbar.LENGTH_SHORT).show();
+                    t.printStackTrace();
                 }
             });
         });
