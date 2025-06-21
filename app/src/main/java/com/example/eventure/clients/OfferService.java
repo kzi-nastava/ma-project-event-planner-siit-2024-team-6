@@ -87,12 +87,12 @@ public interface OfferService {
     @GET("offers/{offerId}/provider")
     Call<ProviderDTO> getProviderByOfferId(@Path("offerId") int offerId);
 
-    @POST("offers/{offerId}/add-favour")
+    @POST("offers/{offerId}/favourite")
     Call<Void> addOfferToFavourites(
             @Path("offerId") int offerId
     );
 
-    @POST("offers/{offerId}/remove-favour")
+    @DELETE("offers/{offerId}/favourite")
     Call<Void> removeOfferFromFavourites(
             @Path("offerId") int offerId
     );
@@ -146,5 +146,8 @@ public interface OfferService {
 
     @GET("offers/{offerId}/provider")
     Call<UserDTO> getProvider(@Path("offerId") int offerId);
+
+    @GET("offers/{offerId}/rating")
+    Call<Integer> getRating(@Path("offerId") int offerId);
 
 }
