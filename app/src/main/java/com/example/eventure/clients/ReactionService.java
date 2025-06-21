@@ -31,4 +31,12 @@ public interface ReactionService {
 
     @PUT(ClientUtils.REACTIONS + "{id}/accept")
     Call<ReactionDTO> acceptReaction(@Path("id") Integer id);
+
+    @GET("reactions/provider/{id}")
+    Call<PagedResponse<ReactionDTO>> getProviderReactions(
+            @Path("id") int providerId,
+            @Query("page") int page,
+            @Query("size") int size
+    );
+
 }
