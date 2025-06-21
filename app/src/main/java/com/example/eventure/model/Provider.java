@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.example.eventure.dto.ProviderDTO;
+import com.example.eventure.dto.UserDTO;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -47,6 +48,17 @@ public class Provider extends User implements Parcelable, Serializable{
     }
 
     public Provider(ProviderDTO dto){
+        this.id = dto.getId();
+        this.description = dto.getDescription();
+        this.companyEmail = dto.getCompanyEmail();
+        this.companyName = dto.getCompanyName();
+        this.companyAddress = dto.getCompanyAddress();
+        this.companyPhotos = dto.getCompanyPhotos();
+        this.openingTime = dto.getOpeningTime();
+        this.closingTime = dto.getClosingTime();
+    }
+
+    public Provider(UserDTO dto){
         this.id = dto.getId();
         this.description = dto.getDescription();
         this.companyEmail = dto.getCompanyEmail();

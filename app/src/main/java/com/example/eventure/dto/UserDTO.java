@@ -23,6 +23,7 @@ public class UserDTO {
     private List<NotificationDTO> notifications;
 
     private String companyEmail;
+    private String companyName;
     private String companyAddress;
     private String description;
     private String openingTime;
@@ -217,5 +218,12 @@ public class UserDTO {
 
     public void setCompanyPhotos(String[] companyPhotos) {
         this.companyPhotos = companyPhotos;
+    }
+
+    public String getCompanyName(){
+        return this.companyName;
+    }
+    public void setCompanyName(String companyName){
+        this.companyName = companyName;
     }
 }
