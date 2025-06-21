@@ -296,25 +296,14 @@ public class OfferDetailsDialog extends DialogFragment {
 
         ImageButton btnAccount = view.findViewById(R.id.provider_icon);
         btnAccount.setOnClickListener(v -> {
-            Call<ProviderDTO> call = ClientUtils.offerService.getProviderByOfferId(offer.getId());
+            if(provider == null){
+                Snackbar.make(view, "Cannot access provider's info. Try again later.", Snackbar.LENGTH_SHORT).show();
+                return;
+            }
+            Provider p = new Provider(provider);
+            CompanyDetailsDialog providerDialog = CompanyDetailsDialog.newInstance(p);
+            providerDialog.show(requireActivity().getSupportFragmentManager(), "ProviderDetailsDialog");
 
-            call.enqueue(new Callback<ProviderDTO>() {
-                @Override
-                public void onResponse(Call<ProviderDTO> call, Response<ProviderDTO> response) {
-                    if (response.isSuccessful() && response.body() != null) {
-                        ProviderDTO providerDTO = response.body();
-                        Provider p = new Provider(providerDTO);
-                        CompanyDetailsDialog providerDialog = CompanyDetailsDialog.newInstance(p);
-                        providerDialog.show(requireActivity().getSupportFragmentManager(), "ProviderDetailsDialog");
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<ProviderDTO> call, Throwable t) {
-                    Snackbar.make(requireView(), "Network error. Please try again.", Snackbar.LENGTH_LONG).show();
-                    Log.e("OfferDetailsDialog", "Failed to fetch provider: " + t.getMessage());
-                }
-            });
         });
 
         btnContact = view.findViewById(R.id.btn_contact);
