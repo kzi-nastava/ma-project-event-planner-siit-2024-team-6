@@ -18,6 +18,13 @@ public class NewEventDTO {
     private List<String> photos;
     private List<String> emails = new ArrayList<>();
 
+    public NewEventDTO(String name, String description, String location, LocalDateTime date) {
+        this.name = name;
+        this.description = description;
+        this.place = location;
+        this.date = date;
+    }
+
     public String getName() {
         return name;
     }

@@ -52,6 +52,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Enter event name" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Event Type"
+                android:textSize="18sp"
+                android:layout_marginTop="16dp" />
+
+            <Spinner
+                android:id="@+id/event_type_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
             <!-- Description -->
             <TextView
@@ -93,7 +104,9 @@
                 android:id="@+id/event_date_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Enter date (e.g. 2025-07-15T18:00)" />
+                android:hint="Select date and time"
+                android:focusable="false"
+                android:clickable="true" />
 
             <!-- Participants -->
             <TextView
@@ -102,12 +115,6 @@
                 android:text="Participants"
                 android:textSize="18sp"
                 android:layout_marginTop="16dp" />
-            <EditText
-                android:id="@+id/event_min_participants_input"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Minimum participants"
-                android:inputType="number" />
             <EditText
                 android:id="@+id/event_max_participants_input"
                 android:layout_width="match_parent"

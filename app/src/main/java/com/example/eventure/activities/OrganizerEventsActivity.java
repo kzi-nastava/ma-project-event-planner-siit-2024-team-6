@@ -21,9 +21,11 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.eventure.R;
+import com.example.eventure.clients.ClientUtils;
 import com.example.eventure.dialogs.CreateEventDialog;
 import com.example.eventure.fragments.EventsFragment;
 import com.example.eventure.fragments.OrganizerEvents;
+import com.example.eventure.utils.MenuUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -47,6 +49,9 @@ public class OrganizerEventsActivity extends AppCompatActivity {
 
         drawer = findViewById(R.id.drawer_events_layout);
         NavigationView navigationView = findViewById(R.id.sidebar_view);
+        String role = ClientUtils.getAuthService().getRole();
+        MenuUtils.filterMenuByRole(navigationView, role);
+
         navController = Navigation.findNavController(this, R.id.fragment_nav_content_main_home);
 
         navigationView.setNavigationItemSelectedListener(item -> {
@@ -64,6 +69,17 @@ public class OrganizerEventsActivity extends AppCompatActivity {
 
         BottomNavigationView bottomNav = findViewById(R.id.events_bottom_navigation);
         NavigationUI.setupWithNavController(bottomNav, navController);
+        bottomNav.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+
+            if (id == R.id.events_menu) {
+                startActivity(new Intent(this, HomeActivity.class));                return true;
+            } else if (id == R.id.offer_menu) {
+                startActivity(new Intent(this, HomeActivity.class));
+                return true;
+            }
+            return false;
+        });
 
         actionBarDrawerToggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);

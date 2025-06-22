@@ -1,4 +1,10 @@
 package com.example.eventure.dialogs;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Calendar;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
@@ -6,10 +12,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,6 +30,7 @@ import com.example.eventure.R;
 import com.example.eventure.adapters.PhotoAdapter;
 import com.example.eventure.clients.ClientUtils;
 import com.example.eventure.dto.EventDTO;
+import com.example.eventure.dto.EventTypeDTO;
 import com.example.eventure.dto.NewEventDTO;
 import com.example.eventure.model.Status;
 import com.google.android.material.snackbar.Snackbar;
@@ -43,6 +53,8 @@ public class CreateEventDialog extends DialogFragment {
     private List<String> photoUrls;
     private PhotoAdapter photoAdapter;
     private OnEventCreatedListener listener;
+    private Spinner eventTypeSpinner;
+    private List<EventTypeDTO> eventTypes = new ArrayList<>();
 
     public interface OnEventCreatedListener {
         void onEventCreated();
@@ -60,8 +72,11 @@ public class CreateEventDialog extends DialogFragment {
         nameInput = view.findViewById(R.id.event_name_input);
         descriptionInput = view.findViewById(R.id.event_description_input);
         locationInput = view.findViewById(R.id.event_location_input);
-        dateInput = view.findViewById(R.id.event_date_input);
-        minParticipantsInput = view.findViewById(R.id.event_min_participants_input);
+        dateInput = view.findViewById(R.id.event_date_input); // 🛠️ ДОБАВЛЕНО: найти поле
+        dateInput.setFocusable(false);
+        dateInput.setClickable(true);
+        dateInput.setOnClickListener(v -> openDateTimePicker());
+
         maxParticipantsInput = view.findViewById(R.id.event_max_participants_input);
         isPublicCheckbox = view.findViewById(R.id.event_is_public_checkbox);
         submitButton = view.findViewById(R.id.submit_event_button);
@@ -73,14 +88,52 @@ public class CreateEventDialog extends DialogFragment {
         photoAdapter = new PhotoAdapter(photoUrls);
         photosRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         photosRecyclerView.setAdapter(photoAdapter);
+        eventTypeSpinner = view.findViewById(R.id.event_type_spinner);
+
+        ClientUtils.eventTypeService.getAll().enqueue(new Callback<List<EventTypeDTO>>() {
+            @Override
+            public void onResponse(Call<List<EventTypeDTO>> call, Response<List<EventTypeDTO>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    eventTypes = response.body();
+                    ArrayAdapter<EventTypeDTO> adapter = new ArrayAdapter<>(
+                            getContext(),
+                            android.R.layout.simple_spinner_item,
+                            eventTypes
+                    );
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    eventTypeSpinner.setAdapter(adapter);
+                } else {
+                    Toast.makeText(getContext(), "Failed to load event types", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<EventTypeDTO>> call, Throwable t) {
+                Toast.makeText(getContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
 
         closeIcon.setOnClickListener(v -> dismiss());
-
         addPhotoButton.setOnClickListener(v -> addPhotoUrl());
-
         submitButton.setOnClickListener(v -> handleSubmit());
 
         return view;
+    }
+
+    private void openDateTimePicker() {
+        Calendar calendar = Calendar.getInstance();
+        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(),
+                (view, year, month, dayOfMonth) -> {
+                    TimePickerDialog timePickerDialog = new TimePickerDialog(getContext(),
+                            (timeView, hourOfDay, minute) -> {
+                                LocalDateTime selectedDateTime = LocalDateTime.of(year, month + 1, dayOfMonth, hourOfDay, minute);
+                                String formatted = selectedDateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+                                dateInput.setText(formatted);
+                            }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true);
+                    timePickerDialog.show();
+                },
+                calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+        datePickerDialog.show();
     }
 
     @Override
@@ -115,15 +168,24 @@ public class CreateEventDialog extends DialogFragment {
         String name = nameInput.getText().toString().trim();
         String description = descriptionInput.getText().toString().trim();
         String location = locationInput.getText().toString().trim();
-        String date = dateInput.getText().toString().trim();
+        String dateStr = dateInput.getText().toString().trim();
+        if (dateStr.isEmpty()) {
+            showSnackbar("Please enter date and time");
+            return;
+        }
+        LocalDateTime date;
+        try {
+            date = LocalDateTime.parse(dateStr, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        } catch (DateTimeParseException e) {
+            showSnackbar("Invalid date format. Use e.g. 2025-07-15T18:00");
+            return;
+        }
+
         boolean isPublic = isPublicCheckbox.isChecked();
         int minParticipants = 0;
         int maxParticipants = 0;
 
         try {
-            if (!minParticipantsInput.getText().toString().trim().isEmpty()) {
-                minParticipants = Integer.parseInt(minParticipantsInput.getText().toString().trim());
-            }
             if (!maxParticipantsInput.getText().toString().trim().isEmpty()) {
                 maxParticipants = Integer.parseInt(maxParticipantsInput.getText().toString().trim());
             }
@@ -132,7 +194,7 @@ public class CreateEventDialog extends DialogFragment {
             return;
         }
 
-        if (name.isEmpty() || description.isEmpty() || location.isEmpty() || date.isEmpty()) {
+        if (name.isEmpty() || description.isEmpty() || location.isEmpty() || date == null) {
             showSnackbar("Please fill in all fields");
             return;
         }
@@ -144,6 +206,12 @@ public class CreateEventDialog extends DialogFragment {
         newEvent.setMaxParticipants(maxParticipants);
 
         submitButton.setEnabled(false);
+        EventTypeDTO selectedType = (EventTypeDTO) eventTypeSpinner.getSelectedItem();
+        if (selectedType == null) {
+            Toast.makeText(getContext(), "Please select event type", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        newEvent.setEventType(selectedType.getName());  // или setEventTypeName()
 
         ClientUtils.organizerService.createEvent(newEvent).enqueue(new Callback<EventDTO>() {
             @Override

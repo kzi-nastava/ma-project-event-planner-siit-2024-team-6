@@ -85,8 +85,12 @@ public class ClientUtils {
     }
     // Create a custom Gson instance with LocalDateTime deserializer
     private static Gson gson = new GsonBuilder()
-            .registerTypeAdapter(LocalDateTime.class, (JsonDeserializer<LocalDateTime>) (json, typeOfT, context) ->
-                    LocalDateTime.parse(json.getAsString()))
+            .registerTypeAdapter(LocalDateTime.class,
+                    (JsonDeserializer<LocalDateTime>) (json, typeOfT, context) ->
+                            LocalDateTime.parse(json.getAsString()))
+            .registerTypeAdapter(LocalDateTime.class,
+                    (com.google.gson.JsonSerializer<LocalDateTime>) (src, typeOfSrc, context) ->
+                            new com.google.gson.JsonPrimitive(src.toString()))
             .create();
 
     public static OkHttpClient test() {

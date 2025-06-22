@@ -39,7 +39,7 @@ public class OrganizerEventDataSource extends PageKeyedDataSource<Integer, Event
 
         try {
             Response<PagedResponse<EventDTO>> response = ClientUtils.eventService
-                    .getPagedEvents(FIRST_PAGE, pageSize, searchQuery)
+                    .getPagedEventsByO(FIRST_PAGE, pageSize, searchQuery)
                     .execute(); // <-- ВАЖНО: блокирующий вызов
 
             if (response.isSuccessful() && response.body() != null) {
@@ -64,7 +64,7 @@ public class OrganizerEventDataSource extends PageKeyedDataSource<Integer, Event
     @Override
     public void loadAfter(@NonNull LoadParams<Integer> params, @NonNull LoadCallback<Integer, Event> callback) {
         Log.d("OrganizerEventDataSource", "Loading next page: " + params.key);
-        ClientUtils.eventService.getPagedEvents(params.key, pageSize, searchQuery)
+        ClientUtils.eventService.getPagedEventsByO(params.key, pageSize, searchQuery)
                 .enqueue(new Callback<PagedResponse<EventDTO>>() {
                     @Override
                     public void onResponse(Call<PagedResponse<EventDTO>> call, Response<PagedResponse<EventDTO>> response) {

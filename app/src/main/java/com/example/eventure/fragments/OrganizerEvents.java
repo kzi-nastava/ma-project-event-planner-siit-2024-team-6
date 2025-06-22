@@ -65,11 +65,9 @@ public class OrganizerEvents extends Fragment {
             dialog.show(getChildFragmentManager(), "Editeventsd");
             Log.d("OrganizerEvents", "Edit clicked for: " + event.getId());
         }, event -> {
-            // TODO: Replace with real delete confirmation
             Log.d("OrganizerEvents", "Delete clicked for: " + event.getId());
             showSnackbar("Event deleted (mock)");
             showDeleteConfirmationDialog(event);
-            // You can call eventViewModel.refresh() if you implement deletion
         });
 
         recyclerView.setAdapter(eventAdapter);
