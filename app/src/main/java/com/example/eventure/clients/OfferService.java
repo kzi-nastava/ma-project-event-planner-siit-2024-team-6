@@ -4,6 +4,7 @@ import com.example.eventure.dto.NewOfferDTO;
 import com.example.eventure.dto.NewPriceListItemDTO;
 import com.example.eventure.dto.OfferDTO;
 import com.example.eventure.dto.ProviderDTO;
+import com.example.eventure.dto.UserDTO;
 import com.example.eventure.model.Offer;
 import com.example.eventure.model.PagedResponse;
 import com.example.eventure.model.PriceListItem;
@@ -86,12 +87,12 @@ public interface OfferService {
     @GET("offers/{offerId}/provider")
     Call<ProviderDTO> getProviderByOfferId(@Path("offerId") int offerId);
 
-    @POST("offers/{offerId}/add-favour")
+    @POST("offers/{offerId}/favourite")
     Call<Void> addOfferToFavourites(
             @Path("offerId") int offerId
     );
 
-    @POST("offers/{offerId}/remove-favour")
+    @DELETE("offers/{offerId}/favourite")
     Call<Void> removeOfferFromFavourites(
             @Path("offerId") int offerId
     );
@@ -142,5 +143,11 @@ public interface OfferService {
     Call<Boolean> isOfferPurchased(
             @Path("offerId") int offerId
     );
+
+    @GET("offers/{offerId}/provider")
+    Call<UserDTO> getProvider(@Path("offerId") int offerId);
+
+    @GET("offers/{offerId}/rating")
+    Call<Double> getRating(@Path("offerId") int offerId);
 
 }

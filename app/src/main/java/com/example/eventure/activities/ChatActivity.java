@@ -116,6 +116,14 @@ public class ChatActivity extends AppCompatActivity {
             Intent intent = new Intent(ChatActivity.this, HomeActivity.class);
             startActivity(intent);
         });
+
+        Intent intent = getIntent();
+        int chatId = intent.getIntExtra("chatId", -1);
+        String userName = intent.getStringExtra("userName");
+        String userImage = intent.getStringExtra("userImage");
+        if(chatId != -1){
+            openChat(chatId, userName, userImage);
+        }
     }
 
     public void openChat(int id, String userName, String userImage) {

@@ -1,5 +1,6 @@
 package com.example.eventure.dialogs;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.LayoutInflater;
@@ -15,8 +16,11 @@ import androidx.fragment.app.DialogFragment;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.eventure.R;
+import com.example.eventure.activities.ChatActivity;
+import com.example.eventure.activities.HomeActivity;
 import com.example.eventure.adapters.ImageCarouselAdapter;
 import com.example.eventure.clients.ClientUtils;
+import com.example.eventure.dto.UserDTO;
 import com.example.eventure.model.Event;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -115,8 +119,58 @@ public class EventDetailsDialog extends DialogFragment {
         });
 
         ImageButton btnContact = view.findViewById(R.id.provider_icon);
-        btnContact.setOnClickListener(v ->
-                Snackbar.make(view, "Contact organizer clicked", Snackbar.LENGTH_SHORT).show());
+        btnContact.setOnClickListener(v -> {
+            if (!ClientUtils.getAuthService().isLoggedIn()) {
+                Snackbar.make(view, "You must be logged in to contact the organizer.", Snackbar.LENGTH_SHORT).show();
+                return;
+            }
+
+            Call<UserDTO> call = ClientUtils.eventService.getEventOrganizer(event.getId());
+            call.enqueue(new Callback<UserDTO>() {
+                @Override
+                public void onResponse(Call<UserDTO> call, Response<UserDTO> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        UserDTO organizer = response.body();
+                        int organizerId = organizer.getId();
+                        String userImage = organizer.getPhotoUrl();
+                        String userName = organizer.getName() + " " + organizer.getLastname();
+
+                        // Now call findChat inside this callback:
+                        ClientUtils.chatService.findChat(organizerId).enqueue(new Callback<Integer>() {
+                            @Override
+                            public void onResponse(Call<Integer> call, Response<Integer> response) {
+                                if (response.isSuccessful()) {
+                                    int chatId = response.body();
+                                    Intent intent = new Intent(getContext(), ChatActivity.class);
+                                    intent.putExtra("chatId", chatId);
+                                    intent.putExtra("userName", userName);
+                                    intent.putExtra("userImage", userImage);
+                                    startActivity(intent);
+                                } else {
+                                    Snackbar.make(view, "Cannot access a chat with yourself.", Snackbar.LENGTH_SHORT).show();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<Integer> call, Throwable t) {
+                                Snackbar.make(view, "Error: "+t.getMessage(), Snackbar.LENGTH_SHORT).show();
+                                t.printStackTrace();
+                            }
+                        });
+
+                    } else {
+                        Snackbar.make(view, "Cannot access organizers info. Try again later.", Snackbar.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<UserDTO> call, Throwable t) {
+                    Snackbar.make(view, "Error: "+t.getMessage(), Snackbar.LENGTH_SHORT).show();
+                    t.printStackTrace();
+                }
+            });
+        });
+
 
         Button btnJoin = view.findViewById(R.id.btn_join);
         btnJoin.setOnClickListener(v -> {

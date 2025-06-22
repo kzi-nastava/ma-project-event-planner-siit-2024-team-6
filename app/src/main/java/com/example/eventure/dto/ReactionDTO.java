@@ -6,6 +6,7 @@ public class ReactionDTO {
 
     private Integer rating;
     private String status;
+    private String userName;
 
     public Integer getId() {
         return id;
@@ -37,6 +38,13 @@ public class ReactionDTO {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getUserName(){
+        return this.userName;
+    }
+    public void setUserName(String userName){
+        this.userName = userName;
     }
 
 

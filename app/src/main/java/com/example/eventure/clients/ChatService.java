@@ -26,5 +26,7 @@ public interface ChatService {
     );
     @POST("chats/{chatId}/block")
     Call<Void> blockChat(@Path("chatId") int chatId);
+    @POST("chats/find/{userId}")
+    Call<Integer> findChat(@Path("userId") Integer userId);
 
 }

@@ -2,6 +2,7 @@ package com.example.eventure.clients;
 
 import com.example.eventure.dto.EventDTO;
 import com.example.eventure.dto.EventTypeDTO;
+import com.example.eventure.dto.UserDTO;
 import com.example.eventure.model.PagedResponse;
 
 import java.util.List;
@@ -96,4 +97,8 @@ public interface EventService {
     @GET("events/{categoryName}/event-types-by-category-name")
     Call<List<EventTypeDTO>> getEventTypesByCategoryName(@retrofit2.http.Path("categoryName") String categoryName);
 
+    @GET("events/{eventId}/getOrganizer")
+    Call<UserDTO> getEventOrganizer(
+            @Path("eventId") int eventId
+    );
 }
