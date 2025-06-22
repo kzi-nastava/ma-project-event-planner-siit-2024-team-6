@@ -23,6 +23,8 @@ import androidx.navigation.ui.NavigationUI;
 //import com.denzcoskun.imageslider.ImageSlider;
 //import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.eventure.R;
+import com.example.eventure.clients.ClientUtils;
+import com.example.eventure.utils.MenuUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 
@@ -55,6 +57,10 @@ public class HomeActivity extends AppCompatActivity {
 
         drawer = findViewById(R.id.drawer_home_layout);
         navigationView = findViewById(R.id.nav_view);
+        // Устанавливаем меню по роли
+        String role = ClientUtils.getAuthService().getRole();
+        MenuUtils.filterMenuByRole(navigationView, role);
+
         navController = Navigation.findNavController(this, R.id.fragment_nav_content_main_home);
 
 
@@ -121,6 +127,10 @@ public class HomeActivity extends AppCompatActivity {
                 return true;
             } else if(id == R.id.nav_price_list){
                 Intent intent = new Intent(HomeActivity.this, ProviderPriceListActivity.class);
+                startActivity(intent);
+                return true;
+            } else if(id == R.id.nav_my_events){
+                Intent intent = new Intent(HomeActivity.this, OrganizerEventsActivity.class);
                 startActivity(intent);
                 return true;
             }

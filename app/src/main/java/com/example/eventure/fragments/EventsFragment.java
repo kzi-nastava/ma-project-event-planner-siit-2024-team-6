@@ -395,7 +395,7 @@ public class EventsFragment extends Fragment {
 
         bottomSheetDialog.show();
     }
-    private void fetchFilteredEvents(String name, String description, String place, String eventType, String startDate, String endDate, int page) {
+    public void fetchFilteredEvents(String name, String description, String place, String eventType, String startDate, String endDate, int page) {
         isLoading = true; // Prevent multiple calls at once
         eventService.getFilteredEvents(name, description, place, eventType, startDate, endDate, page, ClientUtils.PAGE_SIZE, sortDir)
                 .enqueue(new Callback<PagedResponse<EventDTO>>() {

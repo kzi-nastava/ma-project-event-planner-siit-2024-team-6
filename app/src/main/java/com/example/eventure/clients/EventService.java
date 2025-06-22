@@ -37,6 +37,10 @@ public interface EventService {
             "skip: true"
     })
     Call<PagedResponse<EventDTO>> getPagedEvents(@Query("page") int page, @Query("size") int size, @Query("sortDir") String sortDir);
+    @GET("organizers/paged-events")
+    Call<PagedResponse<EventDTO>> getPagedEventsByO(@Query("page") int page, @Query("size") int size, @Query("sortDir") String sortDir);
+
+
     @GET(ClientUtils.FILTERED_EVENTS)
     @Headers({
             "User-Agent: Mobile-Android",

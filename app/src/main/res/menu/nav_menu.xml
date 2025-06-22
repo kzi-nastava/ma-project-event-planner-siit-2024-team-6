@@ -71,6 +71,10 @@
             android:title="my offers"
             android:icon="@drawable/check_box_icon" />
         <item
+            android:id="@+id/nav_my_events"
+            android:title="my events"
+            android:icon="@drawable/check_box_icon" />
+        <item
             android:id="@+id/nav_price_list"
             android:icon="@drawable/list_icon"
             android:title="price list" />

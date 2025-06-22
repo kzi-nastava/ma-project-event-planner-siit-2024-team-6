@@ -36,6 +36,9 @@ public class EventDTO {
         this.rating = rating;
     }
 
+    public EventDTO() {
+    }
+
     public Integer getId() {
         return id;
     }
@@ -82,5 +85,53 @@ public class EventDTO {
 
     public Double getRating() {
         return rating;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setMaxParticipants(Integer maxParticipants) {
+        this.maxParticipants = maxParticipants;
+    }
+
+    public void setParticipants(Integer participants) {
+        this.participants = participants;
+    }
+
+    public void setPublic(Boolean aPublic) {
+        isPublic = aPublic;
+    }
+
+    public void setPlace(String place) {
+        this.place = place;
+    }
+
+    public void setDate(LocalDateTime date) {
+        this.date = date;
+    }
+
+    public void setEventType(EventTypeDTO eventType) {
+        this.eventType = eventType;
+    }
+
+    public void setPhotos(List<String> photos) {
+        this.photos = photos;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
+    }
+
+    public void setRating(Double rating) {
+        this.rating = rating;
     }
 }

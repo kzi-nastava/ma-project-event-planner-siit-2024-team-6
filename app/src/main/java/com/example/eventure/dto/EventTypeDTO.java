@@ -31,4 +31,9 @@ public class EventTypeDTO {
     public void setIsDeleted(boolean value){
         isDeleted = value;
     }
+    @Override
+    public String toString() {
+        return name; // или getName() если поле приватное
+    }
+
 }
