@@ -1,6 +1,7 @@
 package com.example.eventure.clients;
 
 import com.example.eventure.dto.EventDTO;
+import com.example.eventure.dto.EventStatisticsDTO;
 import com.example.eventure.dto.NewEventDTO;
 
 import java.util.List;
@@ -43,4 +44,6 @@ public interface OrganizerService {
     @DELETE("organizers/events/{eventId}")
     Call<Void> deleteEvent(@Path("eventId") int eventId);
 
+    @GET("events/{eventId}/statistics")
+    Call<EventStatisticsDTO> getEventStatistics(@Path("eventId") int eventId);
 }

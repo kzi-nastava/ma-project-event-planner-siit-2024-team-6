@@ -1,6 +1,7 @@
 package com.example.eventure.dialogs;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.LayoutInflater;
@@ -20,8 +21,15 @@ import com.example.eventure.activities.ChatActivity;
 import com.example.eventure.activities.HomeActivity;
 import com.example.eventure.adapters.ImageCarouselAdapter;
 import com.example.eventure.clients.ClientUtils;
+import com.example.eventure.dto.EventStatisticsDTO;
 import com.example.eventure.dto.UserDTO;
 import com.example.eventure.model.Event;
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.File;
@@ -29,6 +37,8 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -236,7 +246,60 @@ public class EventOrganizerDetailsDialog extends DialogFragment {
                 }
             });
         });
+ // FOR GRAPH
+        BarChart chart = view.findViewById(R.id.statistics_chart);
+        chart.setVisibility(View.GONE);
+
+        ClientUtils.organizerService.getEventStatistics(event.getId()).enqueue(new Callback<EventStatisticsDTO>() {
+            @Override
+            public void onResponse(Call<EventStatisticsDTO> call, Response<EventStatisticsDTO> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    EventStatisticsDTO stats = response.body();
+                    drawChart(chart, stats);
+                    chart.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<EventStatisticsDTO> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+
     }
+    private void drawChart(BarChart chart, EventStatisticsDTO stats) {
+        List<BarEntry> entries = new ArrayList<>();
+        entries.add(new BarEntry(0f, stats.participants));
+        entries.add(new BarEntry(1f, stats.maxParticipants));
+        entries.add(new BarEntry(2f, stats.rating));
+
+        BarDataSet dataSet = new BarDataSet(entries, "Event Statistics");
+        dataSet.setColors(Color.BLUE, Color.GREEN, Color.MAGENTA);
+
+        BarData barData = new BarData(dataSet);
+        barData.setBarWidth(0.9f); // set custom bar width
+        chart.setData(barData);
+        chart.setFitBars(true); // make the x-axis fit exactly all bars
+        chart.getDescription().setEnabled(false);
+
+        // labels
+        XAxis xAxis = chart.getXAxis();
+        xAxis.setGranularity(1f);
+        xAxis.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value) {
+                int index = (int) value;
+                switch (index) {
+                    case 0: return "Participants";
+                    case 1: return "Max";
+                    case 2: return "Rating";
+                    default: return "";
+                }
+            }
+        });
+        chart.invalidate(); // refresh
+    }
+
     private boolean savePdfToDownloads(ResponseBody body, String fileName) {
         try {
             File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);

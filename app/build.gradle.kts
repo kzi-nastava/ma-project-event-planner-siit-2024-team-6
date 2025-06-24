@@ -101,4 +101,6 @@ dependencies {
     annotationProcessor ("com.github.bumptech.glide:compiler:4.15.1")
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
+    implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
+
 }

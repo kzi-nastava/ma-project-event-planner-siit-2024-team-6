@@ -232,26 +232,6 @@ public class EventDetailsDialog extends DialogFragment {
             });
         });
 
-        Button btnStatistic = view.findViewById(R.id.btn_download_statistics);
-        btnStatistic.setOnClickListener(v -> {
-            ClientUtils.organizerService.getEventStatisticsPDF(event.getId()).enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    if (response.isSuccessful() && response.body() != null) {
-                        boolean success = savePdfToDownloads(response.body(), "event_statistics_" + event.getId() + ".pdf");
-                        String message = success ? "Statistics PDF saved to Downloads" : "Failed to save Statistics PDF";
-                        Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show();
-                    } else {
-                        Snackbar.make(view, "Statistics download failed", Snackbar.LENGTH_SHORT).show();
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    Snackbar.make(view, "Network error while downloading agenda", Snackbar.LENGTH_SHORT).show();
-                }
-            });
-        });
     }
     private boolean savePdfToDownloads(ResponseBody body, String fileName) {
         try {
