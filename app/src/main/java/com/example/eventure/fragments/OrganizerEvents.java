@@ -68,7 +68,7 @@ public class OrganizerEvents extends Fragment {
             Log.d("OrganizerEvents", "Delete clicked for: " + event.getId());
             showSnackbar("Event deleted (mock)");
             showDeleteConfirmationDialog(event);
-        });
+        },  requireActivity());
 
         recyclerView.setAdapter(eventAdapter);
 

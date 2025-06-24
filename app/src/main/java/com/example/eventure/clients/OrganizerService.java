@@ -1,6 +1,7 @@
 package com.example.eventure.clients;
 
 import com.example.eventure.dto.EventDTO;
+import com.example.eventure.dto.EventStatisticsDTO;
 import com.example.eventure.dto.NewEventDTO;
 
 import java.util.List;
@@ -25,6 +26,8 @@ public interface OrganizerService {
     Call<List<EventDTO>> getFutureEventsForOrganizer();
     @GET("organizers/events/{eventId}/getAgendaPDF")
     Call<okhttp3.ResponseBody> getAgendaPdf(@retrofit2.http.Path("eventId") int eventId);
+    @GET("events/{eventId}/getEventStatisticsPDF")
+    Call<okhttp3.ResponseBody> getEventStatisticsPDF(@retrofit2.http.Path("eventId") int eventId);
     @POST("organizers/events")
     Call<EventDTO> createEvent(
             @Body NewEventDTO newEvent
@@ -41,4 +44,6 @@ public interface OrganizerService {
     @DELETE("organizers/events/{eventId}")
     Call<Void> deleteEvent(@Path("eventId") int eventId);
 
+    @GET("events/{eventId}/statistics")
+    Call<EventStatisticsDTO> getEventStatistics(@Path("eventId") int eventId);
 }
