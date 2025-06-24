@@ -51,6 +51,13 @@
         tools:layout="@layout/fragment_notifications"
         app:popUpTo="@+id/events_menu"
         app:popUpToInclusive="true" />
+<!--    <fragment-->
+<!--        android:id="@+id/nav_my_products"-->
+<!--        android:name="com.example.eventure.fragments.NotificationsFragment"-->
+<!--        android:label="notifications"-->
+<!--        tools:layout="@layout/fragment_notifications"-->
+<!--        app:popUpTo="@+id/events_menu"-->
+<!--        app:popUpToInclusive="true" />-->
 
     <!-- Сообщения -->
     <fragment
