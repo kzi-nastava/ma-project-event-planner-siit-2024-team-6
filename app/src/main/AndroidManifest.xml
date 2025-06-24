@@ -63,6 +63,8 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+        <activity android:name=".activities.ProviderProductsActivity"
+            android:exported="false" />
         <activity
             android:name=".activities.ProviderOffersActivity"
             android:exported="false" />

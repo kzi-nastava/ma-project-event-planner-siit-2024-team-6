@@ -24,6 +24,7 @@ public class MenuUtils {
         if ("ROLE_PROVIDER".equalsIgnoreCase(role)) {
             menu.findItem(R.id.nav_my_offers).setVisible(true);
             menu.findItem(R.id.nav_price_list).setVisible(true);
+            menu.findItem(R.id.nav_my_products).setVisible(true);
         }
         if("ROLE_ORGANIZER".equalsIgnoreCase(role)){
             menu.findItem(R.id.nav_my_events).setVisible(true);

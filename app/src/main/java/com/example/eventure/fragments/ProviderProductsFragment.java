@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -23,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.eventure.R;
 import com.example.eventure.adapters.ProviderOfferAdapter;
+import com.example.eventure.adapters.ProviderProductAdapter;
 import com.example.eventure.clients.ClientUtils;
 import com.example.eventure.dialogs.EditProductDialog;
 import com.example.eventure.model.Offer;
@@ -32,7 +32,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.slider.RangeSlider;
 import com.google.android.material.snackbar.Snackbar;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +42,7 @@ import retrofit2.Response;
 public class ProviderProductsFragment extends Fragment {
 
     private RecyclerView recyclerView;
-    private ProviderOfferAdapter offerAdapter;
+    private ProviderProductAdapter productAdapter;
     private ProgressBar progressBar;
     private ProviderOfferViewModel offerViewModel;
     private Spinner eventTypeSpinner;
@@ -62,13 +61,13 @@ public class ProviderProductsFragment extends Fragment {
         emptyView = rootView.findViewById(R.id.empty_view);
         progressBar = rootView.findViewById(R.id.progress_bar);
 
-        offerAdapter = new ProviderOfferAdapter(offer -> {
+        productAdapter = new ProviderProductAdapter(offer -> {
             EditProductDialog dialog = EditProductDialog.newInstance(offer);
             dialog.setOnOfferUpdatedListener(() -> offerViewModel.refresh());
             dialog.show(getChildFragmentManager(), "EditProductDialog");
         }, offer -> showDeleteConfirmationDialog(offer));
 
-        recyclerView.setAdapter(offerAdapter);
+        recyclerView.setAdapter(productAdapter);
 
         progressBar.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.GONE);
@@ -82,7 +81,7 @@ public class ProviderProductsFragment extends Fragment {
         }).get(ProviderOfferViewModel.class);
 
         offerViewModel.getPagedOffers().observe(getViewLifecycleOwner(), pagedList -> {
-            offerAdapter.submitList(pagedList);
+            productAdapter.submitList(pagedList);
             progressBar.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
         });

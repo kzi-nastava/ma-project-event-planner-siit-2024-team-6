@@ -60,8 +60,8 @@ public class ProviderProductsActivity extends AppCompatActivity {
             return true;
         });
 
-        BottomNavigationView bottomNav = findViewById(R.id.products_bottom_navigation);
-        NavigationUI.setupWithNavController(bottomNav, navController);
+//        BottomNavigationView bottomNav = findViewById(R.id.products_bottom_navigation);
+//        NavigationUI.setupWithNavController(bottomNav, navController);
 
         actionBarDrawerToggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);

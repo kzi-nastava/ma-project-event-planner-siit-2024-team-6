@@ -133,7 +133,11 @@ public class HomeActivity extends AppCompatActivity {
                 Intent intent = new Intent(HomeActivity.this, OrganizerEventsActivity.class);
                 startActivity(intent);
                 return true;
-            }
+            }else if(id == R.id.nav_my_products){
+            Intent intent = new Intent(HomeActivity.this, ProviderProductsActivity.class);
+            startActivity(intent);
+            return true;
+        }
 
             drawer.closeDrawer(GravityCompat.START);
             return false;
