@@ -17,7 +17,11 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -56,6 +60,17 @@ public class CreateEventDialog extends DialogFragment {
     private Spinner eventTypeSpinner;
     private List<EventTypeDTO> eventTypes = new ArrayList<>();
 
+
+    //invitations elements
+    private RadioGroup visibilityGroup;
+    private RadioButton publicRadio, privateRadio;
+    private LinearLayout invitationsSection;
+    private EditText invitationEmailInput;
+    private Button addInvitationButton;
+    private TextView invitationsListText;
+    private List<String> invitedEmails = new ArrayList<>();
+
+
     public interface OnEventCreatedListener {
         void onEventCreated();
     }
@@ -79,6 +94,7 @@ public class CreateEventDialog extends DialogFragment {
 
         maxParticipantsInput = view.findViewById(R.id.event_max_participants_input);
         isPublicCheckbox = view.findViewById(R.id.event_is_public_checkbox);
+        isPublicCheckbox.setVisibility(View.GONE);
         submitButton = view.findViewById(R.id.submit_event_button);
         addPhotoButton = view.findViewById(R.id.add_pictures_button);
         closeIcon = view.findViewById(R.id.close_icon);
@@ -89,6 +105,45 @@ public class CreateEventDialog extends DialogFragment {
         photosRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         photosRecyclerView.setAdapter(photoAdapter);
         eventTypeSpinner = view.findViewById(R.id.event_type_spinner);
+
+        visibilityGroup = view.findViewById(R.id.event_visibility_group);
+        visibilityGroup.setVisibility(View.VISIBLE);
+        publicRadio = view.findViewById(R.id.event_public_radio);
+        privateRadio = view.findViewById(R.id.event_private_radio);
+        invitationsSection = view.findViewById(R.id.invitations_section);
+        invitationEmailInput = view.findViewById(R.id.invitation_email_input);
+        addInvitationButton = view.findViewById(R.id.add_invitation_button);
+        invitationsListText = view.findViewById(R.id.invitations_list_text);
+
+        visibilityGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            if (checkedId == R.id.event_private_radio) {
+                invitationsSection.setVisibility(View.VISIBLE);
+            } else {
+                invitationsSection.setVisibility(View.GONE);
+                invitedEmails.clear();
+                invitationsListText.setText("");
+            }
+        });
+
+        addInvitationButton.setOnClickListener(v -> {
+            String email = invitationEmailInput.getText().toString().trim();
+            if (email.isEmpty()) {
+                showSnackbar("Email cannot be empty");
+                return;
+            }
+            if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                showSnackbar("Invalid email format");
+                return;
+            }
+            if (invitedEmails.contains(email)) {
+                showSnackbar("This email is already invited");
+                return;
+            }
+
+            invitedEmails.add(email);
+            invitationsListText.setText(String.join("\n", invitedEmails));
+            invitationEmailInput.setText("");
+        });
 
         ClientUtils.eventTypeService.getAll().enqueue(new Callback<List<EventTypeDTO>>() {
             @Override
@@ -181,7 +236,7 @@ public class CreateEventDialog extends DialogFragment {
             return;
         }
 
-        boolean isPublic = isPublicCheckbox.isChecked();
+        boolean isPublic = publicRadio.isChecked();
         int minParticipants = 0;
         int maxParticipants = 0;
 
@@ -202,6 +257,9 @@ public class CreateEventDialog extends DialogFragment {
         NewEventDTO newEvent = new NewEventDTO(name, description, location, date);
         newEvent.setPhotos(photoUrls);
         newEvent.setPublic(isPublic);
+        if (!isPublic) {
+            newEvent.setEmails(invitedEmails);
+        }
         newEvent.setParticipants(minParticipants);
         newEvent.setMaxParticipants(maxParticipants);
 

@@ -84,7 +84,7 @@ public class ClientUtils {
         return authService;
     }
     // Create a custom Gson instance with LocalDateTime deserializer
-    private static Gson gson = new GsonBuilder()
+    public static Gson gson = new GsonBuilder()
             .registerTypeAdapter(LocalDateTime.class,
                     (JsonDeserializer<LocalDateTime>) (json, typeOfT, context) ->
                             LocalDateTime.parse(json.getAsString()))
@@ -109,12 +109,6 @@ public class ClientUtils {
                 .addInterceptor(chain -> {
                     okhttp3.Request originalRequest = chain.request();
                     String skipHeader = originalRequest.header("skip");
-                    if(authService.isLoggedIn()){
-                        if(authService.hasTokenExpired()){
-                            Log.d("AuthTag", "TOKEN EXPIRED SO USER LOGGED OUT: " + originalRequest.url());
-                            authService.logout();
-                        }
-                    }
 
                     if ("true".equals(skipHeader)) {
                         Log.d("AuthTag", "Skipping token for request: " + originalRequest.url());

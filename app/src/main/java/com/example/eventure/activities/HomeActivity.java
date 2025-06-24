@@ -24,6 +24,7 @@ import androidx.navigation.ui.NavigationUI;
 //import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.eventure.R;
 import com.example.eventure.clients.ClientUtils;
+import com.example.eventure.clients.NotificationSocketManager;
 import com.example.eventure.utils.MenuUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
@@ -47,6 +48,7 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_home);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -159,6 +161,12 @@ public class HomeActivity extends AppCompatActivity {
             finish();
             startActivity(intent);
         });
+
+        //connect to socket if user is already logged in
+        if (ClientUtils.getAuthService().isLoggedIn()) {
+            int userId = ClientUtils.getAuthService().getUserId();
+            NotificationSocketManager.getInstance().connect(getApplicationContext(), userId);
+        }
 
     }
 

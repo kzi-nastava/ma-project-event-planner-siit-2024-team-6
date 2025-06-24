@@ -72,7 +72,13 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
         public void bind(EventDTO event) {
 
-            String photo = event.getPhotos().get(0);
+            //String photo = event.getPhotos().get(0);
+
+            List<String> photos = event.getPhotos();
+            String photo = null;
+            if (photos != null && !photos.isEmpty()) {
+                photo = photos.get(0);
+            }
 
             Glide.with(eventImage.getContext())
                     .load(photo)

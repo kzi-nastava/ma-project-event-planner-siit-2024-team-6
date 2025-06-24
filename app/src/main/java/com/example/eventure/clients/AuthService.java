@@ -13,6 +13,8 @@ import com.example.eventure.R;
 import com.example.eventure.activities.LoginActivity;
 import com.example.eventure.fragments.LoginFragment;
 
+import java.util.Date;
+
 public class AuthService {
 
     private static final String SHARED_PREFS = "auth_prefs";
@@ -88,19 +90,32 @@ public class AuthService {
     }
     public boolean hasTokenExpired() {
         String token = sharedPreferences.getString(TOKEN_KEY, null);
+        if (token == null || token.isEmpty()) {
+            Log.e("TokenTag", "Token is null or empty!");
+            return true;
+        }
+
         try {
             JWT jwt = new JWT(token);
-            return jwt.isExpired(10); // Check expiration with 10 seconds leeway
+            Date expirationDate = jwt.getExpiresAt();
+            long currentTime = System.currentTimeMillis();
+            long expirationTime = expirationDate.getTime();
+
+            boolean expired = expirationTime <= currentTime;
+            return expired;
         } catch (Exception e) {
             Log.e("AuthTag", "Error checking token expiration", e);
+            return true;
         }
-        return false;
     }
+
+
 
     /**
      * Logout the user by removing the token from shared preferences.
      */
     public void logout() {
+        Log.d("NotificationSocket","logout");
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.remove(TOKEN_KEY);
         editor.remove(MUTED_KEY);

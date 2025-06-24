@@ -126,9 +126,65 @@
             <CheckBox
                 android:id="@+id/event_is_public_checkbox"
                 android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <!-- Public/Private Selection -->
+            <RadioGroup
+                android:id="@+id/event_visibility_group"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Public Event"
-                android:layout_marginTop="16dp" />
+                android:visibility="gone"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/event_public_radio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Public"
+                    android:checked="true" />
+
+                <RadioButton
+                    android:id="@+id/event_private_radio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Private" />
+            </RadioGroup>
+
+            <!-- Invitations Section (Visible only if Private is selected) -->
+            <LinearLayout
+                android:id="@+id/invitations_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:layout_marginTop="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Invitations (emails)"
+                    android:textSize="18sp" />
+
+                <EditText
+                    android:id="@+id/invitation_email_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Enter email and press Add" />
+
+                <Button
+                    android:id="@+id/add_invitation_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Add Email" />
+
+                <TextView
+                    android:id="@+id/invitations_list_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textSize="16sp"
+                    android:layout_marginTop="8dp" />
+            </LinearLayout>
+
 
             <!-- Photos -->
             <TextView
