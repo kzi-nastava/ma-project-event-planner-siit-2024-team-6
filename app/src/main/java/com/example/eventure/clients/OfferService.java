@@ -150,4 +150,16 @@ public interface OfferService {
     @GET("offers/{offerId}/rating")
     Call<Double> getRating(@Path("offerId") int offerId);
 
+    @POST("products")
+    Call<Offer> createProviderProduct(@Body NewOfferDTO newOffer);
+
+    @PUT("products/{productId}")
+    Call<Offer> editProviderProduct(@Path("productId") int offerId, @Body NewOfferDTO dto);
+
+    @DELETE("products/{productId}")
+    Call<Void> deleteProviderProduct(@Path("productId") int id);
+
+    @GET("providers/my-products")
+    Call<PagedResponse<Offer>> getMyProducts(@Query("page") int page, @Query("size") int size);
+
 }

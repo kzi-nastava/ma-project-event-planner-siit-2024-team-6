@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_provider_products"
+    app:startDestination="@id/products_menu">
+
+    <fragment
+        android:id="@+id/products_menu"
+        android:name="com.example.eventure.fragments.ProviderProductsFragment"
+        android:label="products"
+        tools:layout="@layout/fragment_provider_products"
+        app:popUpToInclusive="true" />
+</navigation>
