@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
 import androidx.paging.PagedList;
 import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.DiffUtil;
@@ -19,6 +20,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.eventure.R;
+import com.example.eventure.dialogs.EventDetailsDialog;
+import com.example.eventure.dialogs.EventOrganizerDetailsDialog;
 import com.example.eventure.model.Event;
 
 import java.time.format.DateTimeFormatter;
@@ -35,11 +38,13 @@ public class OrganizerEventAdapter extends PagedListAdapter<Event, OrganizerEven
 
     private final OnEditClickListener onEditClickListener;
     private final OnDeleteClickListener onDeleteClickListener;
+    private final FragmentActivity activity;
 
-    public OrganizerEventAdapter(OnEditClickListener editListener, OnDeleteClickListener deleteListener) {
+    public OrganizerEventAdapter(OnEditClickListener editListener, OnDeleteClickListener deleteListener, FragmentActivity activity) {
         super(DIFF_CALLBACK);
         this.onEditClickListener = editListener;
         this.onDeleteClickListener = deleteListener;
+        this.activity = activity;
     }
 
     private static final DiffUtil.ItemCallback<Event> DIFF_CALLBACK = new DiffUtil.ItemCallback<Event>() {
@@ -106,6 +111,11 @@ public class OrganizerEventAdapter extends PagedListAdapter<Event, OrganizerEven
         holder.deleteButton.setOnClickListener(v -> {
             if (onDeleteClickListener != null) onDeleteClickListener.onDelete(event);
         });
+        holder.itemView.setOnClickListener(v -> {
+            EventOrganizerDetailsDialog dialog = EventOrganizerDetailsDialog.newInstance(event);
+            dialog.show(activity.getSupportFragmentManager(), "EventOrganizerDetailsDialog");
+        });
+
     }
 
 

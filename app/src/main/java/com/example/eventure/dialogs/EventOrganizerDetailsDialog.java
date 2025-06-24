@@ -35,14 +35,14 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class EventDetailsDialog extends DialogFragment {
+public class EventOrganizerDetailsDialog extends DialogFragment {
 
     private Event event;
     private boolean isFavorited;
     private ImageButton btnFavorite;
 
-    public static EventDetailsDialog newInstance(Event event) {
-        EventDetailsDialog fragment = new EventDetailsDialog();
+    public static EventOrganizerDetailsDialog newInstance(Event event) {
+        EventOrganizerDetailsDialog fragment = new EventOrganizerDetailsDialog();
         Bundle args = new Bundle();
         args.putParcelable("event", event);
         fragment.setArguments(args);
@@ -54,7 +54,7 @@ public class EventDetailsDialog extends DialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_event_details_dialog, container, false);
+        View view = inflater.inflate(R.layout.fragment_event_organizer_details_dialog, container, false);
 
         if (getArguments() != null) {
             event = getArguments().getParcelable("event");
@@ -172,22 +172,6 @@ public class EventDetailsDialog extends DialogFragment {
         });
 
 
-        Button btnJoin = view.findViewById(R.id.btn_join);
-        btnJoin.setOnClickListener(v -> {
-            ClientUtils.eventService.isParticipating(event.getId()).enqueue(new Callback<Boolean>() {
-                @Override
-                public void onResponse(Call<Boolean> call, Response<Boolean> response) {
-                    if (response.isSuccessful() && response.body() != null) {
-                        updateJoinButton(view, btnJoin, response.body());
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<Boolean> call, Throwable t) {
-                    Snackbar.make(view, "Failed to check participation", Snackbar.LENGTH_SHORT).show();
-                }
-            });
-        });
 
         Button btnInfo = view.findViewById(R.id.btn_download_info);
         btnInfo.setOnClickListener(v -> {

@@ -25,6 +25,8 @@ public interface OrganizerService {
     Call<List<EventDTO>> getFutureEventsForOrganizer();
     @GET("organizers/events/{eventId}/getAgendaPDF")
     Call<okhttp3.ResponseBody> getAgendaPdf(@retrofit2.http.Path("eventId") int eventId);
+    @GET("events/{eventId}/getEventStatisticsPDF")
+    Call<okhttp3.ResponseBody> getEventStatisticsPDF(@retrofit2.http.Path("eventId") int eventId);
     @POST("organizers/events")
     Call<EventDTO> createEvent(
             @Body NewEventDTO newEvent
