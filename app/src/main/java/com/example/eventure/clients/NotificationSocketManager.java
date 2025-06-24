@@ -49,7 +49,7 @@ public class NotificationSocketManager {
                             .subscribe(message -> {
                                 String json = message.getPayload();
                                 Log.d(TAG, "Received: " + json);
-                                NotificationDTO notification = new Gson().fromJson(json, NotificationDTO.class);
+                                        NotificationDTO notification = ClientUtils.gson.fromJson(json, NotificationDTO.class);
 
                                 if (!authService.isMuted()) {
                                     // Show Android system notification only if not muted
