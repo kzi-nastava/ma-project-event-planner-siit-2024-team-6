@@ -21,12 +21,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.eventure.R;
-import com.example.eventure.adapters.ProviderOfferAdapter;
 import com.example.eventure.adapters.ProviderProductAdapter;
 import com.example.eventure.clients.ClientUtils;
 import com.example.eventure.dialogs.EditProductDialog;
 import com.example.eventure.model.Offer;
 import com.example.eventure.viewmodel.ProviderOfferViewModel;
+import com.example.eventure.viewmodel.ProviderProductViewModel;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.slider.RangeSlider;
@@ -44,7 +44,7 @@ public class ProviderProductsFragment extends Fragment {
     private RecyclerView recyclerView;
     private ProviderProductAdapter productAdapter;
     private ProgressBar progressBar;
-    private ProviderOfferViewModel offerViewModel;
+    private ProviderProductViewModel providerProductViewModel;
     private Spinner eventTypeSpinner;
     private Spinner categorySpinner;
     private TextView emptyView;
@@ -63,7 +63,7 @@ public class ProviderProductsFragment extends Fragment {
 
         productAdapter = new ProviderProductAdapter(offer -> {
             EditProductDialog dialog = EditProductDialog.newInstance(offer);
-            dialog.setOnOfferUpdatedListener(() -> offerViewModel.refresh());
+            dialog.setOnOfferUpdatedListener(() -> providerProductViewModel.refresh());
             dialog.show(getChildFragmentManager(), "EditProductDialog");
         }, offer -> showDeleteConfirmationDialog(offer));
 
@@ -72,15 +72,15 @@ public class ProviderProductsFragment extends Fragment {
         progressBar.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.GONE);
 
-        offerViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
+        providerProductViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
             @NonNull
             @Override
             public <T extends androidx.lifecycle.ViewModel> T create(@NonNull Class<T> modelClass) {
-                return (T) new ProviderOfferViewModel(10);
+                return (T) new ProviderProductViewModel(10);
             }
-        }).get(ProviderOfferViewModel.class);
+        }).get(ProviderProductViewModel.class);
 
-        offerViewModel.getPagedOffers().observe(getViewLifecycleOwner(), pagedList -> {
+        providerProductViewModel.getPagedProducts().observe(getViewLifecycleOwner(), pagedList -> {
             productAdapter.submitList(pagedList);
             progressBar.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
@@ -160,7 +160,7 @@ public class ProviderProductsFragment extends Fragment {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    offerViewModel.refresh();
+                    providerProductViewModel.refresh();
                     showSnackbar("Product deleted successfully");
                 } else {
                     showSnackbar("Error: failed to delete product. Code: " + response.code());
@@ -181,7 +181,7 @@ public class ProviderProductsFragment extends Fragment {
     public void searchProducts(String query) {
         progressBar.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.GONE);
-        offerViewModel.searchOffers(query);
+        providerProductViewModel.searchProducts(query);
         progressBar.setVisibility(View.GONE);
         recyclerView.setVisibility(View.VISIBLE);
     }
@@ -233,6 +233,6 @@ public class ProviderProductsFragment extends Fragment {
     }
 
     private void filterOffers(String category, String eventType, Boolean onSale, Boolean isAvailable, Double price) {
-        offerViewModel.filterOffers(category, eventType, onSale, isAvailable, price);
+        providerProductViewModel.filterProducts(category, eventType, onSale, isAvailable, price);
     }
 }
