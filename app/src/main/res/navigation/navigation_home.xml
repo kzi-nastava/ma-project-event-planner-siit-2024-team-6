@@ -43,6 +43,11 @@
         android:name="com.example.eventure.fragments.RegisterFragment"
         android:label="Login"
         tools:layout="@layout/fragment_register" />
+
+    <fragment
+        android:id="@+id/quickRegisterFragment"
+        android:name="com.example.eventure.fragments.QuickRegisterFragment"
+        tools:layout="@layout/fragment_quick_register" />
     <!-- Уведомления -->
     <fragment
         android:id="@+id/nav_notifications"
