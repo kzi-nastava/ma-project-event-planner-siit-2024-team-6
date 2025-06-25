@@ -22,11 +22,9 @@ public class AdminEventTypeDataSource extends PageKeyedDataSource<Integer, Event
 
     private static final int FIRST_PAGE = 0;
     private final int pageSize;
-    private final String searchQuery;
 
-    public AdminEventTypeDataSource(int pageSize, String searchQuery) {
+    public AdminEventTypeDataSource(int pageSize) {
         this.pageSize = pageSize;
-        this.searchQuery = searchQuery;
     }
 
     @Override
@@ -36,12 +34,11 @@ public class AdminEventTypeDataSource extends PageKeyedDataSource<Integer, Event
 
         try {
             Response<PagedResponse<EventTypeDTO>> response = ClientUtils.adminService
-                    .getPagedEventTypes(FIRST_PAGE, pageSize, searchQuery)
-                    .execute(); // блокирующий вызов
+                    .getPagedEventTypes(FIRST_PAGE, pageSize) // ✅ только два аргумента
+                    .execute();
 
             if (response.isSuccessful() && response.body() != null) {
                 List<EventType> eventTypes = convert(response.body().getContent());
-                Log.d("AdminEventTypeDataSource", "Fetched " + eventTypes.size() + " event types from backend");
                 callback.onResult(eventTypes, null, FIRST_PAGE + 1);
             } else {
                 Log.e("AdminEventTypeDataSource", "Initial load failed: " + response.code());
@@ -52,14 +49,16 @@ public class AdminEventTypeDataSource extends PageKeyedDataSource<Integer, Event
     }
 
     @Override
-    public void loadBefore(@NonNull LoadParams<Integer> params, @NonNull LoadCallback<Integer, EventType> callback) {
-        // не используется
+    public void loadBefore(@NonNull LoadParams<Integer> params,
+                           @NonNull LoadCallback<Integer, EventType> callback) {
+        // Not used
     }
 
     @Override
-    public void loadAfter(@NonNull LoadParams<Integer> params, @NonNull LoadCallback<Integer, EventType> callback) {
+    public void loadAfter(@NonNull LoadParams<Integer> params,
+                          @NonNull LoadCallback<Integer, EventType> callback) {
         Log.d("AdminEventTypeDataSource", "Loading next page: " + params.key);
-        ClientUtils.adminService.getPagedEventTypes(params.key, pageSize, searchQuery)
+        ClientUtils.adminService.getPagedEventTypes(params.key, pageSize)
                 .enqueue(new Callback<PagedResponse<EventTypeDTO>>() {
                     @Override
                     public void onResponse(Call<PagedResponse<EventTypeDTO>> call, Response<PagedResponse<EventTypeDTO>> response) {
@@ -83,7 +82,6 @@ public class AdminEventTypeDataSource extends PageKeyedDataSource<Integer, Event
         for (EventTypeDTO dto : dtoList) {
             eventTypeList.add(new EventType(dto));
         }
-        Log.d("CONVERT", "Converted DTOs to EventTypes, count: " + dtoList.size());
         return eventTypeList;
     }
 }

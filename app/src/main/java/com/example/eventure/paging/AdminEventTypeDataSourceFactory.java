@@ -21,7 +21,7 @@ public class AdminEventTypeDataSourceFactory extends DataSource.Factory<Integer,
 
     @Override
     public DataSource<Integer, EventType> create() {
-        currentDataSource = new AdminEventTypeDataSource(pageSize, query);
+        currentDataSource = new AdminEventTypeDataSource(pageSize);
         dataSourceLiveData.postValue(currentDataSource);
         return currentDataSource;
     }

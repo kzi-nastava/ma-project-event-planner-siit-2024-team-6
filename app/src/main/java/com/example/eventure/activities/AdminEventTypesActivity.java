@@ -35,7 +35,7 @@ public class AdminEventTypesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_events);
+        setContentView(R.layout.activity_event_types);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitleTextAppearance(this, R.style.ToolbarTitleTextStyle);
@@ -43,12 +43,12 @@ public class AdminEventTypesActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        drawer = findViewById(R.id.drawer_events_layout);
+        drawer = findViewById(R.id.drawer_event_types_layout);
         NavigationView navigationView = findViewById(R.id.sidebar_view);
         String role = ClientUtils.getAuthService().getRole();
         MenuUtils.filterMenuByRole(navigationView, role);
 
-        navController = Navigation.findNavController(this, R.id.fragment_nav_content_main_home);
+        navController = Navigation.findNavController(this, R.id.fragment_nav_event_types);
 
         navigationView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
@@ -63,7 +63,7 @@ public class AdminEventTypesActivity extends AppCompatActivity {
             return true;
         });
 
-        BottomNavigationView bottomNav = findViewById(R.id.events_bottom_navigation);
+        BottomNavigationView bottomNav = findViewById(R.id.event_types_bottom_navigation);
         NavigationUI.setupWithNavController(bottomNav, navController);
         bottomNav.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
@@ -96,7 +96,7 @@ public class AdminEventTypesActivity extends AppCompatActivity {
             finish();
         });
 
-        FloatingActionButton fab = findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.fab_event_type);
         fab.setOnClickListener(view -> {
             int currentFragmentId = navController.getCurrentDestination().getId();
             if (currentFragmentId == R.id.AdminEventTypesFragment) {
@@ -108,7 +108,7 @@ public class AdminEventTypesActivity extends AppCompatActivity {
             }
         });
 
-        SearchView searchView = findViewById(R.id.search_view);
+        SearchView searchView = findViewById(R.id.search_view_event_types);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
