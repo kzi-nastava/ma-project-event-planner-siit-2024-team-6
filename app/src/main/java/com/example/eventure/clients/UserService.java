@@ -2,6 +2,7 @@ package com.example.eventure.clients;
 
 import com.example.eventure.dto.LoginDTO;
 import com.example.eventure.dto.PasswordChangeDTO;
+import com.example.eventure.dto.QuickRegistrationDTO;
 import com.example.eventure.dto.RegistrationRequestDTO;
 import com.example.eventure.dto.UserDTO;
 
@@ -12,6 +13,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
@@ -23,8 +25,13 @@ public interface UserService {
     Call<UserDTO> registerUser(@Body RegistrationRequestDTO registrationRequestDTO);
 
 //    // POST /api/users/quick-register
-//    @POST("users/quick-register")
-//    Call<Map<String, String>> quickRegister(@Body QuickRegistrationDTO quickRegistrationDTO);
+    @Headers({
+            "User-Agent: Mobile-Android",
+            "Content-Type:application/json",
+            "skip: true"
+    })
+    @POST("users/quick-register")
+    Call<UserDTO> quickRegister(@Body QuickRegistrationDTO quickRegistrationDTO);
 
     // POST /api/users/login
     @POST("users/login")
