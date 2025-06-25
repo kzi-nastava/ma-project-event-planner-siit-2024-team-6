@@ -28,4 +28,5 @@ public interface EventTypeService {
     })
     @GET(ClientUtils.ALL_EVENT_TYPES)
     Call<List<EventTypeDTO>> getAll();
+
 }

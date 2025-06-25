@@ -53,6 +53,7 @@
         android:layout_gravity="center"
         android:visibility="visible" />
 
+
     <!-- Пустой вид -->
     <TextView
         android:id="@+id/admin_empty_view"
