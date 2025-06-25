@@ -77,6 +77,7 @@ public class LoginFragment extends Fragment {
                         Log.d("AuthTag", "Login successful, role: " + authService.getRole()+" ,muted: "+authService.isMuted());
 
                         int userId = authService.getUserId();
+                        NotificationSocketManager.getInstance().disconnect();
                         NotificationSocketManager.getInstance().connect(requireContext().getApplicationContext(), userId);
 
                         Intent intent = new Intent(requireContext(), HomeActivity.class);
