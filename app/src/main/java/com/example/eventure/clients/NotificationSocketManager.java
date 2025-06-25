@@ -35,7 +35,7 @@ public class NotificationSocketManager {
         if (connected) return;
         authService = new AuthService(context);
 
-        stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, "ws://10.0.2.2:8080/socket");
+        stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, getWebSocketUrl());
 
         stompClient.lifecycle().subscribe(event -> {
             switch (event.getType()) {
@@ -104,4 +104,25 @@ public class NotificationSocketManager {
     public void removeNotificationListener() {
         this.notificationListener = null;
     }
+
+    public String getWebSocketUrl() {
+        if (isRunningOnEmulator()) {
+            // for emulator
+            return "ws://10.0.2.2:8080/socket";
+        } else {
+            // for real devices
+            return "ws://192.168.1.57:8080/socket";
+        }
+    }
+
+    private boolean isRunningOnEmulator() {
+        return android.os.Build.FINGERPRINT.startsWith("generic") ||
+                android.os.Build.FINGERPRINT.toLowerCase().contains("vbox") ||
+                android.os.Build.MODEL.contains("Emulator") ||
+                android.os.Build.MODEL.contains("Android SDK built for x86") ||
+                android.os.Build.MANUFACTURER.contains("Genymotion") ||
+                (android.os.Build.BRAND.startsWith("generic") && android.os.Build.DEVICE.startsWith("generic")) ||
+                "google_sdk".equals(android.os.Build.PRODUCT);
+    }
+
 }
