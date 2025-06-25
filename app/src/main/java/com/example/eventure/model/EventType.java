@@ -10,6 +10,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class EventType implements Parcelable, Serializable {
     @SerializedName("id")
@@ -27,7 +28,7 @@ public class EventType implements Parcelable, Serializable {
     @SerializedName("isDeleted")
     @Expose
     private Boolean isDeleted;
-
+    private List<Category> categories;
     // Default Constructor
     public EventType() {}
 
@@ -42,6 +43,29 @@ public class EventType implements Parcelable, Serializable {
         description = in.readString();
         byte tmpIsDeleted = in.readByte();
         isDeleted = tmpIsDeleted == 0 ? null : tmpIsDeleted == 1;
+    }
+
+    public EventType(String name, String description, Boolean isDeleted, List<Category> categories) {
+        this.name = name;
+        this.description = description;
+        this.isDeleted = isDeleted;
+        this.categories = categories;
+    }
+
+    public Boolean getDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
+    }
+
+    public List<Category> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(List<Category> categories) {
+        this.categories = categories;
     }
 
     public EventType(EventTypeDTO eventTypeDTO){

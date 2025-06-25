@@ -1,11 +1,15 @@
 package com.example.eventure.dto;
 
+import com.example.eventure.model.Category;
 import com.example.eventure.model.EventType;
+
+import java.util.List;
 
 public class EventTypeDTO {
     private String name;
     private String description;
     private boolean isDeleted;
+    private List<Category> categories;
 
     public EventTypeDTO(){}
     public EventTypeDTO(EventType e){
@@ -13,6 +17,30 @@ public class EventTypeDTO {
         this.name = e.getName();
         this.isDeleted = e.getIsDeleted();
     }
+
+    public EventTypeDTO(String name, String description, boolean isDeleted, List<Category> categories) {
+        this.name = name;
+        this.description = description;
+        this.isDeleted = isDeleted;
+        this.categories = categories;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
+    }
+
+    public List<Category> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(List<Category> categories) {
+        this.categories = categories;
+    }
+
     public String getName(){
         return name;
     }
