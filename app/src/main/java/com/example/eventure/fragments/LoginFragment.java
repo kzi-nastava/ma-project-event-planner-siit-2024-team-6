@@ -104,7 +104,12 @@ public class LoginFragment extends Fragment {
                         NotificationSocketManager.getInstance().disconnect();
                         NotificationSocketManager.getInstance().connect(requireContext().getApplicationContext(), userId);
 
-                        navigateToHome();
+                        // if login accessed by invitation link, accept invitation when user logged in
+                        if (receivedEventId != null) {
+                            joinEventAndNavigateHome(receivedEventId);
+                        } else {
+                            navigateToHome();
+                        }
 
 //                        Intent intent = new Intent(requireContext(), HomeActivity.class);
 //                      startActivity(intent);
@@ -134,6 +139,28 @@ public class LoginFragment extends Fragment {
         });
 
         return view;
+    }
+    private void joinEventAndNavigateHome(int eventId) {
+        ClientUtils.eventService.participate(eventId).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(getContext(), "Successfully joined event.", Toast.LENGTH_SHORT).show();
+                    Log.d("Login", "Successfully joined event with ID: " + eventId);
+                } else {
+                    Toast.makeText(getContext(), "You have already joined this event.", Toast.LENGTH_SHORT).show();
+                    Log.e("Login", "Failed to join event, code: " + response.code());
+                }
+                navigateToHome();
+
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.e("Login", "Error joining event: " + t.getMessage());
+                navigateToHome();
+            }
+        });
     }
 
     private void navigateToHome() {
