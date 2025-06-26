@@ -20,7 +20,17 @@
         <item name="android:windowIsTranslucent">false</item>
         <item name="android:windowSoftInputMode">adjustResize</item>
     </style>
+    <style name="BackButtonStyle">
+        <item name="android:backgroundTint">#8B6A9D</item>
+        <item name="android:textColor">#fff</item>
+        <item name="android:padding">10dp</item>
+    </style>
 
+    <style name="SearchButtonStyle">
+        <item name="android:backgroundTint">#3b4664</item>
+        <item name="android:textColor">#fff</item>
+        <item name="android:padding">10dp</item>
+    </style>
 
 
 
