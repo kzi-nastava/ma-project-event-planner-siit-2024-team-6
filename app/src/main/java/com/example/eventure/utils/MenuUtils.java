@@ -19,6 +19,7 @@ public class MenuUtils {
             menu.findItem(R.id.nav_admin_categories).setVisible(true);
             menu.findItem(R.id.nav_admin_manage_comments).setVisible(true);
             menu.findItem(R.id.nav_admin_manage_reports).setVisible(true);
+            menu.findItem(R.id.nav_event_types).setVisible(true);
         }
 
         if ("ROLE_PROVIDER".equalsIgnoreCase(role)) {

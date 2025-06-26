@@ -201,5 +201,6 @@ public class ClientUtils {
     public static final ChatService chatService = retrofit.create(ChatService.class);
     //public static final AuthService authService = retrofit.create(AuthService.class);
     public static final UserService userService = ClientUtils.retrofit.create(UserService.class);
+    public static final AdminService adminService = ClientUtils.retrofit.create(AdminService.class);
 
 }

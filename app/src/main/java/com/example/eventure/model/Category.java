@@ -92,4 +92,9 @@ public class Category implements Parcelable, Serializable {
             return new Category[size];
         }
     };
+    @Override
+    public String toString() {
+        return name != null ? name : "Unknown";
+    }
+
 }
