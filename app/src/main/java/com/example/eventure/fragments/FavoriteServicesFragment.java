@@ -44,7 +44,7 @@ public class FavoriteServicesFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_offer, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_favorite_offers, container, false);
 
         offerRecyclerView = rootView.findViewById(R.id.productRecyclerView);
         emptyOffers = rootView.findViewById(R.id.emptyOffers);

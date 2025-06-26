@@ -15,10 +15,10 @@
 
             <!-- Optional Title -->
             <TextView
-                android:id="@+id/favorite_events_title"
+                android:id="@+id/favorites_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Favorite Events"
+                android:text="Favorites"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 android:textColor="@android:color/black"
@@ -27,31 +27,31 @@
 
             <!-- Empty State -->
             <TextView
-                android:id="@+id/emptyEvents"
+                android:id="@+id/emptyOffers"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="No favorite events found."
-                android:gravity="center"
+                android:text="No items found."
                 android:textSize="16sp"
+                android:gravity="center"
                 android:visibility="gone"
                 android:padding="12dp" />
 
-            <!-- RecyclerView -->
+            <!-- List -->
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/eventRecyclerView"
+                android:id="@+id/productRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="true" />
 
-            <!-- Load More Button -->
+            <!-- Load More -->
             <Button
-                android:id="@+id/loadMoreEvents"
+                android:id="@+id/loadMoreOffers"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:text="Load More"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="80dp"
-                android:text="Load More"
                 android:visibility="gone" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

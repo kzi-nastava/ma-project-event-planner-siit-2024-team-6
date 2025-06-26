@@ -41,7 +41,7 @@ public class FavoriteEventsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_events, container, false);
+        View view = inflater.inflate(R.layout.fragment_favorite_events, container, false);
 
         recyclerView = view.findViewById(R.id.eventRecyclerView);
         emptyText = view.findViewById(R.id.emptyEvents);
