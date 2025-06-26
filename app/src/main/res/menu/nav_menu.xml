@@ -68,7 +68,7 @@
             android:icon="@drawable/ic_calendar" />
         <item
             android:id="@+id/nav_my_offers"
-            android:title="my offers"
+            android:title="my services"
             android:icon="@drawable/check_box_icon" />
         <item
             android:id="@+id/nav_my_products"
