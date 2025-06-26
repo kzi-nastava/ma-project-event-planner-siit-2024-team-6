@@ -33,6 +33,12 @@ public class OfferAdapter extends RecyclerView.Adapter<OfferAdapter.OfferViewHol
         this.offerList = new ArrayList<>();
         this.fragmentManager = fragmentManager;
     }
+    public void setOffers(List<OfferDTO> offers) {
+        this.offerList.clear();
+        this.offerList.addAll(offers);
+        notifyDataSetChanged();
+    }
+
 
     @NonNull
     @Override
