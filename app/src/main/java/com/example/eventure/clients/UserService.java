@@ -2,6 +2,7 @@ package com.example.eventure.clients;
 
 import com.example.eventure.dto.EventDTO;
 import com.example.eventure.dto.LoginDTO;
+import com.example.eventure.dto.OfferDTO;
 import com.example.eventure.dto.PasswordChangeDTO;
 import com.example.eventure.dto.QuickRegistrationDTO;
 import com.example.eventure.dto.RegistrationRequestDTO;
@@ -65,6 +66,11 @@ public interface UserService {
     Call<String> updateRole(@Path("id") int id, @retrofit2.http.Query("newRole") String newRole);
     @GET("events/favorites")
     Call<PagedResponse<EventDTO>> getPagedFavorites(
+            @Query("page") int page,
+            @Query("size") int size
+    );
+    @GET("offers/favoriteServices")
+    Call<PagedResponse<OfferDTO>> getFavoriteServices(
             @Query("page") int page,
             @Query("size") int size
     );
