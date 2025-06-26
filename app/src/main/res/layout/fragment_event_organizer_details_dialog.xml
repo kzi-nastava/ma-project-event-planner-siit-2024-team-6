@@ -105,6 +105,16 @@
             android:layout_width="match_parent"
             android:layout_height="300dp"
             android:layout_marginTop="16dp" />
+        <Button
+            android:id="@+id/btn_view_budget"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="View Budget"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@color/purple"
+            android:textColor="@android:color/white"
+            android:textStyle="bold" />
+
 
     </LinearLayout>
 </ScrollView>

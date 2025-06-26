@@ -18,7 +18,6 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.eventure.R;
 import com.example.eventure.activities.ChatActivity;
-import com.example.eventure.activities.HomeActivity;
 import com.example.eventure.adapters.ImageCarouselAdapter;
 import com.example.eventure.clients.ClientUtils;
 import com.example.eventure.dto.EventStatisticsDTO;
@@ -265,6 +264,13 @@ public class EventOrganizerDetailsDialog extends DialogFragment {
                 t.printStackTrace();
             }
         });
+
+        Button budgetButton = view.findViewById(R.id.btn_view_budget);
+        budgetButton.setOnClickListener(v -> {
+            OrganizerBudgetDialog dialog = OrganizerBudgetDialog.newInstance(this.event.getId());
+            dialog.show(requireActivity().getSupportFragmentManager(), "BudgetDialog");
+        });
+
 
     }
     private void drawChart(BarChart chart, EventStatisticsDTO stats) {
