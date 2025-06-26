@@ -1,10 +1,12 @@
 package com.example.eventure.clients;
 
+import com.example.eventure.dto.EventDTO;
 import com.example.eventure.dto.LoginDTO;
 import com.example.eventure.dto.PasswordChangeDTO;
 import com.example.eventure.dto.QuickRegistrationDTO;
 import com.example.eventure.dto.RegistrationRequestDTO;
 import com.example.eventure.dto.UserDTO;
+import com.example.eventure.model.PagedResponse;
 
 import java.util.List;
 import java.util.Map;
@@ -17,6 +19,7 @@ import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface UserService {
 
@@ -60,4 +63,9 @@ public interface UserService {
     // PUT /api/users/{id}/role?newRole=...
     @PUT("users/{id}/role")
     Call<String> updateRole(@Path("id") int id, @retrofit2.http.Query("newRole") String newRole);
+    @GET("events/favorites")
+    Call<PagedResponse<EventDTO>> getPagedFavorites(
+            @Query("page") int page,
+            @Query("size") int size
+    );
 }

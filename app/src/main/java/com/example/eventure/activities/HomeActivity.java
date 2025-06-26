@@ -60,7 +60,7 @@ public class HomeActivity extends AppCompatActivity {
 
         drawer = findViewById(R.id.drawer_home_layout);
         navigationView = findViewById(R.id.nav_view);
-        // Устанавливаем меню по роли
+        // menu by role
         String role = ClientUtils.getAuthService().getRole();
         MenuUtils.filterMenuByRole(navigationView, role);
 
@@ -101,8 +101,12 @@ public class HomeActivity extends AppCompatActivity {
         // Setup navigation item selection manually
         navigationView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
-
-            if (id == R.id.nav_my_offers) {
+            if (id == R.id.nav_favorite_events) {
+                navController.navigate(R.id.nav_favorite_events);
+                drawer.closeDrawer(GravityCompat.START);
+                return true;
+            }
+            else if (id == R.id.nav_my_offers) {
                 Intent intent = new Intent(HomeActivity.this, ProviderOffersActivity.class);
                 startActivity(intent);
                 drawer.closeDrawer(GravityCompat.START);

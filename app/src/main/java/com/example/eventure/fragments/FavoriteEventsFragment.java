@@ -1,66 +1,113 @@
 package com.example.eventure.fragments;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.eventure.R;
+import com.example.eventure.adapters.EventAdapter;
+import com.example.eventure.clients.ClientUtils;
+import com.example.eventure.clients.UserService;
+import com.example.eventure.dto.EventDTO;
+import com.example.eventure.model.PagedResponse;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link FavoriteEventsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class FavoriteEventsFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private RecyclerView recyclerView;
+    private EventAdapter adapter;
+    private TextView emptyText;
+    private Button loadMoreButton;
+    private UserService userService;
+    private boolean isLoading = false;
+    private int currentPage = 0;
+    private int totalItemsCount = 1;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public FavoriteEventsFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment FavoriteEventsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static FavoriteEventsFragment newInstance(String param1, String param2) {
-        FavoriteEventsFragment fragment = new FavoriteEventsFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
+    @Nullable
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_events, container, false);
+
+        recyclerView = view.findViewById(R.id.eventRecyclerView);
+        emptyText = view.findViewById(R.id.emptyEvents);
+        loadMoreButton = view.findViewById(R.id.loadMoreEvents);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapter = new EventAdapter();
+        recyclerView.setAdapter(adapter);
+        userService = ClientUtils.userService;
+
+        loadFavorites(currentPage);
+
+        loadMoreButton.setOnClickListener(v -> {
+            if (!isLoading && adapter.getItemCount() < totalItemsCount) {
+                currentPage++;
+                loadFavorites(currentPage);
+            }
+        });
+
+        return view;
+    }
+
+    private void loadFavorites(int page) {
+        isLoading = true;
+
+        userService.getPagedFavorites(page, ClientUtils.PAGE_SIZE)
+                .enqueue(new Callback<PagedResponse<EventDTO>>() {
+                    @Override
+                    public void onResponse(Call<PagedResponse<EventDTO>> call, Response<PagedResponse<EventDTO>> response) {
+                        isLoading = false;
+                        if (response.isSuccessful() && response.body() != null) {
+                            PagedResponse<EventDTO> result = response.body();
+                            totalItemsCount = result.getTotalElements();
+
+                            List<EventDTO> favorites = result.getContent();
+                            adapter.addEvents(favorites);
+                            adapter.notifyItemRangeInserted(adapter.getItemCount() - favorites.size(), favorites.size());
+
+                            toggleEmptyText();
+                            toggleLoadMoreVisibility();
+                        } else {
+                            Log.e("FavoritesFragment", "Error code: " + response.code());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<PagedResponse<EventDTO>> call, Throwable t) {
+                        isLoading = false;
+                        Log.e("FavoritesFragment", "Failed to fetch favorites", t);
+                    }
+                });
+    }
+
+    private void toggleEmptyText() {
+        if (adapter.getItemCount() == 0) {
+            emptyText.setVisibility(View.VISIBLE);
+        } else {
+            emptyText.setVisibility(View.GONE);
         }
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_favorite_events, container, false);
+    private void toggleLoadMoreVisibility() {
+        if (adapter.getItemCount() < totalItemsCount) {
+            loadMoreButton.setVisibility(View.VISIBLE);
+        } else {
+            loadMoreButton.setVisibility(View.GONE);
+        }
     }
 }
