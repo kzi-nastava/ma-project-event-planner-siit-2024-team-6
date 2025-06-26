@@ -26,6 +26,7 @@ import com.example.eventure.adapters.PriceListAdapter;
 import com.example.eventure.clients.ClientUtils;
 import com.example.eventure.dto.NewPriceListItemDTO;
 import com.example.eventure.model.PriceListItem;
+import com.example.eventure.utils.MenuUtils;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -100,6 +101,8 @@ public class ProviderPriceListActivity extends AppCompatActivity implements Pric
 
         DrawerLayout drawer = findViewById(R.id.drawer_price_list_layout);
         NavigationView navigationView = findViewById(R.id.sidebar_view);
+        String role = ClientUtils.getAuthService().getRole();
+        MenuUtils.filterMenuByRole(navigationView, role);
 
         // Set listener for navigation item clicks
         navigationView.setNavigationItemSelectedListener(item -> {
@@ -125,6 +128,8 @@ public class ProviderPriceListActivity extends AppCompatActivity implements Pric
                 startActivity(new Intent(this,AdminReportsActivity.class));
             } else if(id == R.id.nav_my_offers){
                 startActivity(new Intent(this,ProviderOffersActivity.class));
+            } else if (id == R.id.nav_my_products) {
+                startActivity(new Intent(this,ProviderProductsActivity.class));
             }
 
             drawer.closeDrawer(GravityCompat.START);

@@ -19,8 +19,10 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.eventure.R;
 import com.example.eventure.clients.AuthService;
+import com.example.eventure.clients.ClientUtils;
 import com.example.eventure.fragments.ChatFragment;
 import com.example.eventure.fragments.ChatsFragment;
+import com.example.eventure.utils.MenuUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 
@@ -53,6 +55,8 @@ public class ChatActivity extends AppCompatActivity {
 
         drawer = findViewById(R.id.drawer_chats_layout);
         navigationView = findViewById(R.id.sidebar_view);
+        String role = ClientUtils.getAuthService().getRole();
+        MenuUtils.filterMenuByRole(navigationView, role);
 
         navigationView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
@@ -82,6 +86,8 @@ public class ChatActivity extends AppCompatActivity {
                 startActivity(new Intent(this, AdminCategoriesActivity.class));
             } else if (id == R.id.nav_price_list){
                 startActivity(new Intent(this, ProviderPriceListActivity.class));
+            } else if (id == R.id.nav_my_products) {
+                startActivity(new Intent(this,ProviderProductsActivity.class));
             }
             if (fragment != null) {
                 Intent intent = new Intent(this, HomeActivity.class);
