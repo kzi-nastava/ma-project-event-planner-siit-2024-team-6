@@ -25,7 +25,7 @@
                     android:id="@+id/dialog_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Create Event Type"
+                    android:text="Edit Event Type"
                     android:textSize="24sp"
                     android:textStyle="bold"
                     android:textColor="@android:color/white"
@@ -92,7 +92,7 @@
                 android:id="@+id/submit_event_type_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Create"
+                android:text="Submit"
                 android:layout_marginTop="24dp" />
         </LinearLayout>
     </ScrollView>

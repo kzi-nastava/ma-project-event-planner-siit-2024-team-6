@@ -20,6 +20,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -29,7 +30,7 @@ public class EditEventTypeDialog extends DialogFragment {
 
     private ImageView closeIcon;
     private EditText nameInput, descriptionInput;
-    private EditText categoryInput;
+    private Spinner categorySpinner;
     private Button addCategoryButton;
     private LinearLayout selectedCategoryContainer;
     private Button submitButton;
@@ -37,8 +38,8 @@ public class EditEventTypeDialog extends DialogFragment {
     private int id;
     private String name, description;
     private boolean isDeleted;
-    private List<Category> categories = new ArrayList<>();
-
+    private List<Category> selectedCategories = new ArrayList<>();
+    private List<Category> allCategories = new ArrayList<>();
 
     public static EditEventTypeDialog newInstance(EventType eventType) {
         EditEventTypeDialog dialog = new EditEventTypeDialog();
@@ -57,7 +58,6 @@ public class EditEventTypeDialog extends DialogFragment {
             }
         }
         args.putStringArrayList("categories", catNames);
-
         dialog.setArguments(args);
         return dialog;
     }
@@ -70,29 +70,26 @@ public class EditEventTypeDialog extends DialogFragment {
             name = getArguments().getString("name");
             description = getArguments().getString("description");
             isDeleted = getArguments().getBoolean("isDeleted", false);
-            categories = new ArrayList<>();
             ArrayList<String> catNames = getArguments().getStringArrayList("categories");
             if (catNames != null) {
                 for (String name : catNames) {
                     Category c = new Category();
                     c.setName(name);
-                    categories.add(c);
+                    selectedCategories.add(c);
                 }
             }
-
-//            if (categories == null) categories = new ArrayList<>();
         }
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.dialog_create_event_type, container, false);
+        View view = inflater.inflate(R.layout.dialog_edit_event_type, container, false);
 
         closeIcon = view.findViewById(R.id.close_icon);
         nameInput = view.findViewById(R.id.event_type_name_input);
         descriptionInput = view.findViewById(R.id.event_type_description_input);
-        categoryInput = view.findViewById(R.id.category_input);
+        categorySpinner = view.findViewById(R.id.category_spinner); // ВАЖНО: добавь Spinner в xml
         addCategoryButton = view.findViewById(R.id.add_category_button);
         selectedCategoryContainer = view.findViewById(R.id.selected_category_container);
         submitButton = view.findViewById(R.id.submit_event_type_button);
@@ -101,19 +98,40 @@ public class EditEventTypeDialog extends DialogFragment {
         descriptionInput.setText(description);
 
         closeIcon.setOnClickListener(v -> dismiss());
-        addCategoryButton.setOnClickListener(v -> {
-            String newCat = categoryInput.getText().toString().trim();
-            if (!newCat.isEmpty() && categories.stream().noneMatch(c -> c.getName().equals(newCat))) {
-                Category c = new Category();
-                c.setName(newCat);
-                categories.add(c);
-                categoryInput.setText("");
-                refreshCategoryList();
+        submitButton.setOnClickListener(v -> handleUpdate());
+
+        // Загрузка всех категорий
+        ClientUtils.adminService.getAllCategories().enqueue(new Callback<List<Category>>() {
+            @Override
+            public void onResponse(Call<List<Category>> call, Response<List<Category>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    allCategories = response.body();
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),
+                            android.R.layout.simple_spinner_item,
+                            allCategories.stream().map(Category::getName).collect(Collectors.toList()));
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    categorySpinner.setAdapter(adapter);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Category>> call, Throwable t) {
+                Log.e("EditEventTypeDialog", "Failed to load categories: " + t.getMessage());
             }
         });
 
-
-        submitButton.setOnClickListener(v -> handleUpdate());
+        addCategoryButton.setOnClickListener(v -> {
+            int pos = categorySpinner.getSelectedItemPosition();
+            if (pos >= 0 && pos < allCategories.size()) {
+                Category selected = allCategories.get(pos);
+                if (!selectedCategories.contains(selected)) {
+                    selectedCategories.add(selected);
+                    refreshCategoryList();
+                } else {
+                    showSnackbar("Category already added");
+                }
+            }
+        });
 
         refreshCategoryList();
         return view;
@@ -121,19 +139,19 @@ public class EditEventTypeDialog extends DialogFragment {
 
     private void refreshCategoryList() {
         selectedCategoryContainer.removeAllViews();
-        for (Category category : categories) {
+        for (Category category : selectedCategories) {
             View item = LayoutInflater.from(getContext()).inflate(R.layout.item_category_chip, selectedCategoryContainer, false);
             TextView text = item.findViewById(R.id.category_name);
             ImageView remove = item.findViewById(R.id.remove_category_icon);
 
             text.setText(category.getName());
             remove.setOnClickListener(v -> {
-                categories.remove(category);
+                selectedCategories.remove(category);
                 refreshCategoryList();
             });
+
             selectedCategoryContainer.addView(item);
         }
-
     }
 
     private void handleUpdate() {
@@ -149,7 +167,7 @@ public class EditEventTypeDialog extends DialogFragment {
         dto.setName(updatedName);
         dto.setDescription(updatedDescription);
         dto.setDeleted(isDeleted);
-        dto.setCategories(categories);
+        dto.setCategories(selectedCategories);
 
         submitButton.setEnabled(false);
 

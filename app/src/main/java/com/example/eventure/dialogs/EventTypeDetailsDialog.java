@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -12,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.eventure.R;
+import com.example.eventure.model.Category;
 import com.example.eventure.model.EventType;
 
 public class EventTypeDetailsDialog extends DialogFragment {
@@ -31,7 +33,7 @@ public class EventTypeDetailsDialog extends DialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.admin_event_type_card, container, false);
+        View view = inflater.inflate(R.layout.dialog_event_type_details, container, false);
 
         if (getArguments() != null) {
             eventType = getArguments().getParcelable("eventType");
@@ -62,8 +64,27 @@ public class EventTypeDetailsDialog extends DialogFragment {
 
         TextView nameText = view.findViewById(R.id.event_type_title);
         TextView descriptionText = view.findViewById(R.id.event_type_description);
+        LinearLayout categoriesContainer = view.findViewById(R.id.categories_container);
 
         nameText.setText(eventType.getName());
         descriptionText.setText(eventType.getDescription());
+
+        // Добавляем категории
+        if (eventType.getCategories() != null && !eventType.getCategories().isEmpty()) {
+            for (Category category : eventType.getCategories()) {
+                TextView catView = new TextView(getContext());
+                catView.setText("• " + category.getName());
+                catView.setTextSize(16f);
+                catView.setTextColor(getResources().getColor(android.R.color.black));
+                catView.setPadding(0, 4, 0, 4);
+                categoriesContainer.addView(catView);
+            }
+        } else {
+            TextView noCats = new TextView(getContext());
+            noCats.setText("No categories.");
+            noCats.setTextColor(getResources().getColor(android.R.color.darker_gray));
+            categoriesContainer.addView(noCats);
+        }
     }
+
 }

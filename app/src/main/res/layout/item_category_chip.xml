@@ -17,6 +17,6 @@
         android:id="@+id/remove_category_icon"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:src="@drawable/ic_close"
+        android:src="@drawable/close_icon"
         android:contentDescription="Remove" />
 </LinearLayout>

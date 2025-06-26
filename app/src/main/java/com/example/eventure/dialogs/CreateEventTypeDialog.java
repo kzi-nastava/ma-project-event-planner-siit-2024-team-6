@@ -77,14 +77,29 @@ public class CreateEventTypeDialog extends DialogFragment {
             int pos = categorySpinner.getSelectedItemPosition();
             if (pos >= 0 && pos < allCategories.size()) {
                 Category selected = allCategories.get(pos);
+
                 if (!selectedCategories.contains(selected)) {
                     selectedCategories.add(selected);
-                    TextView tv = new TextView(getContext());
-                    tv.setText(selected.getName());
-                    selectedCategoryLayout.addView(tv);
+
+                    TextView categoryView = new TextView(getContext());
+                    categoryView.setText("• " + selected.getName());
+                    categoryView.setTextSize(16);
+                    categoryView.setPadding(8, 8, 8, 8);
+                    categoryView.setBackgroundColor(getResources().getColor(R.color.purple));
+                    categoryView.setOnClickListener(removeView -> {
+                        selectedCategories.remove(selected);
+                        selectedCategoryLayout.removeView(categoryView);
+                        showSnackbar("Removed: " + selected.getName());
+                    });
+
+                    selectedCategoryLayout.addView(categoryView);
+                } else {
+                    showSnackbar("Category already added");
                 }
             }
         });
+
+
         submitButton.setOnClickListener(v -> handleSubmit());
         return view;
     }
