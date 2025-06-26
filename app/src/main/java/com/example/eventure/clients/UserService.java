@@ -74,4 +74,9 @@ public interface UserService {
             @Query("page") int page,
             @Query("size") int size
     );
+    @GET("offers/favoriteProducts")
+    Call<PagedResponse<OfferDTO>> getFavoriteProducts(
+            @Query("page") int page,
+            @Query("size") int size
+    );
 }

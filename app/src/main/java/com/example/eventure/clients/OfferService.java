@@ -150,7 +150,7 @@ public interface OfferService {
     @GET("offers/{offerId}/rating")
     Call<Double> getRating(@Path("offerId") int offerId);
 
-    @POST("products")
+    @POST("providers/product")
     Call<Offer> createProviderProduct(@Body NewOfferDTO newOffer);
 
     @PUT("products/{productId}")
