@@ -72,11 +72,10 @@
     </LinearLayout>
 
     <!-- Budget item list container -->
-    <LinearLayout
-        android:id="@+id/budget_items_container"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/budget_items_recycler"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" />
+        android:layout_height="wrap_content" />
 
     <!-- Budget Summary -->
     <LinearLayout
