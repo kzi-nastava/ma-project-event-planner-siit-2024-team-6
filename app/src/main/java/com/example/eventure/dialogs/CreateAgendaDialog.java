@@ -60,8 +60,9 @@ public class CreateAgendaDialog extends DialogFragment {
 
         Button addActivityButton = view.findViewById(R.id.btn_add_activity);
         addActivityButton.setOnClickListener(v -> {
-            Snackbar.make(view, "Add activity clicked (реализация позже)", Snackbar.LENGTH_SHORT).show();
-            // TODO: открой AddActivityDialog или фрагмент
+            Snackbar.make(view, "Add activity clicked ", Snackbar.LENGTH_SHORT).show();
+            AddActivityDialog.newInstance(eventId).show(getParentFragmentManager(), "add_activity");
+
         });
 
         return view;

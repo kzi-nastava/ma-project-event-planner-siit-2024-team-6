@@ -3,6 +3,7 @@ package com.example.eventure.clients;
 import com.example.eventure.dto.ActivityDTO;
 import com.example.eventure.dto.EventDTO;
 import com.example.eventure.dto.EventStatisticsDTO;
+import com.example.eventure.dto.NewActivityDTO;
 import com.example.eventure.dto.NewEventDTO;
 
 import java.util.List;
@@ -48,5 +49,13 @@ public interface OrganizerService {
     @GET("events/{eventId}/statistics")
     Call<EventStatisticsDTO> getEventStatistics(@Path("eventId") int eventId);
 
-    Call<List<ActivityDTO>> getActivities(int eventId);
+    @GET("organizers/events/{eventId}/agenda")
+    Call<List<ActivityDTO>> getActivities(@Path("eventId") int eventId);
+
+    @DELETE("organizers/events/{eventId}/activity/{activityId}")
+    Call<Void> deleteActivity(@Path("eventId") int eventId, @Path("activityId") int activityId);
+
+    @POST("organizers/events/{eventId}/activity")
+    Call<Void> addActivity(@Path("eventId") int eventId, @Body NewActivityDTO dto);
+
 }
