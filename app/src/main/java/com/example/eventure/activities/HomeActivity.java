@@ -152,10 +152,10 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             }else if(id == R.id.nav_my_products){
-            Intent intent = new Intent(HomeActivity.this, ProviderProductsActivity.class);
-            startActivity(intent);
-            return true;
-        }else if(id == R.id.nav_event_types){
+                Intent intent = new Intent(HomeActivity.this, ProviderProductsActivity.class);
+                startActivity(intent);
+                return true;
+            }else if(id == R.id.nav_event_types){
                 Intent intent = new Intent(HomeActivity.this, AdminEventTypesActivity.class);
                 startActivity(intent);
                 return true;

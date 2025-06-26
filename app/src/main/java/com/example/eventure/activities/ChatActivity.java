@@ -19,8 +19,10 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.eventure.R;
 import com.example.eventure.clients.AuthService;
+import com.example.eventure.clients.ClientUtils;
 import com.example.eventure.fragments.ChatFragment;
 import com.example.eventure.fragments.ChatsFragment;
+import com.example.eventure.utils.MenuUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 
@@ -53,7 +55,8 @@ public class ChatActivity extends AppCompatActivity {
 
         drawer = findViewById(R.id.drawer_chats_layout);
         navigationView = findViewById(R.id.sidebar_view);
-
+        String role = ClientUtils.getAuthService().getRole();
+        MenuUtils.filterMenuByRole(navigationView, role);
         navigationView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
             String fragment = null;

@@ -21,8 +21,10 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.eventure.R;
+import com.example.eventure.clients.ClientUtils;
 import com.example.eventure.dialogs.CreateProductDialog;
 import com.example.eventure.fragments.ProviderProductsFragment;
+import com.example.eventure.utils.MenuUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -49,6 +51,8 @@ public class ProviderProductsActivity extends AppCompatActivity {
         drawer = findViewById(R.id.drawer_products_layout);
         navigationView = findViewById(R.id.sidebar_view);
         navController = Navigation.findNavController(this, R.id.fragment_nav_content_main_products);
+        String role = ClientUtils.getAuthService().getRole();
+        MenuUtils.filterMenuByRole(navigationView, role);
 
         navigationView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();

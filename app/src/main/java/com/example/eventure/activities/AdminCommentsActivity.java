@@ -23,6 +23,7 @@ import com.example.eventure.adapters.CommentAdapter;
 import com.example.eventure.clients.ClientUtils;
 import com.example.eventure.dto.ReactionDTO;
 import com.example.eventure.model.PagedResponse;
+import com.example.eventure.utils.MenuUtils;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.List;
@@ -101,6 +102,8 @@ public class AdminCommentsActivity extends AppCompatActivity {
         // Initialize DrawerLayout and NavigationView
         DrawerLayout drawer = findViewById(R.id.drawer_comments_layout);
         NavigationView navigationView = findViewById(R.id.sidebar_view);
+        String role = ClientUtils.getAuthService().getRole();
+        MenuUtils.filterMenuByRole(navigationView, role);
 
         // Set listener for navigation item clicks
         navigationView.setNavigationItemSelectedListener(item -> {

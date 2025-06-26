@@ -23,8 +23,10 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.eventure.R;
+import com.example.eventure.clients.ClientUtils;
 import com.example.eventure.dialogs.CreateServiceDialog;
 import com.example.eventure.fragments.ProviderServicesFragment;
+import com.example.eventure.utils.MenuUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -50,6 +52,8 @@ public class ProviderOffersActivity extends AppCompatActivity {
         drawer = findViewById(R.id.drawer_offers_layout);
         navigationView = findViewById(R.id.sidebar_view);
         navController = Navigation.findNavController(this, R.id.fragment_nav_content_main_home);
+        String role = ClientUtils.getAuthService().getRole();
+        MenuUtils.filterMenuByRole(navigationView, role);
 
         NavigationView navigationView = findViewById(R.id.sidebar_view);
 
