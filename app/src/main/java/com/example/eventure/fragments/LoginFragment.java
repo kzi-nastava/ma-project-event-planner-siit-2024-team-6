@@ -38,6 +38,10 @@ public class LoginFragment extends Fragment {
     private EditText etEmail, etPassword;
     private Button btnLogin;
 
+    private String receivedEmail = null;
+    private Integer receivedEventId = null;
+
+
     public LoginFragment() {
         // Required empty public constructor
     }
@@ -48,13 +52,33 @@ public class LoginFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_login, container, false);
 
+        if (getArguments() != null) {
+            receivedEmail = getArguments().getString("email", null);
+            if (getArguments().containsKey("eventId")) {
+                receivedEventId = getArguments().getInt("eventId");
+            }
+        }
+        Log.d("AuthTag","LOGIN PARAMS");
+        Log.d("AuthTag",String.valueOf(receivedEmail));
+        Log.d("AuthTag",String.valueOf(receivedEventId));
+
         etEmail = view.findViewById(R.id.etEmail);
+        if( receivedEmail != null){
+            etEmail.setText(receivedEmail);
+            etEmail.setEnabled(false);
+        }
+
         etPassword = view.findViewById(R.id.etPassword);
         btnLogin = view.findViewById(R.id.btnLogin);
 
         btnLogin.setOnClickListener(v -> {
             String email = etEmail.getText().toString();
             String password = etPassword.getText().toString();
+
+            if (email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(getContext(), "Email and password cannot be empty", Toast.LENGTH_SHORT).show();
+                return;
+            }
             if (email.isEmpty() || password.isEmpty()) {
                 Log.d("Login", "Email or Password is empty");
                 // Показать сообщение об ошибке пользователю
@@ -80,8 +104,15 @@ public class LoginFragment extends Fragment {
                         NotificationSocketManager.getInstance().disconnect();
                         NotificationSocketManager.getInstance().connect(requireContext().getApplicationContext(), userId);
 
-                        Intent intent = new Intent(requireContext(), HomeActivity.class);
-                        startActivity(intent);
+                        // if login accessed by invitation link, accept invitation when user logged in
+                        if (receivedEventId != null) {
+                            joinEventAndNavigateHome(receivedEventId);
+                        } else {
+                            navigateToHome();
+                        }
+
+//                        Intent intent = new Intent(requireContext(), HomeActivity.class);
+//                      startActivity(intent);
                     } else if (response.code() == 403) {
                         try {
                             String errorString = response.errorBody().string();
@@ -109,5 +140,33 @@ public class LoginFragment extends Fragment {
 
         return view;
     }
+    private void joinEventAndNavigateHome(int eventId) {
+        ClientUtils.eventService.participate(eventId).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(getContext(), "Successfully joined event.", Toast.LENGTH_SHORT).show();
+                    Log.d("Login", "Successfully joined event with ID: " + eventId);
+                } else {
+                    Toast.makeText(getContext(), "You have already joined this event.", Toast.LENGTH_SHORT).show();
+                    Log.e("Login", "Failed to join event, code: " + response.code());
+                }
+                navigateToHome();
+
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.e("Login", "Error joining event: " + t.getMessage());
+                navigateToHome();
+            }
+        });
+    }
+
+    private void navigateToHome() {
+        Intent intent = new Intent(requireContext(), HomeActivity.class);
+        startActivity(intent);
+    }
+
 
 }

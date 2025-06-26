@@ -106,9 +106,9 @@ public class QuickRegisterFragment extends Fragment {
                 if (response.isSuccessful()) {
                     NavController navController = NavHostFragment.findNavController(QuickRegisterFragment.this);
                     Toast.makeText(requireContext(), "Registration successful! Please log in.", Toast.LENGTH_SHORT).show();
-                    navController.navigate(R.id.loginFragment); // Убедись, что ID совпадает с тем, что у тебя в nav_graph.xml
-
-//                    startActivity(new Intent(requireContext(), HomeActivity.class));
+                    Bundle bundle = new Bundle();
+                    bundle.putString("email", email);
+                    navController.navigate(R.id.loginFragment, bundle);
                 } else {
                     Toast.makeText(requireContext(), "Registration failed", Toast.LENGTH_SHORT).show();
                     Log.e("Register", "Server error: " + response.code());
