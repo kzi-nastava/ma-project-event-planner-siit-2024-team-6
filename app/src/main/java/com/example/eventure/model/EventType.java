@@ -72,6 +72,8 @@ public class EventType implements Parcelable, Serializable {
         name = eventTypeDTO.getName();
         description = eventTypeDTO.getDescription();
         isDeleted = eventTypeDTO.getIsDeleted();
+        categories = eventTypeDTO.getCategories();
+        id = eventTypeDTO.getId();
     }
 
     @Override

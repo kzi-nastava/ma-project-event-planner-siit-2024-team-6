@@ -2,12 +2,14 @@ package com.example.eventure.clients;
 
 import com.example.eventure.dto.EventDTO;
 import com.example.eventure.dto.EventTypeDTO;
+import com.example.eventure.model.Category;
 import com.example.eventure.model.EventType;
 import com.example.eventure.model.PagedResponse;
 
 import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
@@ -33,11 +35,13 @@ Call<PagedResponse<EventTypeDTO>> getPagedEventTypes(
 );
 
     @POST("admins/event-types")
-    Call<EventTypeDTO> createEventType(EventTypeDTO newEventType);
+    Call<EventTypeDTO> createEventType(@Body EventTypeDTO newEventType);
     @PUT("admins/event-types/{id}")
-    Call<EventTypeDTO> updateEventType(@Path("id") int id, EventTypeDTO dto);
+    Call<EventTypeDTO> updateEventType(@Path("id") int id, @Body EventTypeDTO dto);
 
     @PUT("admins/event-types/{id}/change-status")
     Call<Void> deleteEventType(@Path("id") Integer id);
 
+    @GET("admins/categoriesNonPaged")
+    Call<List<Category>> getAllCategories();
 }

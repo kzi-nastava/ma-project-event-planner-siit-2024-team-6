@@ -24,6 +24,14 @@
             android:textSize="22sp"
             android:textStyle="bold"
             android:textColor="@android:color/black" />
+<!--        <TextView-->
+<!--        android:id="@+id/event_type_id"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="ID: 0"-->
+<!--        android:textSize="12sp"-->
+<!--        android:textColor="@android:color/darker_gray"-->
+<!--        android:layout_marginTop="4dp"/>-->
 
         <!-- Description -->
         <TextView

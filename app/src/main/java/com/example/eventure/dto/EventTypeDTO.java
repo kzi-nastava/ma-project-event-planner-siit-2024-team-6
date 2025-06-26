@@ -6,6 +6,7 @@ import com.example.eventure.model.EventType;
 import java.util.List;
 
 public class EventTypeDTO {
+    private Integer id;
     private String name;
     private String description;
     private boolean isDeleted;
@@ -16,6 +17,8 @@ public class EventTypeDTO {
         this.description = e.getDescription();
         this.name = e.getName();
         this.isDeleted = e.getIsDeleted();
+        this.id = e.getId();
+        this.categories = e.getCategories();
     }
 
     public EventTypeDTO(String name, String description, boolean isDeleted, List<Category> categories) {
@@ -23,6 +26,22 @@ public class EventTypeDTO {
         this.description = description;
         this.isDeleted = isDeleted;
         this.categories = categories;
+    }
+
+    public EventTypeDTO(Integer id, String name, String description, boolean isDeleted, List<Category> categories) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.isDeleted = isDeleted;
+        this.categories = categories;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public boolean isDeleted() {

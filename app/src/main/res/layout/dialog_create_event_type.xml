@@ -70,6 +70,25 @@
                 android:inputType="textMultiLine"
                 android:minLines="4"
                 android:gravity="top" />
+            <EditText
+                android:id="@+id/category_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Add Category"
+                android:layout_marginTop="16dp" />
+
+
+            <Button
+                android:id="@+id/add_category_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Category" />
+
+            <LinearLayout
+                android:id="@+id/selected_category_container"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
             <!-- Кнопка отправки -->
             <Button
