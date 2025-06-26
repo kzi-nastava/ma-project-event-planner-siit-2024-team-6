@@ -30,14 +30,32 @@ public class SplashScreenActivity extends AppCompatActivity {
         Animation fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in);
         fadeIn.setDuration(1000);
         textView.startAnimation(fadeIn);
+
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
+                Intent intent = new Intent(SplashScreenActivity.this, HomeActivity.class);
+
+                // Forward deep link data (for quick registration)
+                Intent incomingIntent = getIntent();
+                if (incomingIntent != null && incomingIntent.getData() != null) {
+                    intent.setData(incomingIntent.getData());
+                }
+
+                startActivity(intent);
+                finish();
+            }
+        }, SPLASH_SCREEN_DELAY);
+    }
+        /*
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+
                 Intent intent = new Intent(SplashScreenActivity.this,  HomeActivity.class);
                 startActivity(intent);
                 finish();
             }
         }, SPLASH_SCREEN_DELAY);
-
-    }
+*/
 }

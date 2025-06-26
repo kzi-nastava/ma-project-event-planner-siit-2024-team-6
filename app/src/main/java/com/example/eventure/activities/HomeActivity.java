@@ -1,6 +1,7 @@
 package com.example.eventure.activities;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -65,6 +66,7 @@ public class HomeActivity extends AppCompatActivity {
 
         navController = Navigation.findNavController(this, R.id.fragment_nav_content_main_home);
 
+        handleDeepLink(getIntent());
 
         String fragmentName = getIntent().getStringExtra("FRAGMENT_NAME");
         if (fragmentName != null) {
@@ -203,6 +205,50 @@ public class HomeActivity extends AppCompatActivity {
 //        }
 //        return true;
 //    };
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleDeepLink(intent);
+    }
+
+    private void handleDeepLink(Intent intent) {
+        if (intent != null && intent.getData() != null) {
+            Uri data = intent.getData();
+
+            final String email = data.getQueryParameter("email");
+            final String eventIdStr = data.getQueryParameter("eventId");
+            final Integer eventId = eventIdStr != null ? tryParseInt(eventIdStr) : null;
+
+
+            String host = data.getHost();
+
+            // Use post to delay navigation until after NavController is ready
+            findViewById(R.id.fragment_nav_content_main_home).post(() -> {
+                if ("quick-registration".equals(host)) {
+                    Bundle bundle = new Bundle();
+                    if (email != null) bundle.putString("email", email);
+                    if (eventId != null) bundle.putInt("eventId", eventId);
+                    navController.navigate(R.id.quickRegisterFragment, bundle);
+                } else if ("login".equals(host)) {
+                    Bundle bundle = new Bundle();
+                    if (email != null) bundle.putString("email", email);
+                    if (eventId != null) bundle.putInt("eventId", eventId);
+                    navController.navigate(R.id.loginFragment, bundle);
+                }
+            });
+        }
+    }
+    private Integer tryParseInt(String str) {
+        try {
+            return Integer.parseInt(str);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 
 
     @Override

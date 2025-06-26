@@ -38,6 +38,7 @@ public class AuthService {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(TOKEN_KEY, token);
         editor.apply();
+        Log.d("AuthTag","New token saved.");
     }
     public void saveMuted(boolean muted) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -121,14 +122,14 @@ public class AuthService {
         editor.remove(MUTED_KEY);
         editor.apply();
 
-        // Disconnect from WebSocket (notification socket)
+        // Disconnect from socket when logging out
         NotificationSocketManager.getInstance().disconnect();
 
         if (context instanceof AppCompatActivity) {
             AppCompatActivity activity = (AppCompatActivity) context;
             activity.getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.fragment_container, new LoginFragment()) // Replace with your container ID and fragment
+                    .replace(R.id.fragment_container, new LoginFragment())
                     .commit();
         } else {
             Log.e("NavigationError", "Context is not an instance of AppCompatActivity, cannot switch to fragment.");
