@@ -37,6 +37,5 @@ public class MenuUtils {
             menu.findItem(R.id.nav_favorite_products).setVisible(true);
             menu.findItem(R.id.nav_favorite_services).setVisible(true);
             menu.findItem(R.id.nav_my_calendar).setVisible(true);
-
     }
 }

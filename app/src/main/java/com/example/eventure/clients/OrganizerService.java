@@ -1,5 +1,6 @@
 package com.example.eventure.clients;
 
+import com.example.eventure.dto.ActivityDTO;
 import com.example.eventure.dto.EventDTO;
 import com.example.eventure.dto.EventStatisticsDTO;
 import com.example.eventure.dto.NewEventDTO;
@@ -46,4 +47,6 @@ public interface OrganizerService {
 
     @GET("events/{eventId}/statistics")
     Call<EventStatisticsDTO> getEventStatistics(@Path("eventId") int eventId);
+
+    Call<List<ActivityDTO>> getActivities(int eventId);
 }
