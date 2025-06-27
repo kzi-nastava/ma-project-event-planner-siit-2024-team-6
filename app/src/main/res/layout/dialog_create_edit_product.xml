@@ -40,15 +40,25 @@
                 android:text="Event Types"
                 android:textSize="20sp"
                 android:layout_marginTop="16dp" />
-            <ScrollView
+        <ScrollView
+            android:id="@+id/event_types_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"> <!-- Или сколько нужно -->
+
+            <LinearLayout
+                android:id="@+id/event_types_container"
                 android:layout_width="match_parent"
-                android:layout_height="150dp">
-                <LinearLayout
-                    android:id="@+id/event_types_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical" />
-            </ScrollView>
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+        </ScrollView>
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="150dp">-->
+<!--                <LinearLayout-->
+<!--                    android:id="@+id/event_types_container"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:orientation="vertical" />-->
+<!--            </ScrollView>-->
 
             <TextView
                 android:id="@+id/category_text"
