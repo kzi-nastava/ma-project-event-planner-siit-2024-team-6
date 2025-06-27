@@ -61,6 +61,12 @@ public class OrganizerEventsActivity extends AppCompatActivity {
                 startActivity(new Intent(this, HomeActivity.class).putExtra("FRAGMENT_NAME", "NOTIFICATIONS"));
             } else if (id == R.id.nav_my_calendar) {
                 startActivity(new Intent(this, HomeActivity.class).putExtra("FRAGMENT_NAME", "CALENDAR"));
+            } else if (id == R.id.nav_favorite_events) {
+                startActivity(new Intent(this, HomeActivity.class).putExtra("FRAGMENT_NAME", "FAVOURITE_EVENTS"));
+            } else if (id == R.id.nav_favorite_services) {
+                startActivity(new Intent(this, HomeActivity.class).putExtra("FRAGMENT_NAME", "FAVOURITE_SERVICES"));
+            } else if (id == R.id.nav_favorite_products) {
+                startActivity(new Intent(this, HomeActivity.class).putExtra("FRAGMENT_NAME", "FAVOURITE_PRODUCTS"));
             }
             drawer.closeDrawer(GravityCompat.START);
             return true;

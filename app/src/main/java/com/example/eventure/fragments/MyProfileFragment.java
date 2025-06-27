@@ -1,7 +1,6 @@
 package com.example.eventure.fragments;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -22,10 +21,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.eventure.R;
-import com.example.eventure.activities.LoginActivity;
 import com.example.eventure.clients.ClientUtils;
 import com.example.eventure.clients.UserService;
-import com.example.eventure.dto.ProviderDTO;
 import com.example.eventure.dto.UserDTO;
 
 import retrofit2.Call;

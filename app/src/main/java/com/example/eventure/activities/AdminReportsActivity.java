@@ -21,6 +21,7 @@ import com.example.eventure.adapters.ReportAdapter;
 import com.example.eventure.clients.ClientUtils;
 import com.example.eventure.dto.ReportDTO;
 import com.example.eventure.model.PagedResponse;
+import com.example.eventure.utils.MenuUtils;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.List;
@@ -100,7 +101,8 @@ public class AdminReportsActivity extends AppCompatActivity {
 
         DrawerLayout drawer = findViewById(R.id.drawer_reports_layout);
         NavigationView navigationView = findViewById(R.id.sidebar_view);
-
+        String role = ClientUtils.getAuthService().getRole();
+        MenuUtils.filterMenuByRole(navigationView, role);
         // Set listener for navigation item clicks
         navigationView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();

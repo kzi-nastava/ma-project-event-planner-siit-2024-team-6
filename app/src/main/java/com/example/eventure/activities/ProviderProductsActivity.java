@@ -21,8 +21,10 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.eventure.R;
+import com.example.eventure.clients.ClientUtils;
 import com.example.eventure.dialogs.CreateProductDialog;
 import com.example.eventure.fragments.ProviderProductsFragment;
+import com.example.eventure.utils.MenuUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -49,12 +51,23 @@ public class ProviderProductsActivity extends AppCompatActivity {
         drawer = findViewById(R.id.drawer_products_layout);
         navigationView = findViewById(R.id.sidebar_view);
         navController = Navigation.findNavController(this, R.id.fragment_nav_content_main_products);
+        String role = ClientUtils.getAuthService().getRole();
+        MenuUtils.filterMenuByRole(navigationView, role);
 
         navigationView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
-            // Можешь оставить ту же логику или адаптировать под нужды продуктов
-            if (id == R.id.nav_my_calendar) {
+            if (id == R.id.nav_messages) {
+                startActivity(new Intent(this, ChatActivity.class));
+            } else if (id == R.id.nav_notifications) {
+                startActivity(new Intent(this, HomeActivity.class).putExtra("FRAGMENT_NAME", "NOTIFICATIONS"));
+            } else if (id == R.id.nav_my_calendar) {
                 startActivity(new Intent(this, HomeActivity.class).putExtra("FRAGMENT_NAME", "CALENDAR"));
+            } else if (id == R.id.nav_favorite_events) {
+                startActivity(new Intent(this, HomeActivity.class).putExtra("FRAGMENT_NAME", "FAVOURITE_EVENTS"));
+            } else if (id == R.id.nav_favorite_services) {
+                startActivity(new Intent(this, HomeActivity.class).putExtra("FRAGMENT_NAME", "FAVOURITE_SERVICES"));
+            } else if (id == R.id.nav_favorite_products) {
+                startActivity(new Intent(this, HomeActivity.class).putExtra("FRAGMENT_NAME", "FAVOURITE_PRODUCTS"));
             }
             drawer.closeDrawer(GravityCompat.START);
             return true;

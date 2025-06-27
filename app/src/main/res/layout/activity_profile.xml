@@ -7,12 +7,19 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     tools:openDrawer="start"
-    android:id="@+id/drawer_layout">
+    android:id="@+id/drawer_profile_layout">
 
-    <include
-        android:id="@+id/activity_profile_base"
-        layout="@layout/activity_profile_base"
-        />
+    <!-- Базовый layout с тулбаром и фрагментами -->
+    <include layout="@layout/activity_profile_base" />
+
+    <!-- NavigationView для drawer-меню -->
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:menu="@menu/nav_menu" />
 
 <!--    <com.google.android.material.navigation.NavigationView-->
 <!--        android:id="@+id/nav_view"-->

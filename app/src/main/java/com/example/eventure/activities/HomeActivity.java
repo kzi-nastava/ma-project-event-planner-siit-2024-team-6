@@ -106,6 +106,16 @@ public class HomeActivity extends AppCompatActivity {
                 drawer.closeDrawer(GravityCompat.START);
                 return true;
             }
+            else if (id == R.id.nav_favorite_services) {
+                navController.navigate(R.id.nav_favorite_services);
+                drawer.closeDrawer(GravityCompat.START);
+                return true;
+            }
+            else if (id == R.id.nav_favorite_products) {
+                navController.navigate(R.id.nav_favorite_products);
+                drawer.closeDrawer(GravityCompat.START);
+                return true;
+            }
             else if (id == R.id.nav_my_offers) {
                 Intent intent = new Intent(HomeActivity.this, ProviderOffersActivity.class);
                 startActivity(intent);
@@ -142,10 +152,10 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             }else if(id == R.id.nav_my_products){
-            Intent intent = new Intent(HomeActivity.this, ProviderProductsActivity.class);
-            startActivity(intent);
-            return true;
-        }else if(id == R.id.nav_event_types){
+                Intent intent = new Intent(HomeActivity.this, ProviderProductsActivity.class);
+                startActivity(intent);
+                return true;
+            }else if(id == R.id.nav_event_types){
                 Intent intent = new Intent(HomeActivity.this, AdminEventTypesActivity.class);
                 startActivity(intent);
                 return true;

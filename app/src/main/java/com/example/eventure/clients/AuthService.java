@@ -1,16 +1,13 @@
 package com.example.eventure.clients;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.auth0.android.jwt.JWT;
 import com.example.eventure.R;
-import com.example.eventure.activities.LoginActivity;
 import com.example.eventure.fragments.LoginFragment;
 
 import java.util.Date;
