@@ -177,7 +177,7 @@ private void showUrlDialog(String title, UrlCallback callback) {
                 if (response.isSuccessful()) {
                     Toast.makeText(requireContext(), "Registration successful!", Toast.LENGTH_SHORT).show();
 
-                    NavController navController = Navigation.findNavController(requireActivity(), R.id.fragment_nav_content_main);
+                    NavController navController = Navigation.findNavController(requireActivity(), R.id.fragment_nav_content_main_profile);
                     Toast.makeText(requireContext(), "Registration successful! Please log in.", Toast.LENGTH_SHORT).show();
                     navController.navigate(R.id.loginFragment); // Убедись, что ID совпадает с тем, что у тебя в nav_graph.xml
 
