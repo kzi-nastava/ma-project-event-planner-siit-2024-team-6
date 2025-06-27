@@ -1,19 +1,17 @@
 package com.example.eventure.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.eventure.R;
 import com.example.eventure.adapters.CalendarAdapter;
@@ -24,30 +22,33 @@ import com.example.eventure.dto.CalendarItemDTO;
 import com.example.eventure.model.Event;
 import com.example.eventure.model.Offer;
 import com.kizitonwose.calendar.core.CalendarDay;
+import com.kizitonwose.calendar.core.CalendarMonth;
 import com.kizitonwose.calendar.view.CalendarView;
 import com.kizitonwose.calendar.view.MonthDayBinder;
 import com.kizitonwose.calendar.view.ViewContainer;
 
-
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-
 public class MyCalendarFragment extends Fragment {
 
     private CalendarView calendarView;
     private RecyclerView eventRecycler;
-    private Map<LocalDate, List<CalendarItemDTO>> itemsByDate = new HashMap<>();
-    private List<CalendarItemDTO> selectedItems = new ArrayList<>();
+    private TextView monthTextView;
+
+    private final Map<LocalDate, List<CalendarItemDTO>> itemsByDate = new HashMap<>();
+    private final List<CalendarItemDTO> selectedItems = new ArrayList<>();
     private CalendarAdapter adapter;
 
     @Nullable
@@ -56,12 +57,17 @@ public class MyCalendarFragment extends Fragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_my_calendar, container, false);
+
         calendarView = view.findViewById(R.id.calendarView);
         eventRecycler = view.findViewById(R.id.eventRecycler);
+        monthTextView = view.findViewById(R.id.monthTextView); // добавь в XML
+
         adapter = new CalendarAdapter(selectedItems, this::onItemClick);
-        eventRecycler.setAdapter(adapter);
         eventRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        eventRecycler.setAdapter(adapter);
+
         fetchCalendarItems();
+
         return view;
     }
 
@@ -86,11 +92,18 @@ public class MyCalendarFragment extends Fragment {
 
     private void initCalendar() {
         calendarView.setup(
-                YearMonth.from(LocalDate.now().minusMonths(6)),
-                YearMonth.from(LocalDate.now().plusMonths(6)),
+                YearMonth.now().minusMonths(6),
+                YearMonth.now().plusMonths(6),
                 DayOfWeek.MONDAY
         );
         calendarView.scrollToDate(LocalDate.now());
+
+        calendarView.setMonthScrollListener(month -> {
+            String title = month.getYearMonth().getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault())
+                    + " " + month.getYearMonth().getYear();
+            monthTextView.setText(title);
+            return null;
+        });
 
         calendarView.setDayBinder(new MonthDayBinder<DayViewContainer>() {
             @NonNull
@@ -101,11 +114,20 @@ public class MyCalendarFragment extends Fragment {
 
             @Override
             public void bind(@NonNull DayViewContainer container, @NonNull CalendarDay day) {
-                container.textView.setText(String.valueOf(day.getDate().getDayOfMonth()));
+                TextView tv = container.textView;
+                tv.setText(String.valueOf(day.getDate().getDayOfMonth()));
+
+                boolean hasItems = itemsByDate.containsKey(day.getDate());
+
+                if (hasItems) {
+                    tv.setBackgroundResource(R.drawable.bg_day_with_event);
+                } else {
+                    tv.setBackgroundResource(R.drawable.bg_day_default);
+                }
+
                 container.getView().setOnClickListener(v -> onDateSelected(day.getDate()));
             }
         });
-
     }
 
     private void onDateSelected(LocalDate date) {
@@ -152,7 +174,6 @@ public class MyCalendarFragment extends Fragment {
             });
         }
     }
-
 
     class DayViewContainer extends ViewContainer {
         final TextView textView;
