@@ -56,9 +56,18 @@ public class ProviderProductsActivity extends AppCompatActivity {
 
         navigationView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
-            // Можешь оставить ту же логику или адаптировать под нужды продуктов
-            if (id == R.id.nav_my_calendar) {
+            if (id == R.id.nav_messages) {
+                startActivity(new Intent(this, ChatActivity.class));
+            } else if (id == R.id.nav_notifications) {
+                startActivity(new Intent(this, HomeActivity.class).putExtra("FRAGMENT_NAME", "NOTIFICATIONS"));
+            } else if (id == R.id.nav_my_calendar) {
                 startActivity(new Intent(this, HomeActivity.class).putExtra("FRAGMENT_NAME", "CALENDAR"));
+            } else if (id == R.id.nav_favorite_events) {
+                startActivity(new Intent(this, HomeActivity.class).putExtra("FRAGMENT_NAME", "FAVOURITE_EVENTS"));
+            } else if (id == R.id.nav_favorite_services) {
+                startActivity(new Intent(this, HomeActivity.class).putExtra("FRAGMENT_NAME", "FAVOURITE_SERVICES"));
+            } else if (id == R.id.nav_favorite_products) {
+                startActivity(new Intent(this, HomeActivity.class).putExtra("FRAGMENT_NAME", "FAVOURITE_PRODUCTS"));
             }
             drawer.closeDrawer(GravityCompat.START);
             return true;

@@ -86,14 +86,6 @@ public class AdminEventTypesActivity extends AppCompatActivity {
                 Intent intent = new Intent(AdminEventTypesActivity.this, ProviderPriceListActivity.class);
                 startActivity(intent);
                 return true;
-            } else if(id == R.id.nav_my_events){
-                Intent intent = new Intent(AdminEventTypesActivity.this, OrganizerEventsActivity.class);
-                startActivity(intent);
-                return true;
-            }else if(id == R.id.nav_my_products){
-                Intent intent = new Intent(AdminEventTypesActivity.this, ProviderProductsActivity.class);
-                startActivity(intent);
-                return true;
             }
             drawer.closeDrawer(GravityCompat.START);
             return true;
