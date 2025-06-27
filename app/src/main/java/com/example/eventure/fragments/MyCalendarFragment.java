@@ -130,10 +130,9 @@ public class MyCalendarFragment extends Fragment {
     class DayViewContainer extends ViewContainer {
         final TextView textView;
 
-        public DayViewContainer(@NonNull View view) {
+        public DayViewContainer(View view) {
             super(view);
-            textView = new TextView(view.getContext());
-            ((ViewGroup) view).addView(textView);
+            textView = view.findViewById(R.id.calendarDayText);
         }
     }
 }
