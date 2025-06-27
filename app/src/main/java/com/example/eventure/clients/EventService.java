@@ -3,6 +3,7 @@ package com.example.eventure.clients;
 import com.example.eventure.dto.EventDTO;
 import com.example.eventure.dto.EventTypeDTO;
 import com.example.eventure.dto.UserDTO;
+import com.example.eventure.model.Event;
 import com.example.eventure.model.PagedResponse;
 
 import java.util.List;
@@ -101,4 +102,6 @@ public interface EventService {
     Call<UserDTO> getEventOrganizer(
             @Path("eventId") int eventId
     );
+    @GET("events/{id}")
+    Event getById(@Path("id") int id);
 }

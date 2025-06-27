@@ -102,5 +102,5 @@ dependencies {
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
     implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
-    implementation ("com.kizitonwose.calendar:view:2.0.3")
+    implementation ("com.kizitonwose.calendar:view:2.3.0")
 }
