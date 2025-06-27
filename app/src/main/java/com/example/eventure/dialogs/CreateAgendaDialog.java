@@ -64,6 +64,12 @@ public class CreateAgendaDialog extends DialogFragment {
             AddActivityDialog.newInstance(eventId).show(getParentFragmentManager(), "add_activity");
 
         });
+        getParentFragmentManager().setFragmentResultListener("agendaRefreshRequest", this, (key, bundle) -> {
+            boolean refresh = bundle.getBoolean("refreshAgenda", false);
+            if (refresh) {
+                loadActivities(); // снова загрузить активности
+            }
+        });
 
         return view;
     }
@@ -77,16 +83,24 @@ public class CreateAgendaDialog extends DialogFragment {
                     activityList.addAll(response.body());
                     adapter.notifyDataSetChanged();
                 } else {
-                    Snackbar.make(requireView(), "Failed to load activities", Snackbar.LENGTH_SHORT).show();
+                    View root = getView();
+                    if (root != null) {
+                        Snackbar.make(root, "Failed to load activities", Snackbar.LENGTH_SHORT).show();
+                    }
                 }
             }
 
             @Override
             public void onFailure(Call<List<ActivityDTO>> call, Throwable t) {
-                Snackbar.make(requireView(), "Network error", Snackbar.LENGTH_SHORT).show();
+                t.printStackTrace(); // лог в Logcat
+                View root = getView();
+                if (root != null) {
+                    Snackbar.make(root, "Network error: " + t.getClass().getSimpleName(), Snackbar.LENGTH_SHORT).show();
+                }
             }
         });
     }
+
 
     private void deleteActivity(int activityId) {
         ClientUtils.organizerService.deleteActivity(eventId, activityId).enqueue(new Callback<Void>() {

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
 
 import com.google.gson.Gson;
@@ -14,6 +15,10 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import com.example.eventure.BuildConfig;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializer;
+
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 import org.json.JSONObject;
 import org.json.JSONException;
@@ -83,15 +88,29 @@ public class ClientUtils {
         }
         return authService;
     }
-    // Create a custom Gson instance with LocalDateTime deserializer
     public static Gson gson = new GsonBuilder()
             .registerTypeAdapter(LocalDateTime.class,
-                    (JsonDeserializer<LocalDateTime>) (json, typeOfT, context) ->
-                            LocalDateTime.parse(json.getAsString()))
+                    (JsonDeserializer<LocalDateTime>) (json, typeOfT, context) -> {
+                        String dateStr = json.getAsString().replace("Z", ""); // удаляем Z если есть
+
+                        DateTimeFormatter[] formatters = new DateTimeFormatter[] {
+                                DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS"),
+                                DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+                        };
+
+                        for (DateTimeFormatter formatter : formatters) {
+                            try {
+                                return LocalDateTime.parse(dateStr, formatter);
+                            } catch (Exception ignored) { }
+                        }
+
+                        throw new JsonParseException("Unparseable LocalDateTime: " + dateStr);
+                    })
             .registerTypeAdapter(LocalDateTime.class,
-                    (com.google.gson.JsonSerializer<LocalDateTime>) (src, typeOfSrc, context) ->
-                            new com.google.gson.JsonPrimitive(src.toString()))
+                    (JsonSerializer<LocalDateTime>) (src, typeOfSrc, context) ->
+                            new JsonPrimitive(src.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS"))))
             .create();
+
 
     public static OkHttpClient test() {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
