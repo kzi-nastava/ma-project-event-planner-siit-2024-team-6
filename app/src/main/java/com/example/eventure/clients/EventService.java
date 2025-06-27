@@ -103,5 +103,5 @@ public interface EventService {
             @Path("eventId") int eventId
     );
     @GET("events/{id}")
-    Event getById(@Path("id") int id);
+    Call<Event> getById(@Path("id") int id);
 }

@@ -117,15 +117,42 @@ public class MyCalendarFragment extends Fragment {
 
     private void onItemClick(CalendarItemDTO item) {
         if ("MyService".equals(item.getType())) {
-            Offer o = ClientUtils.offerService.getById(item.getId());
-            OfferDetailsDialog.newInstance(o)
-                    .show(getParentFragmentManager(), "offer_details");
+            ClientUtils.offerService.getById(item.getId()).enqueue(new Callback<Offer>() {
+                @Override
+                public void onResponse(Call<Offer> call, Response<Offer> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        OfferDetailsDialog.newInstance(response.body())
+                                .show(getParentFragmentManager(), "offer_details");
+                    } else {
+                        Toast.makeText(getContext(), "Failed to load offer", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Offer> call, Throwable t) {
+                    Toast.makeText(getContext(), "Network error", Toast.LENGTH_SHORT).show();
+                }
+            });
         } else {
-            Event e = ClientUtils.eventService.getById(item.getId());
-            EventDetailsDialog.newInstance(e)
-                    .show(getParentFragmentManager(), "event_details");
+            ClientUtils.eventService.getById(item.getId()).enqueue(new Callback<Event>() {
+                @Override
+                public void onResponse(Call<Event> call, Response<Event> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        EventDetailsDialog.newInstance(response.body())
+                                .show(getParentFragmentManager(), "event_details");
+                    } else {
+                        Toast.makeText(getContext(), "Failed to load event", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Event> call, Throwable t) {
+                    Toast.makeText(getContext(), "Network error", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
+
 
     class DayViewContainer extends ViewContainer {
         final TextView textView;

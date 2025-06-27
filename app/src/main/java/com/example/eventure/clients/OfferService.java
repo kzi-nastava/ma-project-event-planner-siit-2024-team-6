@@ -163,5 +163,5 @@ public interface OfferService {
     Call<PagedResponse<Offer>> getMyProducts(@Query("page") int page, @Query("size") int size);
 
     @GET("offers/{id}")
-    Offer getById(@Path("id") int id);
+    Call<Offer> getById(@Path("id") int id);
 }
