@@ -1,5 +1,6 @@
 package com.example.eventure.clients;
 
+import com.example.eventure.dto.CategoryDTO;
 import com.example.eventure.dto.NewCategoryDTO;
 import com.example.eventure.model.Category;
 import com.example.eventure.model.CategorySuggestion;
@@ -56,4 +57,6 @@ public interface CategoryService {
     @PUT(ClientUtils.REJECT_CATEGORY_SUGGETION)
     Call<CategorySuggestion> rejectSuggestion(@Path("id") int id, @Query("categoryName") String categoryName);
 
+    @GET()
+    Call<List<CategoryDTO>> getAllCategories();
 }

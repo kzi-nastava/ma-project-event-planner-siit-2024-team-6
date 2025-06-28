@@ -1,66 +1,186 @@
 package com.example.eventure.fragments;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.eventure.R;
+import com.example.eventure.adapters.CalendarAdapter;
+import com.example.eventure.clients.ClientUtils;
+import com.example.eventure.dialogs.EventDetailsDialog;
+import com.example.eventure.dialogs.OfferDetailsDialog;
+import com.example.eventure.dto.CalendarItemDTO;
+import com.example.eventure.model.Event;
+import com.example.eventure.model.Offer;
+import com.kizitonwose.calendar.core.CalendarDay;
+import com.kizitonwose.calendar.core.CalendarMonth;
+import com.kizitonwose.calendar.view.CalendarView;
+import com.kizitonwose.calendar.view.MonthDayBinder;
+import com.kizitonwose.calendar.view.ViewContainer;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link MyCalendarFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.format.TextStyle;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class MyCalendarFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private CalendarView calendarView;
+    private RecyclerView eventRecycler;
+    private TextView monthTextView;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private final Map<LocalDate, List<CalendarItemDTO>> itemsByDate = new HashMap<>();
+    private final List<CalendarItemDTO> selectedItems = new ArrayList<>();
+    private CalendarAdapter adapter;
 
-    public MyCalendarFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment MyCalendarFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static MyCalendarFragment newInstance(String param1, String param2) {
-        MyCalendarFragment fragment = new MyCalendarFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
+    @Nullable
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_my_calendar, container, false);
+
+        calendarView = view.findViewById(R.id.calendarView);
+        eventRecycler = view.findViewById(R.id.eventRecycler);
+        monthTextView = view.findViewById(R.id.monthTextView); // добавь в XML
+
+        adapter = new CalendarAdapter(selectedItems, this::onItemClick);
+        eventRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        eventRecycler.setAdapter(adapter);
+
+        fetchCalendarItems();
+
+        return view;
+    }
+
+    private void fetchCalendarItems() {
+        ClientUtils.calendarService.getCalendarItems().enqueue(new Callback<List<CalendarItemDTO>>() {
+            @Override
+            public void onResponse(Call<List<CalendarItemDTO>> call, Response<List<CalendarItemDTO>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    for (CalendarItemDTO item : response.body()) {
+                        itemsByDate.computeIfAbsent(item.getDate().toLocalDate(), d -> new ArrayList<>()).add(item);
+                    }
+                    initCalendar();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<CalendarItemDTO>> call, Throwable t) {
+                Toast.makeText(getContext(), "Failed to load calendar items", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void initCalendar() {
+        calendarView.setup(
+                YearMonth.now().minusMonths(6),
+                YearMonth.now().plusMonths(6),
+                DayOfWeek.MONDAY
+        );
+        calendarView.scrollToDate(LocalDate.now());
+
+        calendarView.setMonthScrollListener(month -> {
+            String title = month.getYearMonth().getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault())
+                    + " " + month.getYearMonth().getYear();
+            monthTextView.setText(title);
+            return null;
+        });
+
+        calendarView.setDayBinder(new MonthDayBinder<DayViewContainer>() {
+            @NonNull
+            @Override
+            public DayViewContainer create(@NonNull View view) {
+                return new DayViewContainer(view);
+            }
+
+            @Override
+            public void bind(@NonNull DayViewContainer container, @NonNull CalendarDay day) {
+                TextView tv = container.textView;
+                tv.setText(String.valueOf(day.getDate().getDayOfMonth()));
+
+                boolean hasItems = itemsByDate.containsKey(day.getDate());
+
+                if (hasItems) {
+                    tv.setBackgroundResource(R.drawable.bg_day_with_event);
+                } else {
+                    tv.setBackgroundResource(R.drawable.bg_day_default);
+                }
+
+                container.getView().setOnClickListener(v -> onDateSelected(day.getDate()));
+            }
+        });
+    }
+
+    private void onDateSelected(LocalDate date) {
+        selectedItems.clear();
+        List<CalendarItemDTO> items = itemsByDate.get(date);
+        if (items != null) selectedItems.addAll(items);
+        adapter.notifyDataSetChanged();
+    }
+
+    private void onItemClick(CalendarItemDTO item) {
+        if ("MyService".equals(item.getType())) {
+            ClientUtils.offerService.getById(item.getId()).enqueue(new Callback<Offer>() {
+                @Override
+                public void onResponse(Call<Offer> call, Response<Offer> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        OfferDetailsDialog.newInstance(response.body())
+                                .show(getParentFragmentManager(), "offer_details");
+                    } else {
+                        Toast.makeText(getContext(), "Failed to load offer", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Offer> call, Throwable t) {
+                    Toast.makeText(getContext(), "Network error", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            ClientUtils.eventService.getById(item.getId()).enqueue(new Callback<Event>() {
+                @Override
+                public void onResponse(Call<Event> call, Response<Event> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        EventDetailsDialog.newInstance(response.body())
+                                .show(getParentFragmentManager(), "event_details");
+                    } else {
+                        Toast.makeText(getContext(), "Failed to load event", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Event> call, Throwable t) {
+                    Toast.makeText(getContext(), "Network error", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_my_calendar, container, false);
+    class DayViewContainer extends ViewContainer {
+        final TextView textView;
+
+        public DayViewContainer(View view) {
+            super(view);
+            textView = view.findViewById(R.id.calendarDayText);
+        }
     }
 }

@@ -28,5 +28,6 @@ public interface EventTypeService {
     })
     @GET(ClientUtils.ALL_EVENT_TYPES)
     Call<List<EventTypeDTO>> getAll();
-
+    @GET("events/{categoryName}/event-types-by-category-name")
+    Call<List<EventTypeDTO>> getByCategoryName(@Path("categoryName") String categoryName);
 }
