@@ -10,9 +10,9 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_alignParentEnd="true"
-        android:layout_margin="16dp"
+        android:layout_margin="10dp"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:src="@drawable/ic_close"
+        android:src="@drawable/close_icon"
         android:contentDescription="Close"
         app:tint="#3b4664" />
 
@@ -20,8 +20,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/close_button"
-        android:padding="20dp">
+        android:layout_below="@id/close_button">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -29,13 +28,16 @@
             android:orientation="vertical">
 
             <!-- Budget Planning Section -->
-            <include layout="@layout/layout_budget_section" />
+            <include layout="@layout/layout_budget_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
             <Button
                 android:id="@+id/search_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Search"
+                android:paddingLeft="20dp"
                 android:layout_marginTop="16dp"
                 android:backgroundTint="#3b4664"
                 android:textColor="@android:color/white" />
