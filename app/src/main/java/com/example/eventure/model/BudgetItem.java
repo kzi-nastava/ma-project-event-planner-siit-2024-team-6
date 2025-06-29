@@ -1,12 +1,12 @@
 package com.example.eventure.model;
 
 public class BudgetItem {
-    private String catgeory;
+    private String category;
     private int maxPrice;
     private int currPrice;
 
     public BudgetItem(int max, int curr, String c){
-        this.catgeory = c;
+        this.category = c;
         this.currPrice = curr;
         this.maxPrice = max;
     }
@@ -27,11 +27,11 @@ public class BudgetItem {
         this.currPrice = currPrice;
     }
 
-    public String getCatgeory() {
-        return catgeory;
+    public String getCategory() {
+        return category;
     }
 
-    public void setCatgeory(String catgeory) {
-        this.catgeory = catgeory;
+    public void setCategory(String category) {
+        this.category = category;
     }
 }

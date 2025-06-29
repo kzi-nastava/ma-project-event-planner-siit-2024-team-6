@@ -1,6 +1,7 @@
 package com.example.eventure.adapters;
 
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.eventure.R;
 import com.example.eventure.model.BudgetItem;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class OrganizerBudgetItemAdapter extends RecyclerView.Adapter<OrganizerBudgetItemAdapter.BudgetViewHolder> {
@@ -22,11 +24,11 @@ public class OrganizerBudgetItemAdapter extends RecyclerView.Adapter<OrganizerBu
         void onDelete(BudgetItem item);
     }
 
-    private List<BudgetItem> budgetItems;
+    private List<BudgetItem> budgetItems = new ArrayList<>();
     private OnBudgetActionListener listener;
 
     public OrganizerBudgetItemAdapter(List<BudgetItem> budgetItems, OnBudgetActionListener listener) {
-        this.budgetItems = budgetItems;
+        this.budgetItems.addAll(budgetItems);
         this.listener = listener;
     }
 
@@ -41,12 +43,15 @@ public class OrganizerBudgetItemAdapter extends RecyclerView.Adapter<OrganizerBu
     @Override
     public void onBindViewHolder(@NonNull BudgetViewHolder holder, int position) {
         BudgetItem item = budgetItems.get(position);
+        Log.d("BudgetItemAdapter", "Binding item: " + item.getCategory());
         holder.bind(item);
     }
 
     @Override
     public int getItemCount() {
-        return budgetItems.size();
+        int count = budgetItems.size();
+        Log.d("AdapterDebug", "getItemCount called, count = " + count);
+        return count;
     }
 
     class BudgetViewHolder extends RecyclerView.ViewHolder {
@@ -63,7 +68,7 @@ public class OrganizerBudgetItemAdapter extends RecyclerView.Adapter<OrganizerBu
         }
 
         void bind(BudgetItem item) {
-            category.setText(item.getCatgeory());
+            category.setText(item.getCategory());
             maxPrice.setText("$" + item.getMaxPrice());
             spent.setText("$" + item.getCurrPrice());
 
@@ -72,6 +77,7 @@ public class OrganizerBudgetItemAdapter extends RecyclerView.Adapter<OrganizerBu
         }
     }
     public void updateItems(List<BudgetItem> newItems) {
+        Log.d("AdapterDebug", "Updating with " + newItems.size() + " items");
         budgetItems.clear();
         budgetItems.addAll(newItems);
         notifyDataSetChanged();

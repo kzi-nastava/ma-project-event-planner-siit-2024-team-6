@@ -8,7 +8,7 @@ public class BudgetItemDTO {
     String category;
 
     public BudgetItemDTO(BudgetItem bi){
-        this.category = bi.getCatgeory();
+        this.category = bi.getCategory();
         this.currPrice = bi.getCurrPrice();
         this.maxPrice = bi.getMaxPrice();
     }

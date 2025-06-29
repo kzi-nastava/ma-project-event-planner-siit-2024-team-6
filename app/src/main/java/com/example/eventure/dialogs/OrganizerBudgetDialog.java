@@ -102,8 +102,9 @@ public class OrganizerBudgetDialog extends DialogFragment {
             @Override
             public void onResponse(Call<Budget> call, Response<Budget> response) {
                 if (response.isSuccessful() && response.body() != null) {
+                    Budget b = response.body();
                     budgetItems.clear();
-                    budgetItems.addAll(response.body().getBudgetItems());
+                    budgetItems.addAll(b.getBudgetItems());
                     budgetItemAdapter.updateItems(budgetItems);
                 } else {
                     Snackbar.make(requireView(), "Failed to load budget.", Snackbar.LENGTH_LONG).show();
