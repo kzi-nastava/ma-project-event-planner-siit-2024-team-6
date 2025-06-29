@@ -1,5 +1,6 @@
 package com.example.eventure.dialogs;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,6 +41,7 @@ public class OrganizerBudgetDialog extends DialogFragment {
     private RecyclerView offerRecyclerView, budgetRecycler;
     private LinearLayout noOffersMessage;
     private OfferAdapter offerAdapter;
+    private Integer budgetId;
     private OrganizerBudgetItemAdapter budgetItemAdapter;
 
     private final List<OfferDTO> matchedOffers = new ArrayList<>();
@@ -76,12 +78,32 @@ public class OrganizerBudgetDialog extends DialogFragment {
         budgetItemAdapter = new OrganizerBudgetItemAdapter(budgetItems, new OrganizerBudgetItemAdapter.OnBudgetActionListener() {
             @Override
             public void onEdit(BudgetItem item) {
-                // TODO: Handle edit
+                EditBudgetItemDialog dialog = EditBudgetItemDialog.newInstance(item);
+                dialog.setOnBudgetItemUpdatedListener(updatedItem -> {
+                    if(updatedItem.getCurrPrice() > updatedItem.getMaxPrice()){
+                        Snackbar.make(requireView(), "Maximal amount cannot be lesser than spent amount.", Snackbar.LENGTH_SHORT).show();
+                    }else{
+                        updateBudget(item, updatedItem);
+                    }
+                });
+                dialog.show(getChildFragmentManager(), "EditBudgetDialog");
             }
 
             @Override
             public void onDelete(BudgetItem item) {
-                // TODO: Handle delete
+                new AlertDialog.Builder(requireContext())
+                        .setTitle("Delete Budget Item: "+item.getCategory())
+                        .setMessage("Are you sure you want to delete this item?")
+                        .setPositiveButton("Delete", (dialog, which) -> {
+                            if(item.getCurrPrice() > 0){
+                                Snackbar.make(requireView(), "You have spent money under this category. It cannot be deleted.", Snackbar.LENGTH_SHORT).show();
+                            } else{
+                                deleteBudgetItem(item);
+                                Snackbar.make(requireView(), "Item deleted", Snackbar.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .show();
             }
         });
         budgetRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -103,6 +125,7 @@ public class OrganizerBudgetDialog extends DialogFragment {
             public void onResponse(Call<Budget> call, Response<Budget> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     Budget b = response.body();
+                    budgetId = b.getId();
                     budgetItems.clear();
                     budgetItems.addAll(b.getBudgetItems());
                     budgetItemAdapter.updateItems(budgetItems);
@@ -164,5 +187,68 @@ public class OrganizerBudgetDialog extends DialogFragment {
             int width = (int) (requireContext().getResources().getDisplayMetrics().widthPixels * 0.95);
             getDialog().getWindow().setLayout(width, ViewGroup.LayoutParams.WRAP_CONTENT);
         }
+    }
+
+    private void updateBudget(BudgetItem item, BudgetItem updatedItem){
+        NewBudgetDTO dto = new NewBudgetDTO();
+        List<BudgetItemDTO> items = new ArrayList<>();
+        int index = budgetItems.indexOf(item);
+        if (index != -1) {
+            budgetItems.set(index, updatedItem);
+            budgetItemAdapter.notifyItemChanged(index);
+        }else{
+            Snackbar.make(requireView(), "Update failed", Snackbar.LENGTH_SHORT).show();
+            return;
+        }
+        for (BudgetItem i: budgetItems){
+            items.add(new BudgetItemDTO(i));
+        }
+        dto.setBudgetItems(items);
+        ClientUtils.eventService.updateBudget(budgetId, dto).enqueue(new Callback<Budget>() {
+            @Override
+            public void onResponse(Call<Budget> call, Response<Budget> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Budget updatedBudget = response.body();
+                    budgetItems.clear();
+                    budgetItems.addAll(updatedBudget.getBudgetItems());
+                    budgetItemAdapter.updateItems(budgetItems);
+                    Snackbar.make(requireView(), "Budget updated!", Snackbar.LENGTH_SHORT).show();
+                } else {
+                    Snackbar.make(requireView(), "Update failed", Snackbar.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Budget> call, Throwable t) {
+                Snackbar.make(requireView(), "Error: " + t.getMessage(), Snackbar.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void deleteBudgetItem(BudgetItem item){
+        NewBudgetDTO dto = new NewBudgetDTO();
+        List<BudgetItemDTO> items = new ArrayList<>();
+        budgetItems.remove(item);
+        for (BudgetItem i: this.budgetItems){
+            items.add(new BudgetItemDTO(i));
+        }
+        dto.setBudgetItems(items);
+        ClientUtils.eventService.updateBudget(budgetId, dto).enqueue(new Callback<Budget>() {
+            @Override
+            public void onResponse(Call<Budget> call, Response<Budget> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Budget updatedBudget = response.body();
+                    budgetItemAdapter.updateItems(budgetItems);
+                    Snackbar.make(requireView(), "Budget updated!", Snackbar.LENGTH_SHORT).show();
+                } else {
+                    Snackbar.make(requireView(), "Update failed", Snackbar.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Budget> call, Throwable t) {
+                Snackbar.make(requireView(), "Error: " + t.getMessage(), Snackbar.LENGTH_LONG).show();
+            }
+        });
     }
 }

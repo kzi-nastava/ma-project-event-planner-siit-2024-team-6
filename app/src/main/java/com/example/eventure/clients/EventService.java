@@ -2,6 +2,7 @@ package com.example.eventure.clients;
 
 import com.example.eventure.dto.EventDTO;
 import com.example.eventure.dto.EventTypeDTO;
+import com.example.eventure.dto.NewBudgetDTO;
 import com.example.eventure.dto.UserDTO;
 import com.example.eventure.model.Budget;
 import com.example.eventure.model.PagedResponse;
@@ -9,11 +10,13 @@ import com.example.eventure.model.PagedResponse;
 import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -106,6 +109,11 @@ public interface EventService {
     @GET("/api/events/{id}/budget")
     Call<Budget> getBudgetByEventId(
             @Path("id") int eventId
+    );
+    @PUT("/api/organizers/budget/{id}")
+    Call<Budget> updateBudget(
+            @Path("id") int budgetId,
+            @Body NewBudgetDTO budgetDTO
     );
 
 }
