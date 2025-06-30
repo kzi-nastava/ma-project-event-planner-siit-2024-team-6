@@ -48,6 +48,7 @@ public class OrganizerBudgetDialog extends DialogFragment {
 
     private final List<OfferDTO> matchedOffers = new ArrayList<>();
     private final List<BudgetItem> budgetItems = new ArrayList<>();
+    private final List<String> categories = new ArrayList<>();
     private TextView totalValueText;
     private TextView leftValueText;
 
@@ -76,7 +77,7 @@ public class OrganizerBudgetDialog extends DialogFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         eventId = getArguments() != null ? (int) getArguments().getLong("eventId", -1) : -1;
-
+        fetchCategories();
         offerRecyclerView = view.findViewById(R.id.offer_list);
         budgetRecycler = view.findViewById(R.id.budget_items_recycler);
         noOffersMessage = view.findViewById(R.id.no_offers_message);
@@ -106,7 +107,14 @@ public class OrganizerBudgetDialog extends DialogFragment {
                     if(updatedItem.getCurrPrice() > updatedItem.getMaxPrice()){
                         Snackbar.make(requireView(), "Maximal amount cannot be lesser than spent amount.", Snackbar.LENGTH_SHORT).show();
                     }else{
-                        updateBudget(item, updatedItem);
+                        int index = budgetItems.indexOf(item);
+                        if (index != -1) {
+                            budgetItems.set(index, updatedItem);
+                            budgetItemAdapter.notifyItemChanged(index);
+                            updateBudget();
+                        }else{
+                            Snackbar.make(requireView(), "Update failed", Snackbar.LENGTH_SHORT).show();
+                        }
                     }
                 });
                 dialog.show(getChildFragmentManager(), "EditBudgetDialog");
@@ -134,6 +142,7 @@ public class OrganizerBudgetDialog extends DialogFragment {
 
         ImageButton closeButton = view.findViewById(R.id.close_button);
         Button searchButton = view.findViewById(R.id.search_button);
+        Button addNewItemButton = view.findViewById(R.id.new_item_button);
 
         closeButton.setOnClickListener(v -> dismiss());
 
@@ -142,6 +151,34 @@ public class OrganizerBudgetDialog extends DialogFragment {
             isLastPage = false;
             matchedOffers.clear();
             fetchOffers();
+        });
+
+        addNewItemButton.setOnClickListener(v-> {
+            List<String> unusedCategories = new ArrayList<>();
+            for (String category : categories) {
+                boolean alreadyUsed = false;
+                for (BudgetItem item : budgetItems) {
+                    if (item.getCategory().equals(category)) {
+                        alreadyUsed = true;
+                        break;
+                    }
+                }
+                if (!alreadyUsed) {
+                    unusedCategories.add(category);
+                }
+            }
+            if(unusedCategories.isEmpty()){
+                Snackbar.make(requireView(), "There are no more categories to choose from.", Snackbar.LENGTH_LONG).show();
+                return;
+            }
+
+            AddBudgetItemDialog dialog = AddBudgetItemDialog.newInstance((ArrayList<String>) unusedCategories);
+            dialog.setOnBudgetItemAddedListener(newItem -> {
+                budgetItems.add(newItem);
+                budgetItemAdapter.notifyItemInserted(budgetItems.size() - 1);
+                updateBudget();
+            });
+            dialog.show(getChildFragmentManager(), "AddBudgetItemDialog");
         });
 
         if (eventId != -1) fetchBudget();
@@ -225,17 +262,9 @@ public class OrganizerBudgetDialog extends DialogFragment {
         }
     }
 
-    private void updateBudget(BudgetItem item, BudgetItem updatedItem){
+    private void updateBudget(){
         NewBudgetDTO dto = new NewBudgetDTO();
         List<BudgetItemDTO> items = new ArrayList<>();
-        int index = budgetItems.indexOf(item);
-        if (index != -1) {
-            budgetItems.set(index, updatedItem);
-            budgetItemAdapter.notifyItemChanged(index);
-        }else{
-            Snackbar.make(requireView(), "Update failed", Snackbar.LENGTH_SHORT).show();
-            return;
-        }
         for (BudgetItem i: budgetItems){
             items.add(new BudgetItemDTO(i));
         }
@@ -302,6 +331,30 @@ public class OrganizerBudgetDialog extends DialogFragment {
 
         totalValueText.setText("Total: $" + total);
         leftValueText.setText("Left: $" + left);
+    }
+
+    private void fetchCategories(){
+        ClientUtils.categoryService.getCategoryNames().enqueue(new Callback<List<String>>() {
+            @Override
+            public void onResponse(Call<List<String>> call, Response<List<String>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    categories.clear();
+                    categories.addAll(response.body());
+                    // Use categories to populate spinner or UI
+                } else if (response.code() == 204) {
+                    // No categories found
+                } else if (response.code() == 401) {
+                    // Unauthorized - handle auth failure
+                } else {
+                    // Other errors
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<String>> call, Throwable t) {
+                // Handle network or other errors
+            }
+        });
     }
 
 }

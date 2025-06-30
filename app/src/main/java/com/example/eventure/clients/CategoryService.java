@@ -55,5 +55,7 @@ public interface CategoryService {
 
     @PUT(ClientUtils.REJECT_CATEGORY_SUGGETION)
     Call<CategorySuggestion> rejectSuggestion(@Path("id") int id, @Query("categoryName") String categoryName);
+    @GET("organizers/category-names")
+    Call<List<String>> getCategoryNames();
 
 }

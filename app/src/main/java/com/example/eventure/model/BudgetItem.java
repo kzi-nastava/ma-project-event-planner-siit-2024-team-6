@@ -5,6 +5,8 @@ public class BudgetItem {
     private int maxPrice;
     private int currPrice;
 
+    public BudgetItem(){}
+
     public BudgetItem(int max, int curr, String c){
         this.category = c;
         this.currPrice = curr;
