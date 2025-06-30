@@ -35,8 +35,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.chrono.ChronoLocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import okhttp3.ResponseBody;
@@ -266,6 +270,11 @@ public class EventOrganizerDetailsDialog extends DialogFragment {
         });
 
         Button budgetButton = view.findViewById(R.id.btn_view_budget);
+        if(event != null && event.getDate().isAfter(LocalDateTime.now())){
+            budgetButton.setVisibility(View.VISIBLE);
+        }else{
+            budgetButton.setVisibility(View.GONE);
+        }
         budgetButton.setOnClickListener(v -> {
             OrganizerBudgetDialog dialog = OrganizerBudgetDialog.newInstance(this.event.getId());
             dialog.show(requireActivity().getSupportFragmentManager(), "BudgetDialog");
