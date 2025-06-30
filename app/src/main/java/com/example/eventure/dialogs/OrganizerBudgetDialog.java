@@ -181,6 +181,12 @@ public class OrganizerBudgetDialog extends DialogFragment {
             dialog.show(getChildFragmentManager(), "AddBudgetItemDialog");
         });
 
+        Button recommendationsButton = view.findViewById(R.id.recommendations_button);
+
+        recommendationsButton.setOnClickListener(v -> {
+            fetchEventCategoriesAndShowRecommendations();
+        });
+
         if (eventId != -1) fetchBudget();
     }
 
@@ -356,5 +362,56 @@ public class OrganizerBudgetDialog extends DialogFragment {
             }
         });
     }
+
+    private void fetchEventCategoriesAndShowRecommendations() {
+
+        ClientUtils.eventService.getEventCategories(eventId).enqueue(new Callback<List<String>>() {
+            @Override
+            public void onResponse(Call<List<String>> call, Response<List<String>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<String> recommended = response.body();
+                    List<String> recs = new ArrayList<>();
+                    for(String c : recommended) {
+                        boolean exists = false;
+                        for(BudgetItem i: budgetItems){
+                            if(i.getCategory().equals(c)){
+                                exists = true;
+                                break;
+                            }
+                        }
+                        if (!exists){
+                            recs.add(c);
+                        }
+                    }
+                    if(recs.isEmpty()){
+                        Snackbar.make(requireView(), "All recommended categories are already added.", Snackbar.LENGTH_SHORT).show();
+
+                    }else{
+                        BudgetRecommendationsDialog dialog = BudgetRecommendationsDialog.newInstance(recs);
+
+                        dialog.setOnCategoryChosenListener(newItem -> {
+                            budgetItems.add(newItem);
+                            budgetItemAdapter.notifyItemInserted(budgetItems.size() - 1);
+                            updateBudget();
+                        });
+
+                        dialog.show(getChildFragmentManager(), "BudgetRecommendationsDialog");
+                    }
+                } else if (response.code() == 204) {
+                    Snackbar.make(requireView(), "No categories found for this event.", Snackbar.LENGTH_SHORT).show();
+                } else if (response.code() == 401) {
+                    Snackbar.make(requireView(), "Unauthorized access.", Snackbar.LENGTH_SHORT).show();
+                } else {
+                    Snackbar.make(requireView(), "Failed to load categories.", Snackbar.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<String>> call, Throwable t) {
+                Snackbar.make(requireView(), "Error: " + t.getMessage(), Snackbar.LENGTH_LONG).show();
+            }
+        });
+    }
+
 
 }

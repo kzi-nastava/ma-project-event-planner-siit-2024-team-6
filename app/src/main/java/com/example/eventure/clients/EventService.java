@@ -115,5 +115,9 @@ public interface EventService {
             @Path("id") int budgetId,
             @Body NewBudgetDTO budgetDTO
     );
+    @GET("/api/events/{eventId}/categories")
+    Call<List<String>> getEventCategories(
+            @Path("eventId") int eventId
+    );
 
 }

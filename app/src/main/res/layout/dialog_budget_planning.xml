@@ -3,25 +3,43 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#f9f9f9">
+    <!-- Example snippet inside dialog_budget_planning.xml -->
+    <LinearLayout
+        android:id="@+id/top_buttons_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="8dp">
 
-    <!-- Close (X) Button -->
-    <ImageButton
-        android:id="@+id/close_button"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="10dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:src="@drawable/close_icon"
-        android:contentDescription="Close"
-        app:tint="#3b4664" />
+        <Button
+            android:id="@+id/recommendations_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Recommendations"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <!-- Close (X) Button -->
+        <ImageButton
+            android:id="@+id/close_button"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/close_icon"
+            android:contentDescription="Close"
+            app:tint="#3b4664" />
+    </LinearLayout>
+
 
     <!-- Scroll content -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/close_button">
+        android:layout_below="@id/top_buttons_layout">
 
         <LinearLayout
             android:layout_width="match_parent"
