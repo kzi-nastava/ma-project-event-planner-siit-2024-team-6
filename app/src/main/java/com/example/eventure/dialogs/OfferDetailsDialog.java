@@ -34,7 +34,6 @@ import com.example.eventure.dto.NewOfferDTO;
 import com.example.eventure.dto.NewReactionDTO;
 import com.example.eventure.dto.NotificationDTO;
 import com.example.eventure.dto.OfferDTO;
-import com.example.eventure.dto.ProviderDTO;
 import com.example.eventure.dto.ReactionDTO;
 import com.example.eventure.dto.UserDTO;
 import com.example.eventure.model.EventType;
@@ -496,8 +495,8 @@ public class OfferDetailsDialog extends DialogFragment {
             });
         });
     }
-    private void fetchProviderByOfferId(int offerId, Callback<ProviderDTO> callback) {
-        Call<ProviderDTO> call = ClientUtils.offerService.getProviderByOfferId(offerId);
+    private void fetchProviderByOfferId(int offerId, Callback<UserDTO> callback) {
+        Call<UserDTO> call = ClientUtils.offerService.getProvider(offerId);
         call.enqueue(callback);
     }
 
@@ -507,11 +506,11 @@ public class OfferDetailsDialog extends DialogFragment {
     }
 
     private void sendReviewNotification(ReactionDTO reaction, String offerName, int offerId, View v) {
-        fetchProviderByOfferId(offerId, new Callback<ProviderDTO>() {
+        fetchProviderByOfferId(offerId, new Callback<UserDTO>() {
             @Override
-            public void onResponse(Call<ProviderDTO> call, Response<ProviderDTO> response) {
+            public void onResponse(Call<UserDTO> call, Response<UserDTO> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    ProviderDTO provider = response.body();
+                    UserDTO provider = response.body();
                     String notificationText = createNotificationText(reaction, offerName);
                     NewNotificationDTO notification = new NewNotificationDTO();
                     notification.setText(notificationText);
@@ -538,7 +537,7 @@ public class OfferDetailsDialog extends DialogFragment {
             }
 
             @Override
-            public void onFailure(Call<ProviderDTO> call, Throwable t) {
+            public void onFailure(Call<UserDTO> call, Throwable t) {
                 Snackbar.make(v, "Network error getting provider: " + t.getMessage(), Snackbar.LENGTH_LONG).show();
             }
         });

@@ -48,6 +48,8 @@ public class AdminCategoriesActivity extends AppCompatActivity {
 
         drawer = findViewById(R.id.drawer_categories_layout);
         navigationView = findViewById(R.id.sidebar_view);
+        String role = ClientUtils.getAuthService().getRole();
+        MenuUtils.filterMenuByRole(navigationView, role);
         navController = Navigation.findNavController(this, R.id.fragment_nav_content_categories);
 
         navigationView.setNavigationItemSelectedListener(item -> {

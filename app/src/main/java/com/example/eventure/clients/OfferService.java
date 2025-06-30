@@ -1,5 +1,6 @@
 package com.example.eventure.clients;
 
+import com.example.eventure.dto.NewBudgetDTO;
 import com.example.eventure.dto.NewOfferDTO;
 import com.example.eventure.dto.NewPriceListItemDTO;
 import com.example.eventure.dto.OfferDTO;
@@ -10,6 +11,7 @@ import com.example.eventure.model.PagedResponse;
 import com.example.eventure.model.PriceListItem;
 
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -22,6 +24,7 @@ import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import retrofit2.http.QueryMap;
 
 public interface OfferService {
 
@@ -161,6 +164,13 @@ public interface OfferService {
 
     @GET("providers/my-products")
     Call<PagedResponse<Offer>> getMyProducts(@Query("page") int page, @Query("size") int size);
+    @POST("/api/offers/search-by-budget")
+    Call<PagedResponse<OfferDTO>> getFilteredOffersByBudget(
+            @Body NewBudgetDTO budgetDTO,
+            @Query("page") int page,
+            @Query("pageSize") int pageSize
+    );
+
 
     @GET("offers/{id}")
     Call<Offer> getById(@Path("id") int id);

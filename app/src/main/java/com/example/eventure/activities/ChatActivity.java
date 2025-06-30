@@ -85,6 +85,8 @@ public class ChatActivity extends AppCompatActivity {
                 startActivity(new Intent(this, AdminCategoriesActivity.class));
             } else if (id == R.id.nav_price_list){
                 startActivity(new Intent(this, ProviderPriceListActivity.class));
+            } else if (id == R.id.nav_my_products) {
+                startActivity(new Intent(this,ProviderProductsActivity.class));
             }
             if (fragment != null) {
                 Intent intent = new Intent(this, HomeActivity.class);

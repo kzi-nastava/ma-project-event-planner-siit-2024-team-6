@@ -18,7 +18,6 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.eventure.R;
 import com.example.eventure.activities.ChatActivity;
-import com.example.eventure.activities.HomeActivity;
 import com.example.eventure.adapters.ImageCarouselAdapter;
 import com.example.eventure.clients.ClientUtils;
 import com.example.eventure.dto.EventStatisticsDTO;
@@ -36,8 +35,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.chrono.ChronoLocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import okhttp3.ResponseBody;
@@ -264,6 +267,17 @@ public class EventOrganizerDetailsDialog extends DialogFragment {
             public void onFailure(Call<EventStatisticsDTO> call, Throwable t) {
                 t.printStackTrace();
             }
+        });
+
+        Button budgetButton = view.findViewById(R.id.btn_view_budget);
+        if(event != null && event.getDate().isAfter(LocalDateTime.now())){
+            budgetButton.setVisibility(View.VISIBLE);
+        }else{
+            budgetButton.setVisibility(View.GONE);
+        }
+        budgetButton.setOnClickListener(v -> {
+            OrganizerBudgetDialog dialog = OrganizerBudgetDialog.newInstance(this.event.getId());
+            dialog.show(requireActivity().getSupportFragmentManager(), "BudgetDialog");
         });
 
         Button btnCreateAgenda = view.findViewById(R.id.btn_create_agenda);

@@ -128,6 +128,8 @@ public class ProviderPriceListActivity extends AppCompatActivity implements Pric
                 startActivity(new Intent(this,AdminReportsActivity.class));
             } else if(id == R.id.nav_my_offers){
                 startActivity(new Intent(this,ProviderOffersActivity.class));
+            } else if (id == R.id.nav_my_products) {
+                startActivity(new Intent(this,ProviderProductsActivity.class));
             }
 
             drawer.closeDrawer(GravityCompat.START);

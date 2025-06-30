@@ -51,6 +51,8 @@ public class ProviderOffersActivity extends AppCompatActivity {
 
         drawer = findViewById(R.id.drawer_offers_layout);
         navigationView = findViewById(R.id.sidebar_view);
+        String role = ClientUtils.getAuthService().getRole();
+        MenuUtils.filterMenuByRole(navigationView, role);
         navController = Navigation.findNavController(this, R.id.fragment_nav_content_main_home);
         String role = ClientUtils.getAuthService().getRole();
         MenuUtils.filterMenuByRole(navigationView, role);
@@ -81,14 +83,13 @@ public class ProviderOffersActivity extends AppCompatActivity {
                 startActivity(new Intent(this,AdminReportsActivity.class));
             } else if (id == R.id.nav_price_list) {
                 startActivity(new Intent(this,ProviderPriceListActivity.class));
+            }else if (id == R.id.nav_my_products) {
+                startActivity(new Intent(this,ProviderProductsActivity.class));
             }
 
             drawer.closeDrawer(GravityCompat.START);
             return true;
         });
-
-        BottomNavigationView bottomNav = findViewById(R.id.offers_bottom_navigation);
-        NavigationUI.setupWithNavController(bottomNav, navController);
 
         actionBarDrawerToggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
