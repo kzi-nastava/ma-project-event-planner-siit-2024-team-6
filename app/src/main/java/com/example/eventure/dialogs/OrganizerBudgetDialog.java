@@ -2,6 +2,7 @@ package com.example.eventure.dialogs;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,6 +51,11 @@ public class OrganizerBudgetDialog extends DialogFragment {
     private TextView totalValueText;
     private TextView leftValueText;
 
+    private int currentPage = 0;
+    private final int pageSize = 8;
+    private boolean isLastPage = false;
+
+
 
     public static OrganizerBudgetDialog newInstance(long eventId) {
         OrganizerBudgetDialog dialog = new OrganizerBudgetDialog();
@@ -79,8 +85,18 @@ public class OrganizerBudgetDialog extends DialogFragment {
 
 
         offerAdapter = new OfferAdapter(matchedOffers, getChildFragmentManager());
-        offerRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        offerRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 1));
         offerRecyclerView.setAdapter(offerAdapter);
+        offerRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                LinearLayoutManager lm = (LinearLayoutManager) recyclerView.getLayoutManager();
+                if (lm != null && lm.findLastCompletelyVisibleItemPosition() == matchedOffers.size() - 1 && !isLastPage) {
+                    fetchOffers();
+                }
+            }
+        });
+
 
         budgetItemAdapter = new OrganizerBudgetItemAdapter(budgetItems, new OrganizerBudgetItemAdapter.OnBudgetActionListener() {
             @Override
@@ -121,7 +137,12 @@ public class OrganizerBudgetDialog extends DialogFragment {
 
         closeButton.setOnClickListener(v -> dismiss());
 
-        searchButton.setOnClickListener(v -> fetchOffers());
+        searchButton.setOnClickListener(v -> {
+            currentPage = 0;
+            isLastPage = false;
+            matchedOffers.clear();
+            fetchOffers();
+        });
 
         if (eventId != -1) fetchBudget();
     }
@@ -157,13 +178,19 @@ public class OrganizerBudgetDialog extends DialogFragment {
         }
         dto.setBudgetItems(items);
 
-        ClientUtils.offerService.getFilteredOffersByBudget(dto).enqueue(new Callback<PagedResponse<OfferDTO>>() {
+        ClientUtils.offerService.getFilteredOffersByBudget(dto, currentPage, pageSize).enqueue(new Callback<PagedResponse<OfferDTO>>() {
             @Override
             public void onResponse(Call<PagedResponse<OfferDTO>> call, Response<PagedResponse<OfferDTO>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    matchedOffers.clear();
-                    matchedOffers.addAll(response.body().getContent());
-                    displayOffers();
+                    List<OfferDTO> newOffers = response.body().getContent();
+                    if (newOffers.isEmpty()) {
+                        isLastPage = true;
+                    }
+                    currentPage++;
+                    matchedOffers.addAll(newOffers);
+                    List<OfferDTO> offers = new ArrayList<>(matchedOffers);
+                    offers.addAll(newOffers);
+                    displayOffers(offers);
                 } else {
                     Snackbar.make(requireView(), "Failed to load offers.", Snackbar.LENGTH_LONG).show();
                 }
@@ -176,14 +203,15 @@ public class OrganizerBudgetDialog extends DialogFragment {
         });
     }
 
-    private void displayOffers() {
-        if (matchedOffers.isEmpty()) {
+    private void displayOffers(List<OfferDTO> newOffers) {
+        if (newOffers.isEmpty()) {
             offerRecyclerView.setVisibility(View.GONE);
             noOffersMessage.setVisibility(View.VISIBLE);
         } else {
+            Log.d("OffersBLA", "matchedOffers size: " + matchedOffers.size());
             offerRecyclerView.setVisibility(View.VISIBLE);
             noOffersMessage.setVisibility(View.GONE);
-            offerAdapter.setOffers(matchedOffers);
+            offerAdapter.setOffers(newOffers);
         }
     }
 

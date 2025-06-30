@@ -166,7 +166,10 @@ public interface OfferService {
     Call<PagedResponse<Offer>> getMyProducts(@Query("page") int page, @Query("size") int size);
     @POST("/api/offers/search-by-budget")
     Call<PagedResponse<OfferDTO>> getFilteredOffersByBudget(
-            @Body NewBudgetDTO budgetDTO
+            @Body NewBudgetDTO budgetDTO,
+            @Query("page") int page,
+            @Query("pageSize") int pageSize
     );
+
 
 }
