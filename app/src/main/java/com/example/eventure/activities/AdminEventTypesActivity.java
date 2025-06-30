@@ -56,8 +56,36 @@ public class AdminEventTypesActivity extends AppCompatActivity {
                 startActivity(new Intent(this, ChatActivity.class));
             } else if (id == R.id.nav_notifications) {
                 startActivity(new Intent(this, HomeActivity.class).putExtra("FRAGMENT_NAME", "NOTIFICATIONS"));
+            } else if (id == R.id.nav_favorite_events) {
+                startActivity(new Intent(this, HomeActivity.class).putExtra("FRAGMENT_NAME", "FAVOURITE_EVENTS"));
+            } else if (id == R.id.nav_favorite_services) {
+                startActivity(new Intent(this, HomeActivity.class).putExtra("FRAGMENT_NAME", "FAVOURITE_SERVICES"));
+            } else if (id == R.id.nav_favorite_products) {
+                startActivity(new Intent(this, HomeActivity.class).putExtra("FRAGMENT_NAME", "FAVOURITE_PRODUCTS"));
             } else if (id == R.id.nav_my_calendar) {
                 startActivity(new Intent(this, HomeActivity.class).putExtra("FRAGMENT_NAME", "CALENDAR"));
+            } else if (id == R.id.nav_messages) {
+                navController.navigate(R.id.nav_messages);
+                Intent intent = new Intent(AdminEventTypesActivity.this, ChatActivity.class);
+                startActivity(intent);
+                return true;
+            } else if (id == R.id.nav_admin_categories) {
+                Intent intent = new Intent(AdminEventTypesActivity.this, AdminCategoriesActivity.class);
+                startActivity(intent);
+                drawer.closeDrawer(GravityCompat.START);
+                return true;
+            } else if (id == R.id.nav_admin_manage_comments) {
+                Intent intent = new Intent(AdminEventTypesActivity.this, AdminCommentsActivity.class);
+                startActivity(intent);
+                return true;
+            } else if (id == R.id.nav_admin_manage_reports) {
+                Intent intent = new Intent(AdminEventTypesActivity.this, AdminReportsActivity.class);
+                startActivity(intent);
+                return true;
+            } else if(id == R.id.nav_price_list){
+                Intent intent = new Intent(AdminEventTypesActivity.this, ProviderPriceListActivity.class);
+                startActivity(intent);
+                return true;
             }
             drawer.closeDrawer(GravityCompat.START);
             return true;
@@ -65,18 +93,18 @@ public class AdminEventTypesActivity extends AppCompatActivity {
 
         BottomNavigationView bottomNav = findViewById(R.id.event_types_bottom_navigation);
         NavigationUI.setupWithNavController(bottomNav, navController);
-        bottomNav.setOnItemSelectedListener(item -> {
-            int id = item.getItemId();
-
-            if (id == R.id.events_menu) {
-                startActivity(new Intent(this, HomeActivity.class));
-                return true;
-            } else if (id == R.id.offer_menu) {
-                startActivity(new Intent(this, HomeActivity.class));
-                return true;
-            }
-            return false;
-        });
+//        bottomNav.setOnItemSelectedListener(item -> {
+//            int id = item.getItemId();
+//
+//            if (id == R.id.events_menu) {
+//                startActivity(new Intent(this, HomeActivity.class));
+//                return true;
+//            } else if (id == R.id.offer_menu) {
+//                startActivity(new Intent(this, HomeActivity.class));
+//                return true;
+//            }
+//            return false;
+//        });
 
         actionBarDrawerToggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);

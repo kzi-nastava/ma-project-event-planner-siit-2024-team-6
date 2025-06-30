@@ -54,6 +54,8 @@ public class ProviderOffersActivity extends AppCompatActivity {
         String role = ClientUtils.getAuthService().getRole();
         MenuUtils.filterMenuByRole(navigationView, role);
         navController = Navigation.findNavController(this, R.id.fragment_nav_content_main_home);
+        String role = ClientUtils.getAuthService().getRole();
+        MenuUtils.filterMenuByRole(navigationView, role);
 
         NavigationView navigationView = findViewById(R.id.sidebar_view);
 

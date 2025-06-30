@@ -7,7 +7,11 @@
     app:startDestination="@id/events_menu">
 
 <!--    &lt;!&ndash; Профиль &ndash;&gt;-->
-
+    <fragment
+        android:id="@+id/myProfileFragment"
+        android:name="com.example.eventure.fragments.MyProfileFragment"
+        android:label="My Profile"
+        tools:layout="@layout/fragment_my_profile" />
     <fragment
         android:id="@+id/events_menu"
         android:name="com.example.eventure.fragments.EventsFragment"
@@ -15,22 +19,13 @@
         tools:layout="@layout/fragment_events"
         app:popUpToInclusive="true" />
 
+    <!-- Первый фрагмент (nav_profile) — без actions -->
     <fragment
         android:id="@+id/nav_profile"
         android:name="com.example.eventure.fragments.ProfileStartFragment"
-        android:label="profile"
-        app:popUpTo="@+id/events_menu"
-        tools:layout="@layout/fragment_profile_start">
-        <!-- Action to navigate to LoginFragment -->
-        <action
-            android:id="@+id/action_profileStartFragment_to_loginFragment"
-            app:destination="@id/loginFragment" />
+        tools:layout="@layout/fragment_profile_start" />
 
-        <!-- Action to navigate to RegisterFragment -->
-        <action
-            android:id="@+id/action_profileStartFragment_to_registerFragment"
-            app:destination="@id/registerFragment" />
-    </fragment>
+
 
     <fragment
         android:id="@+id/loginFragment"

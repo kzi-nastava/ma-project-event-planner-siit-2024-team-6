@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.eventure.R;
 import com.example.eventure.adapters.PhotoAdapter;
 import com.example.eventure.clients.ClientUtils;
-import com.example.eventure.dto.CategorySuggestionDTO;
 import com.example.eventure.dto.EventTypeDTO;
 import com.example.eventure.dto.NewCategoryDTO;
 import com.example.eventure.dto.NewOfferDTO;
@@ -42,7 +41,6 @@ public class CreateProductDialog extends DialogFragment {
     private LinearLayout eventTypesContainer;
     private PhotoAdapter photoAdapter;
     private List<String> photoUrls;
-    private List<EventTypeDTO> eventTypes = new ArrayList<>();
     private final Map<String, EventTypeDTO> eventTypeMap = new HashMap<>();
 
     private OnOfferCreatedListener listener;
@@ -56,6 +54,7 @@ public class CreateProductDialog extends DialogFragment {
     public void setOnOfferCreatedListener(OnOfferCreatedListener listener) {
         this.listener = listener;
     }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -64,6 +63,7 @@ public class CreateProductDialog extends DialogFragment {
             getDialog().getWindow().setLayout(width, ViewGroup.LayoutParams.WRAP_CONTENT);
         }
     }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -71,7 +71,6 @@ public class CreateProductDialog extends DialogFragment {
 
         initializeViews(view);
         loadCategories();
-        loadEventTypes();
 
         photoUrls = new ArrayList<>();
         photoAdapter = new PhotoAdapter(photoUrls);
@@ -115,7 +114,7 @@ public class CreateProductDialog extends DialogFragment {
                         if (!name.isEmpty()) {
                             proposedCategory = new NewCategoryDTO(name, desc);
                             proposeCategoryButton.setEnabled(false);
-                            showSnackbar("Proposed: " + name);
+                            safeShowSnackbar("Proposed: " + name);
                         }
                     })
                     .setNegativeButton("Cancel", null)
@@ -139,6 +138,17 @@ public class CreateProductDialog extends DialogFragment {
                     .show();
         });
 
+        productCategorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedCategoryName = categoryList.get(position);
+                loadEventTypesByCategoryName(selectedCategoryName);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
         submitButton.setOnClickListener(v -> handleSubmit());
     }
 
@@ -151,37 +161,67 @@ public class CreateProductDialog extends DialogFragment {
                     ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, categoryList);
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     productCategorySpinner.setAdapter(adapter);
-                }
-            }
 
-            @Override
-            public void onFailure(Call<List<String>> call, Throwable t) {
-                Toast.makeText(getContext(), "Failed to load categories", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private void loadEventTypes() {
-        eventTypesContainer.removeAllViews();
-        ClientUtils.eventTypeService.getAll().enqueue(new Callback<List<EventTypeDTO>>() {
-            @Override
-            public void onResponse(Call<List<EventTypeDTO>> call, Response<List<EventTypeDTO>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    for (EventTypeDTO eventType : response.body()) {
-                        eventTypeMap.put(eventType.getName(), eventType);
-                        CheckBox checkBox = new CheckBox(getContext());
-                        checkBox.setText(eventType.getName());
-                        checkBox.setTag(eventType.getName());
-                        eventTypesContainer.addView(checkBox);
+                    if (!categoryList.isEmpty()) {
+                        productCategorySpinner.setSelection(0); // вызовет onItemSelected
+                        loadEventTypesByCategoryName(categoryList.get(0)); // безопасный вызов
                     }
                 }
             }
 
             @Override
-            public void onFailure(Call<List<EventTypeDTO>> call, Throwable t) {
-                Toast.makeText(getContext(), "Failed to load event types", Toast.LENGTH_SHORT).show();
+            public void onFailure(Call<List<String>> call, Throwable t) {
+                safeShowSnackbar("Failed to load categories.");
             }
         });
+    }
+
+
+    private void loadEventTypesByCategoryName(String categoryName) {
+        try {
+            if (categoryName == null || categoryName.trim().isEmpty()) {
+                Log.w("CreateDialog", "Empty category name passed to loadEventTypesByCategoryName");
+                return;
+            }
+        eventTypesContainer.removeAllViews();
+        eventTypeMap.clear();
+
+
+        ClientUtils.eventTypeService.getByCategoryName(categoryName).enqueue(new Callback<List<EventTypeDTO>>() {
+            @Override
+            public void onResponse(Call<List<EventTypeDTO>> call, Response<List<EventTypeDTO>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<EventTypeDTO> types = response.body();
+                    if (types.isEmpty()) {
+                        TextView noTypes = new TextView(getContext());
+                        noTypes.setText("No event types for this category.");
+                        eventTypesContainer.addView(noTypes);
+                        return;
+                    }
+                    for (EventTypeDTO eventType : types) {
+                        String name = eventType.getName();
+                        if (name == null || name.trim().isEmpty()) continue;
+
+                        eventTypeMap.put(name, eventType);
+                        CheckBox checkBox = new CheckBox(getContext());
+                        checkBox.setText(name);
+                        checkBox.setTag(name);
+                        eventTypesContainer.addView(checkBox);
+                    }
+                } else {
+                    safeShowSnackbar("Failed to load event types.");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<EventTypeDTO>> call, Throwable t) {
+                Log.e("CreateDialog", "Event type loading failed", t);
+                safeShowSnackbar("Failed to load event types.");
+            }
+        });
+    } catch (Exception e) {
+        Log.e("CreateDialog", "loadEventTypesByCategoryName threw exception", e);
+    }
     }
 
     private void handleSubmit() {
@@ -197,7 +237,7 @@ public class CreateProductDialog extends DialogFragment {
             if (proposedCategory == null) {
                 String selected = productCategorySpinner.getSelectedItem().toString();
                 if (selected.isEmpty()) {
-                    showSnackbar("Please select or propose a category.");
+                    safeShowSnackbar("Please select or propose a category.");
                     return;
                 }
                 category = selected;
@@ -208,12 +248,17 @@ public class CreateProductDialog extends DialogFragment {
                 View view = eventTypesContainer.getChildAt(i);
                 if (view instanceof CheckBox && ((CheckBox) view).isChecked()) {
                     String eventTypeName = (String) view.getTag();
-                    selectedTypes.add(eventTypeMap.get(eventTypeName));
+                    EventTypeDTO dto = eventTypeMap.get(eventTypeName);
+                    if (dto != null) {
+                        selectedTypes.add(dto);
+                    } else {
+                        Log.w("CreateDialog", "No DTO for selected event type: " + eventTypeName);
+                    }
                 }
             }
 
             if (name.isEmpty() || desc.isEmpty() || photoUrls.isEmpty() || selectedTypes.isEmpty()) {
-                showSnackbar("Please fill all required fields and select event types.");
+                safeShowSnackbar("Please fill all required fields and select event types.");
                 return;
             }
 
@@ -236,27 +281,31 @@ public class CreateProductDialog extends DialogFragment {
                 public void onResponse(Call<Offer> call, Response<Offer> response) {
                     if (response.isSuccessful()) {
                         if (listener != null) listener.onOfferCreated();
-                        showSnackbar("Product created successfully.");
+                        safeShowSnackbar("Product created successfully.");
                         dismiss();
                     } else {
-                        showSnackbar("Creation failed.");
+                        safeShowSnackbar("Creation failed.");
                     }
                 }
 
                 @Override
                 public void onFailure(Call<Offer> call, Throwable t) {
                     Log.e("CreateProduct", "Error: " + t.getMessage());
-                    showSnackbar("Server error.");
+                    safeShowSnackbar("Server error.");
                 }
             });
 
         } catch (Exception e) {
             Log.e("CreateProductDialog", "Submit error", e);
-            showSnackbar("Invalid input.");
+            safeShowSnackbar("Invalid input.");
         }
     }
 
-    private void showSnackbar(String msg) {
-        Snackbar.make(requireView(), msg, Snackbar.LENGTH_LONG).show();
+    private void safeShowSnackbar(String msg) {
+        if (getView() != null) {
+            Snackbar.make(requireView(), msg, Snackbar.LENGTH_LONG).show();
+        } else {
+            Log.w("CreateProductDialog", "Snackbar skipped: " + msg);
+        }
     }
 }

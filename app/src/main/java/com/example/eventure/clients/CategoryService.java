@@ -1,5 +1,6 @@
 package com.example.eventure.clients;
 
+import com.example.eventure.dto.CategoryDTO;
 import com.example.eventure.dto.NewCategoryDTO;
 import com.example.eventure.model.Category;
 import com.example.eventure.model.CategorySuggestion;
@@ -58,4 +59,6 @@ public interface CategoryService {
     @GET("organizers/category-names")
     Call<List<String>> getCategoryNames();
 
+    @GET()
+    Call<List<CategoryDTO>> getAllCategories();
 }

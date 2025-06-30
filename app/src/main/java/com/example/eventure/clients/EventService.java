@@ -5,6 +5,7 @@ import com.example.eventure.dto.EventTypeDTO;
 import com.example.eventure.dto.NewBudgetDTO;
 import com.example.eventure.dto.UserDTO;
 import com.example.eventure.model.Budget;
+import com.example.eventure.model.Event;
 import com.example.eventure.model.PagedResponse;
 
 import java.util.List;
@@ -119,5 +120,5 @@ public interface EventService {
     Call<List<String>> getEventCategories(
             @Path("eventId") int eventId
     );
-
+    Call<Event> getById(@Path("id") int id);
 }

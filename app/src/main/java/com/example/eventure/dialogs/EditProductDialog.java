@@ -43,7 +43,7 @@ public class EditProductDialog extends DialogFragment {
     private List<String> currentEventTypes;
     private final Map<String, EventTypeDTO> eventTypeMap = new HashMap<>();
 
-    private String name, description;
+    private String name, description, categoryName;
     private double price, discount;
     private boolean visible, available;
     private int offerId;
@@ -68,6 +68,7 @@ public class EditProductDialog extends DialogFragment {
         args.putBoolean("visible", o.getIsVisible() != null && o.getIsVisible());
         args.putBoolean("available", o.getIsAvailable() != null && o.getIsAvailable());
         args.putInt("offerId", o.getId());
+        args.putString("categoryName", o.getCategory());
         ArrayList<String> et = new ArrayList<>();
         for (EventType e : o.getEventTypes()) et.add(e.getName());
         args.putStringArrayList("eventTypes", et);
@@ -75,6 +76,7 @@ public class EditProductDialog extends DialogFragment {
         dialog.setArguments(args);
         return dialog;
     }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -83,10 +85,10 @@ public class EditProductDialog extends DialogFragment {
             getDialog().getWindow().setLayout(width, ViewGroup.LayoutParams.WRAP_CONTENT);
         }
     }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         if (getArguments() != null) {
             name = getArguments().getString("name");
             description = getArguments().getString("description");
@@ -95,6 +97,7 @@ public class EditProductDialog extends DialogFragment {
             visible = getArguments().getBoolean("visible");
             available = getArguments().getBoolean("available");
             offerId = getArguments().getInt("offerId");
+            categoryName = getArguments().getString("categoryName");
             currentEventTypes = getArguments().getStringArrayList("eventTypes");
             photoUrls = getArguments().getStringArrayList("photos");
         }
@@ -124,7 +127,7 @@ public class EditProductDialog extends DialogFragment {
 
         setupListeners();
         populateFields();
-        loadEventTypes();
+        loadEventTypesByCategoryName(categoryName);
         return view;
     }
 
@@ -161,9 +164,12 @@ public class EditProductDialog extends DialogFragment {
                 .show();
     }
 
-    private void loadEventTypes() {
+    private void loadEventTypesByCategoryName(String categoryName) {
         eventTypesContainer.removeAllViews();
-        ClientUtils.eventTypeService.getAll().enqueue(new Callback<List<EventTypeDTO>>() {
+        eventTypeMap.clear();
+        if (categoryName == null) return;
+
+        ClientUtils.eventTypeService.getByCategoryName(categoryName).enqueue(new Callback<List<EventTypeDTO>>() {
             @Override
             public void onResponse(Call<List<EventTypeDTO>> call, Response<List<EventTypeDTO>> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -175,12 +181,15 @@ public class EditProductDialog extends DialogFragment {
                         if (currentEventTypes.contains(eventType.getName())) checkBox.setChecked(true);
                         eventTypesContainer.addView(checkBox);
                     }
+                } else {
+                    showSnackbar("Failed to load event types.");
                 }
             }
 
             @Override
             public void onFailure(Call<List<EventTypeDTO>> call, Throwable t) {
-                Toast.makeText(getContext(), "Failed to load event types", Toast.LENGTH_SHORT).show();
+                Log.e("EditProductDialog", "Failed to load event types", t);
+                showSnackbar("Error loading event types.");
             }
         });
     }
@@ -234,14 +243,14 @@ public class EditProductDialog extends DialogFragment {
 
                 @Override
                 public void onFailure(Call<Offer> call, Throwable t) {
-                    Log.e("EditProduct", "Error: " + t.getMessage());
+                    Log.e("EditProductDialog", "Save failed", t);
                     showSnackbar("Server error.");
                     saveButton.setEnabled(true);
                 }
             });
 
         } catch (Exception e) {
-            Log.e("EditProductDialog", "Error saving", e);
+            Log.e("EditProductDialog", "Exception during save", e);
             showSnackbar("Invalid input.");
         }
     }

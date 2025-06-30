@@ -38,7 +38,7 @@ public class ChatActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         AuthService as = new AuthService(getBaseContext());
         if(!as.isLoggedIn()){
-            startActivity(new Intent(this, LoginActivity.class));
+            startActivity(new Intent(this, ProfileActivity.class));
             finish();
             return;
         }
@@ -57,7 +57,6 @@ public class ChatActivity extends AppCompatActivity {
         navigationView = findViewById(R.id.sidebar_view);
         String role = ClientUtils.getAuthService().getRole();
         MenuUtils.filterMenuByRole(navigationView, role);
-
         navigationView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
             String fragment = null;

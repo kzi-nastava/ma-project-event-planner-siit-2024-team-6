@@ -280,6 +280,11 @@ public class EventOrganizerDetailsDialog extends DialogFragment {
             dialog.show(requireActivity().getSupportFragmentManager(), "BudgetDialog");
         });
 
+        Button btnCreateAgenda = view.findViewById(R.id.btn_create_agenda);
+        btnCreateAgenda.setOnClickListener(v -> {
+            CreateAgendaDialog dialog = CreateAgendaDialog.newInstance(event.getId());
+            dialog.show(getParentFragmentManager(), "create_agenda_dialog");
+        });
 
     }
     private void drawChart(BarChart chart, EventStatisticsDTO stats) {
