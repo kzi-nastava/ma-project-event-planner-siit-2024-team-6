@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -46,6 +47,9 @@ public class OrganizerBudgetDialog extends DialogFragment {
 
     private final List<OfferDTO> matchedOffers = new ArrayList<>();
     private final List<BudgetItem> budgetItems = new ArrayList<>();
+    private TextView totalValueText;
+    private TextView leftValueText;
+
 
     public static OrganizerBudgetDialog newInstance(long eventId) {
         OrganizerBudgetDialog dialog = new OrganizerBudgetDialog();
@@ -70,6 +74,9 @@ public class OrganizerBudgetDialog extends DialogFragment {
         offerRecyclerView = view.findViewById(R.id.offer_list);
         budgetRecycler = view.findViewById(R.id.budget_items_recycler);
         noOffersMessage = view.findViewById(R.id.no_offers_message);
+        totalValueText = view.findViewById(R.id.total_max_amount);
+        leftValueText = view.findViewById(R.id.total_spent_amount);
+
 
         offerAdapter = new OfferAdapter(matchedOffers, getChildFragmentManager());
         offerRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
@@ -129,6 +136,7 @@ public class OrganizerBudgetDialog extends DialogFragment {
                     budgetItems.clear();
                     budgetItems.addAll(b.getBudgetItems());
                     budgetItemAdapter.updateItems(budgetItems);
+                    updateBudgetTotalsUI();
                 } else {
                     Snackbar.make(requireView(), "Failed to load budget.", Snackbar.LENGTH_LONG).show();
                 }
@@ -212,6 +220,7 @@ public class OrganizerBudgetDialog extends DialogFragment {
                     budgetItems.clear();
                     budgetItems.addAll(updatedBudget.getBudgetItems());
                     budgetItemAdapter.updateItems(budgetItems);
+                    updateBudgetTotalsUI();
                     Snackbar.make(requireView(), "Budget updated!", Snackbar.LENGTH_SHORT).show();
                 } else {
                     Snackbar.make(requireView(), "Update failed", Snackbar.LENGTH_SHORT).show();
@@ -239,6 +248,7 @@ public class OrganizerBudgetDialog extends DialogFragment {
                 if (response.isSuccessful() && response.body() != null) {
                     Budget updatedBudget = response.body();
                     budgetItemAdapter.updateItems(budgetItems);
+                    updateBudgetTotalsUI();
                     Snackbar.make(requireView(), "Budget updated!", Snackbar.LENGTH_SHORT).show();
                 } else {
                     Snackbar.make(requireView(), "Update failed", Snackbar.LENGTH_SHORT).show();
@@ -251,4 +261,19 @@ public class OrganizerBudgetDialog extends DialogFragment {
             }
         });
     }
+    private void updateBudgetTotalsUI() {
+        int total = 0;
+        int spent = 0;
+
+        for (BudgetItem item : budgetItems) {
+            total += item.getMaxPrice();
+            spent += item.getCurrPrice();
+        }
+
+        int left = total - spent;
+
+        totalValueText.setText("Total: $" + total);
+        leftValueText.setText("Left: $" + left);
+    }
+
 }
