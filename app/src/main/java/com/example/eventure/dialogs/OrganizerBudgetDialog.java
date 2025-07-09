@@ -24,6 +24,7 @@ import com.example.eventure.adapters.OrganizerBudgetItemAdapter;
 import com.example.eventure.clients.ClientUtils;
 import com.example.eventure.dto.BudgetItemDTO;
 import com.example.eventure.dto.NewBudgetDTO;
+import com.example.eventure.dto.NewBudgetItemDTO;
 import com.example.eventure.dto.OfferDTO;
 import com.example.eventure.model.Budget;
 import com.example.eventure.model.BudgetItem;
@@ -107,14 +108,7 @@ public class OrganizerBudgetDialog extends DialogFragment {
                     if(updatedItem.getCurrPrice() > updatedItem.getMaxPrice()){
                         Snackbar.make(requireView(), "Maximal amount cannot be lesser than spent amount.", Snackbar.LENGTH_SHORT).show();
                     }else{
-                        int index = budgetItems.indexOf(item);
-                        if (index != -1) {
-                            budgetItems.set(index, updatedItem);
-                            budgetItemAdapter.notifyItemChanged(index);
-                            updateBudget();
-                        }else{
-                            Snackbar.make(requireView(), "Update failed", Snackbar.LENGTH_SHORT).show();
-                        }
+                        updateBudgetItem(item, updatedItem.getMaxPrice());
                     }
                 });
                 dialog.show(getChildFragmentManager(), "EditBudgetDialog");
@@ -130,7 +124,6 @@ public class OrganizerBudgetDialog extends DialogFragment {
                                 Snackbar.make(requireView(), "You have spent money under this category. It cannot be deleted.", Snackbar.LENGTH_SHORT).show();
                             } else{
                                 deleteBudgetItem(item);
-                                Snackbar.make(requireView(), "Item deleted", Snackbar.LENGTH_SHORT).show();
                             }
                         })
                         .setNegativeButton("Cancel", null)
@@ -174,9 +167,7 @@ public class OrganizerBudgetDialog extends DialogFragment {
 
             AddBudgetItemDialog dialog = AddBudgetItemDialog.newInstance((ArrayList<String>) unusedCategories);
             dialog.setOnBudgetItemAddedListener(newItem -> {
-                budgetItems.add(newItem);
-                budgetItemAdapter.notifyItemInserted(budgetItems.size() - 1);
-                updateBudget();
+                addItemToBudget(newItem);
             });
             dialog.show(getChildFragmentManager(), "AddBudgetItemDialog");
         });
@@ -268,58 +259,51 @@ public class OrganizerBudgetDialog extends DialogFragment {
         }
     }
 
-    private void updateBudget(){
-        NewBudgetDTO dto = new NewBudgetDTO();
-        List<BudgetItemDTO> items = new ArrayList<>();
-        for (BudgetItem i: budgetItems){
-            items.add(new BudgetItemDTO(i));
-        }
-        dto.setBudgetItems(items);
-        ClientUtils.eventService.updateBudget(budgetId, dto).enqueue(new Callback<Budget>() {
+    private void updateBudgetItem(BudgetItem item, double newPrice){
+        ClientUtils.eventService.updateBudgetItem(budgetId, item.getId(), newPrice).enqueue(new Callback<BudgetItemDTO>() {
             @Override
-            public void onResponse(Call<Budget> call, Response<Budget> response) {
+            public void onResponse(Call<BudgetItemDTO> call, Response<BudgetItemDTO> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    Budget updatedBudget = response.body();
-                    budgetItems.clear();
-                    budgetItems.addAll(updatedBudget.getBudgetItems());
-                    budgetItemAdapter.updateItems(budgetItems);
-                    updateBudgetTotalsUI();
-                    Snackbar.make(requireView(), "Budget updated!", Snackbar.LENGTH_SHORT).show();
+                    BudgetItemDTO updated = response.body();
+                    BudgetItem newItem = new BudgetItem(updated);
+                    int index = budgetItems.indexOf(item);
+                    if (index != -1) {
+                        budgetItems.set(index, newItem);
+                        budgetItemAdapter.notifyItemChanged(index);
+                        budgetItemAdapter.updateItems(budgetItems);
+                        updateBudgetTotalsUI();
+                        Snackbar.make(requireView(), "Budget item updated!", Snackbar.LENGTH_SHORT).show();
+                    }else{
+                        Snackbar.make(requireView(), "Unexpected error! Try refreshing this page.", Snackbar.LENGTH_SHORT).show();
+                    }
                 } else {
                     Snackbar.make(requireView(), "Update failed", Snackbar.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onFailure(Call<Budget> call, Throwable t) {
+            public void onFailure(Call<BudgetItemDTO> call, Throwable t) {
                 Snackbar.make(requireView(), "Error: " + t.getMessage(), Snackbar.LENGTH_LONG).show();
             }
         });
     }
 
     private void deleteBudgetItem(BudgetItem item){
-        NewBudgetDTO dto = new NewBudgetDTO();
-        List<BudgetItemDTO> items = new ArrayList<>();
-        budgetItems.remove(item);
-        for (BudgetItem i: this.budgetItems){
-            items.add(new BudgetItemDTO(i));
-        }
-        dto.setBudgetItems(items);
-        ClientUtils.eventService.updateBudget(budgetId, dto).enqueue(new Callback<Budget>() {
+        ClientUtils.eventService.deleteBudgetItem(budgetId, item.getId()).enqueue(new Callback<Void>() {
             @Override
-            public void onResponse(Call<Budget> call, Response<Budget> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    Budget updatedBudget = response.body();
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    budgetItems.remove(item);
                     budgetItemAdapter.updateItems(budgetItems);
                     updateBudgetTotalsUI();
-                    Snackbar.make(requireView(), "Budget updated!", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(requireView(), "Budget item deleted successfully!", Snackbar.LENGTH_SHORT).show();
                 } else {
-                    Snackbar.make(requireView(), "Update failed", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(requireView(), "Deletion failed", Snackbar.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onFailure(Call<Budget> call, Throwable t) {
+            public void onFailure(Call<Void> call, Throwable t) {
                 Snackbar.make(requireView(), "Error: " + t.getMessage(), Snackbar.LENGTH_LONG).show();
             }
         });
@@ -363,6 +347,35 @@ public class OrganizerBudgetDialog extends DialogFragment {
         });
     }
 
+    private void addItemToBudget(BudgetItem item){
+        NewBudgetItemDTO dto = new NewBudgetItemDTO(item.getCategory(), item.getMaxPrice(), 0);
+
+        Call<BudgetItemDTO> call = ClientUtils.eventService.addItemToBudget(budgetId, dto);
+
+        call.enqueue(new Callback<BudgetItemDTO>() {
+            @Override
+            public void onResponse(Call<BudgetItemDTO> call, Response<BudgetItemDTO> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    BudgetItemDTO addedItem = response.body();
+                    BudgetItem newItem = new BudgetItem(addedItem);
+                    budgetItems.add(newItem);
+                    budgetItemAdapter.notifyItemInserted(budgetItems.size() - 1);
+                    updateBudgetTotalsUI();
+                    budgetItemAdapter.updateItems(budgetItems);
+                    Snackbar.make(requireView(), "Budget item created!", Snackbar.LENGTH_SHORT).show();
+                } else {
+                    Snackbar.make(requireView(), "Creation failed", Snackbar.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<BudgetItemDTO> call, Throwable t) {
+                Snackbar.make(requireView(), "Error: " + t.getMessage(), Snackbar.LENGTH_LONG).show();
+            }
+        });
+
+    }
+
     private void fetchEventCategoriesAndShowRecommendations() {
 
         ClientUtils.eventService.getEventCategories(eventId).enqueue(new Callback<List<String>>() {
@@ -390,9 +403,7 @@ public class OrganizerBudgetDialog extends DialogFragment {
                         BudgetRecommendationsDialog dialog = BudgetRecommendationsDialog.newInstance(recs);
 
                         dialog.setOnCategoryChosenListener(newItem -> {
-                            budgetItems.add(newItem);
-                            budgetItemAdapter.notifyItemInserted(budgetItems.size() - 1);
-                            updateBudget();
+                            addItemToBudget(newItem);
                         });
 
                         dialog.show(getChildFragmentManager(), "BudgetRecommendationsDialog");
