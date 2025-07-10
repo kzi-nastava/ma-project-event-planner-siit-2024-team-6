@@ -212,7 +212,7 @@ public class OrganizerBudgetDialog extends DialogFragment {
         }
         dto.setBudgetItems(items);
 
-        ClientUtils.offerService.getFilteredOffersByBudget(dto, currentPage, pageSize).enqueue(new Callback<PagedResponse<OfferDTO>>() {
+        ClientUtils.offerService.getFilteredOffersByBudget(budgetId, dto, currentPage, pageSize).enqueue(new Callback<PagedResponse<OfferDTO>>() {
             @Override
             public void onResponse(Call<PagedResponse<OfferDTO>> call, Response<PagedResponse<OfferDTO>> response) {
                 if (response.isSuccessful() && response.body() != null) {
