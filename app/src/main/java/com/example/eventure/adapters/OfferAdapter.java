@@ -67,7 +67,7 @@ public class OfferAdapter extends RecyclerView.Adapter<OfferAdapter.OfferViewHol
         notifyDataSetChanged();
     }
     static class OfferViewHolder extends RecyclerView.ViewHolder {
-        TextView productTitle, productPrice, productSalePrice, saleTag;
+        TextView productTitle, productPrice, productSalePrice, saleTag, productCategory;
         ImageView productImage, saleEuroIcon;
 
         public OfferViewHolder(@NonNull View itemView) {
@@ -78,11 +78,13 @@ public class OfferAdapter extends RecyclerView.Adapter<OfferAdapter.OfferViewHol
             productImage = itemView.findViewById(R.id.product_image);
             saleTag = itemView.findViewById(R.id.sale_tag);
             saleEuroIcon = itemView.findViewById(R.id.sale_euro_icon);
+            productCategory = itemView.findViewById(R.id.product_category);
 
         }
 
         public void bind(OfferDTO offer, FragmentManager fragmentManager) {
             productTitle.setText(offer.getName());
+            productCategory.setText(offer.getCategory());
 
             if (offer.getSale() > 0) {
                 // Display original price with a line through it

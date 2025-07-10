@@ -72,7 +72,10 @@ public class EditBudgetItemDialog extends DialogFragment {
         saveButton.setOnClickListener(v -> {
             try {
                 int newMax = Integer.parseInt(maxPriceInput.getText().toString());
-                BudgetItem updated = new BudgetItem(newMax, currPrice, category);
+                BudgetItem updated = new BudgetItem();
+                updated.setCategory(category);
+                updated.setMaxPrice(newMax);
+                updated.setCurrPrice(currPrice);
                 if (listener != null) listener.onBudgetItemUpdated(updated);
                 dismiss();
             } catch (NumberFormatException e) {

@@ -1,17 +1,22 @@
 package com.example.eventure.model;
 
+import com.example.eventure.dto.BudgetItemDTO;
+
 public class BudgetItem {
+    private int id;
     private String category;
     private int maxPrice;
     private int currPrice;
 
     public BudgetItem(){}
 
-    public BudgetItem(int max, int curr, String c){
-        this.category = c;
-        this.currPrice = curr;
-        this.maxPrice = max;
+    public BudgetItem(BudgetItemDTO dto){
+        this.id = dto.getId();
+        this.category = dto.getCategory();
+        this.currPrice = dto.getCurrPrice();
+        this.maxPrice = dto.getMaxPrice();
     }
+    public int getId(){return id;}
 
     public int getMaxPrice() {
         return maxPrice;

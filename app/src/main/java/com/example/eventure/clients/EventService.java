@@ -1,8 +1,9 @@
 package com.example.eventure.clients;
 
+import com.example.eventure.dto.BudgetItemDTO;
 import com.example.eventure.dto.EventDTO;
 import com.example.eventure.dto.EventTypeDTO;
-import com.example.eventure.dto.NewBudgetDTO;
+import com.example.eventure.dto.NewBudgetItemDTO;
 import com.example.eventure.dto.UserDTO;
 import com.example.eventure.model.Budget;
 import com.example.eventure.model.Event;
@@ -14,7 +15,6 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
-import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
@@ -111,10 +111,24 @@ public interface EventService {
     Call<Budget> getBudgetByEventId(
             @Path("id") int eventId
     );
-    @PUT("/api/organizers/budget/{id}")
-    Call<Budget> updateBudget(
-            @Path("id") int budgetId,
-            @Body NewBudgetDTO budgetDTO
+    @POST("/api/organizers/budget/{budgetId}/items")
+    Call<BudgetItemDTO> addItemToBudget(
+            @Path("budgetId") int budgetId,
+            @Body NewBudgetItemDTO newItem
+    );
+
+    @Headers("Content-Type: application/json")
+    @PUT("/api/organizers/budget/{budgetId}/items/{itemId}")
+    Call<BudgetItemDTO> updateBudgetItem(
+            @Path("budgetId") int budgetId,
+            @Path("itemId") int itemId,
+            @Body Double price
+    );
+
+    @DELETE("/api/organizers/budget/{budgetId}/items/{itemId}")
+    Call<Void> deleteBudgetItem(
+            @Path("budgetId") int budgetId,
+            @Path("itemId") int itemId
     );
     @GET("/api/events/{eventId}/categories")
     Call<List<String>> getEventCategories(
