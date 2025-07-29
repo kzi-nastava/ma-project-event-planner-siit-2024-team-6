@@ -73,19 +73,7 @@ public class OrganizerEventsActivity extends AppCompatActivity {
         });
 
         BottomNavigationView bottomNav = findViewById(R.id.events_bottom_navigation);
-        NavigationUI.setupWithNavController(bottomNav, navController);
-        bottomNav.setOnItemSelectedListener(item -> {
-            int id = item.getItemId();
-
-            if (id == R.id.events_menu) {
-                startActivity(new Intent(this, HomeActivity.class));                return true;
-            } else if (id == R.id.offer_menu) {
-                startActivity(new Intent(this, HomeActivity.class));
-                return true;
-            }
-            return false;
-        });
-
+        bottomNav.setVisibility(View.GONE);
         actionBarDrawerToggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(actionBarDrawerToggle);

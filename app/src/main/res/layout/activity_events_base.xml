@@ -74,6 +74,7 @@
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/events_bottom_navigation"
         android:layout_width="match_parent"
+        android:visibility="gone"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         android:background="@color/blue"
