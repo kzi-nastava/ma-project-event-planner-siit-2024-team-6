@@ -62,21 +62,24 @@ public class EventCarouselAdapter extends RecyclerView.Adapter<EventCarouselAdap
         }
 
         public void bind(EventDTO event) {
+            List<String> photos = event.getPhotos();
 
-            String photo = event.getPhotos().get(0);
+            if (photos != null && !photos.isEmpty() && photos.get(0) != null && !photos.get(0).isEmpty()) {
+                String photo = photos.get(0);
+                Glide.with(eventImage.getContext())
+                        .load(photo)
+                        .placeholder(R.drawable.event2)
+                        .error(R.drawable.error_image)
+                        .into(eventImage);
+            } else {
+                eventImage.setImageResource(R.drawable.event2); // или какая-то дефолтная
+            }
 
-            Glide.with(eventImage.getContext())
-                    .load(photo)
-                    .placeholder(R.drawable.event2)
-                    .error(R.drawable.error_image)
-                    .into(eventImage);
-
-            eventImage.setImageResource(R.drawable.event5);
-            //event title
+            // event title
             eventTitle.setText(event.getName());
             eventDescription.setText(event.getDescription());
-
         }
+
     }
 }
 
