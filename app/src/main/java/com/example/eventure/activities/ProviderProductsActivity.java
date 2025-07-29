@@ -68,6 +68,8 @@ public class ProviderProductsActivity extends AppCompatActivity {
                 startActivity(new Intent(this, HomeActivity.class).putExtra("FRAGMENT_NAME", "FAVOURITE_SERVICES"));
             } else if (id == R.id.nav_favorite_products) {
                 startActivity(new Intent(this, HomeActivity.class).putExtra("FRAGMENT_NAME", "FAVOURITE_PRODUCTS"));
+            }else if (id == R.id.nav_my_offers) {
+                startActivity(new Intent(this,ProviderOffersActivity.class));
             }
             drawer.closeDrawer(GravityCompat.START);
             return true;
