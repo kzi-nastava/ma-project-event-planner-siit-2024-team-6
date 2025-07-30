@@ -41,7 +41,7 @@ public class MyProfileFragment extends Fragment {
 
     private Button submitButton, changePasswordButton, logoutButton, deactivateButton;
     private ImageView profilePhoto;
-    private TextView photoTitle;
+    private TextView photoTitle, companyEmailLabel, companyAddressLabel, descriptionLabel, openingTimeLabel, closingTimeLabel;
     private LinearLayout photoContainer;
     private Button addPhotoButton;
 
@@ -82,6 +82,11 @@ public class MyProfileFragment extends Fragment {
         photoTitle = view.findViewById(R.id.company_photos_title);
         photoContainer = view.findViewById(R.id.company_photos_container);
         addPhotoButton = view.findViewById(R.id.add_photo_button);
+         companyEmailLabel = view.findViewById(R.id.company_email_label);
+         companyAddressLabel = view.findViewById(R.id.company_address_label);
+         descriptionLabel = view.findViewById(R.id.description_label);
+         openingTimeLabel = view.findViewById(R.id.opening_time_label);
+         closingTimeLabel = view.findViewById(R.id.closing_time_label);
 
 
         loadProfile();
@@ -198,6 +203,11 @@ public class MyProfileFragment extends Fragment {
                         photoTitle.setVisibility(View.VISIBLE);
                         photoContainer.setVisibility(View.VISIBLE);
                         addPhotoButton.setVisibility(View.VISIBLE);
+                        companyEmailLabel.setVisibility(View.VISIBLE);
+                        companyAddressLabel.setVisibility(View.VISIBLE);
+                        descriptionLabel.setVisibility(View.VISIBLE);
+                        openingTimeLabel.setVisibility(View.VISIBLE);
+                        closingTimeLabel.setVisibility(View.VISIBLE);
 
                         // Очистим контейнер и добавим поля
                         photoContainer.removeAllViews();
