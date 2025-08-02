@@ -253,7 +253,7 @@ public class MyProfileFragment extends Fragment {
                 for (int i = 0; i < photoContainer.getChildCount(); i++) {
                     View row = photoContainer.getChildAt(i);
                     if (row instanceof LinearLayout) {
-                        EditText input = (EditText) ((LinearLayout) row).getChildAt(0);
+                        EditText input = (EditText) ((LinearLayout) row).getChildAt(1);
                         String text = input.getText().toString().trim();
                         if (!text.isEmpty()) {
                             photoUrls.add(text);
