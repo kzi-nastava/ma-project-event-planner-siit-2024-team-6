@@ -134,5 +134,5 @@ public interface EventService {
     Call<List<String>> getEventCategories(
             @Path("eventId") int eventId
     );
-    Call<Event> getById(@Path("id") int id);
-}
+    @GET("events/{id}")
+    Call<Event> getById(@Path("id") int id);}

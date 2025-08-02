@@ -100,12 +100,17 @@ public class EditEventTypeDialog extends DialogFragment {
         closeIcon.setOnClickListener(v -> dismiss());
         submitButton.setOnClickListener(v -> handleUpdate());
 
-        // Загрузка всех категорий
         ClientUtils.adminService.getAllCategories().enqueue(new Callback<List<Category>>() {
             @Override
             public void onResponse(Call<List<Category>> call, Response<List<Category>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    allCategories = response.body();
+                    allCategories =  response.body().stream()
+                            .filter(cat -> cat.getName() != null)
+                            .filter(cat -> selectedCategories.stream().noneMatch(sel -> sel.getName().equals(cat.getName())))
+                            .collect(Collectors.collectingAndThen(
+                                    Collectors.toMap(Category::getName, c -> c, (c1, c2) -> c1),
+                                    map -> new ArrayList<>(map.values())
+                            ));
                     ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),
                             android.R.layout.simple_spinner_item,
                             allCategories.stream().map(Category::getName).collect(Collectors.toList()));
@@ -139,6 +144,7 @@ public class EditEventTypeDialog extends DialogFragment {
 
     private void refreshCategoryList() {
         selectedCategoryContainer.removeAllViews();
+
         for (Category category : selectedCategories) {
             View item = LayoutInflater.from(getContext()).inflate(R.layout.item_category_chip, selectedCategoryContainer, false);
             TextView text = item.findViewById(R.id.category_name);
@@ -147,12 +153,28 @@ public class EditEventTypeDialog extends DialogFragment {
             text.setText(category.getName());
             remove.setOnClickListener(v -> {
                 selectedCategories.remove(category);
+
+                boolean alreadyExists = allCategories.stream()
+                        .anyMatch(c -> c.getName().equals(category.getName()));
+                if (!alreadyExists) {
+                    allCategories.add(category);
+                    // Сортируем по имени для стабильности, можно убрать
+                    allCategories.sort((a, b) -> a.getName().compareToIgnoreCase(b.getName()));
+                }
+
                 refreshCategoryList();
             });
 
             selectedCategoryContainer.addView(item);
         }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),
+                android.R.layout.simple_spinner_item,
+                allCategories.stream().map(Category::getName).collect(Collectors.toList()));
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        categorySpinner.setAdapter(adapter);
     }
+
 
     private void handleUpdate() {
         String updatedName = nameInput.getText().toString().trim();
