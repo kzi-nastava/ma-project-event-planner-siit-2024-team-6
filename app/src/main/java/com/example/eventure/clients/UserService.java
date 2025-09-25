@@ -79,4 +79,11 @@ public interface UserService {
             @Query("page") int page,
             @Query("size") int size
     );
+
+    // GET /api/users/{id}/is-muted
+    @GET("users/{id}/is-muted")
+    Call<Boolean> isMuted(@Path("id") int userId);
+    // Toggle mute status
+    @PUT("users/mute/{userId}")
+    Call<Void> toggleMute(@Path("userId") int userId, @Query("mute") boolean mute);
 }

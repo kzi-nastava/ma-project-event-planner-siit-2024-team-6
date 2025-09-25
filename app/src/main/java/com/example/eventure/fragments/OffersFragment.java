@@ -311,6 +311,8 @@ public class OffersFragment extends Fragment {
                 } else {
                     Log.e("OffersFragment", "Failed to fetch offers. Response code: " + response.code());
                 }
+                toggleEmptyOffers();
+
             }
 
             @Override
@@ -539,6 +541,8 @@ public class OffersFragment extends Fragment {
             public void onFailure(Call<PagedResponse<OfferDTO>> call, Throwable t) {
                 isLoading = false;
                 Log.e("OffersTag", "Error loading filtered offers: " + t.getMessage());
+                toggleEmptyOffers();
+                updateLoadMoreVisibility();
             }
         });
     }

@@ -484,13 +484,14 @@ public class OfferDetailsDialog extends DialogFragment {
                         sendReviewNotification(response.body(), offer.getName(), offer.getId(), v);
 
                     } else {
-                        Snackbar.make(v, "Failed to submit reaction.", Snackbar.LENGTH_LONG).show();
+                        Log.e("NTag","Failed to submit reaction");
+
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ReactionDTO> call, Throwable t) {
-                    Snackbar.make(v, "Network error: " + t.getMessage(), Snackbar.LENGTH_LONG).show();
+                    Log.e("NTag","Network error: " + t.getMessage());
                 }
             });
         });
@@ -520,25 +521,27 @@ public class OfferDetailsDialog extends DialogFragment {
                         @Override
                         public void onResponse(Call<NotificationDTO> call, Response<NotificationDTO> notifResponse) {
                             if (notifResponse.isSuccessful()) {
-                                Snackbar.make(v, "Notification sent to provider.", Snackbar.LENGTH_SHORT).show();
+                                Log.d("NTag","Notification sent to provider");
+
                             } else {
-                                Snackbar.make(v, "Failed to send notification.", Snackbar.LENGTH_SHORT).show();
+                                Log.e("NTag","Failed to send notification.");
                             }
                         }
 
                         @Override
                         public void onFailure(Call<NotificationDTO> call, Throwable t) {
-                            Snackbar.make(v, "Error sending notification: " + t.getMessage(), Snackbar.LENGTH_SHORT).show();
+                            Log.e("NTag","Error sending notification: "+t.getMessage());
+
                         }
                     });
                 } else {
-                    Snackbar.make(v, "Failed to get provider info.", Snackbar.LENGTH_LONG).show();
+                    Log.e("NTag","Failed to get provider info");
                 }
             }
 
             @Override
             public void onFailure(Call<UserDTO> call, Throwable t) {
-                Snackbar.make(v, "Network error getting provider: " + t.getMessage(), Snackbar.LENGTH_LONG).show();
+                Log.e("NTag","Network error getting provider: "+t.getMessage());
             }
         });
     }

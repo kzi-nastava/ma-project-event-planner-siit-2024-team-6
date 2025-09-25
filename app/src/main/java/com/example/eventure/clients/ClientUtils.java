@@ -94,6 +94,8 @@ public class ClientUtils {
                         String dateStr = json.getAsString().replace("Z", ""); // удаляем Z если есть
 
                         DateTimeFormatter[] formatters = new DateTimeFormatter[] {
+                                DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS"),
+                                DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS"),
                                 DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS"),
                                 DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
                         };
