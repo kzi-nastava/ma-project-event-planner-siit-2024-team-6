@@ -8,10 +8,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.eventure.R;
+import com.example.eventure.dialogs.EventDetailsDialog;
 import com.example.eventure.dto.EventDTO;
 import com.example.eventure.model.Event;
 
@@ -21,12 +23,15 @@ import java.util.List;
 public class EventCarouselAdapter extends RecyclerView.Adapter<EventCarouselAdapter.EventViewHolder> {
 
     private List<EventDTO> events;
+    private FragmentActivity activity;
 
-    public EventCarouselAdapter(List<EventDTO> events) {
+
+    public EventCarouselAdapter(List<EventDTO> events, FragmentActivity fragmentActivity) {
         if (events == null) {
             throw new IllegalArgumentException("Event list cannot be null");
         }
         this.events = events;
+        this.activity = fragmentActivity;
     }
 
     @NonNull
@@ -48,17 +53,21 @@ public class EventCarouselAdapter extends RecyclerView.Adapter<EventCarouselAdap
         return events.size();
     }
 
-    public static class EventViewHolder extends RecyclerView.ViewHolder {
+    public class EventViewHolder extends RecyclerView.ViewHolder {
 
         private ImageView eventImage;
         private TextView eventTitle;
         private TextView eventDescription;
+        private TextView viewButton;
+
         public EventViewHolder(@NonNull View itemView) {
             super(itemView);
 
             eventImage = itemView.findViewById(R.id.top_event_image);
             eventTitle = itemView.findViewById(R.id.top_event_title);
             eventDescription = itemView.findViewById(R.id.top_event_description);
+            viewButton = itemView.findViewById(R.id.top_event_view_button);
+
         }
 
         public void bind(EventDTO event) {
@@ -78,6 +87,11 @@ public class EventCarouselAdapter extends RecyclerView.Adapter<EventCarouselAdap
             // event title
             eventTitle.setText(event.getName());
             eventDescription.setText(event.getDescription());
+            viewButton.setOnClickListener(v -> {
+                Event fullEvent = new Event(event);
+                EventDetailsDialog dialog = EventDetailsDialog.newInstance(fullEvent);
+                dialog.show(activity.getSupportFragmentManager(), "EventDetailsDialog");
+        });
         }
 
     }
