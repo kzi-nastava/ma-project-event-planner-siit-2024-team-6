@@ -330,7 +330,7 @@ public class OffersFragment extends Fragment {
                 if (response.isSuccessful() && response.body() != null) {
                     List<OfferDTO> offers = response.body();
 
-                    carouselAdapter = new OfferCarouselAdapter(offers);
+                    carouselAdapter = new OfferCarouselAdapter(offers, requireActivity());
                     offerCarousel.setAdapter(carouselAdapter);
 
                     // Apply carousel transformations
