@@ -97,10 +97,26 @@ public class LoginFragment extends Fragment {
                     if (response.isSuccessful() && response.body() != null) {
                         AuthService authService = new AuthService(getContext());
                         authService.login(response.body().getToken());
-                        authService.saveMuted(response.body().isMuted());
+                        int userId = authService.getUserId();
+                        ClientUtils.userService.isMuted(userId).enqueue(new Callback<Boolean>() {
+                            @Override
+                            public void onResponse(Call<Boolean> call, Response<Boolean> resp) {
+                                if (resp.isSuccessful() && resp.body() != null) {
+                                    boolean muted = resp.body();
+                                    authService.saveMuted(muted);
+                                    Log.d("AuthTag", "Mute status fetched: " + muted);
+                                } else {
+                                    Log.e("AuthTag", "Failed to fetch mute status: " + resp.code());
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<Boolean> call, Throwable t) {
+                                Log.e("AuthTag", "Error fetching mute status", t);
+                            }
+                        });
                         Log.d("AuthTag", "Login successful, role: " + authService.getRole()+" ,muted: "+authService.isMuted());
 
-                        int userId = authService.getUserId();
                         NotificationSocketManager.getInstance().disconnect();
                         NotificationSocketManager.getInstance().connect(requireContext().getApplicationContext(), userId);
 

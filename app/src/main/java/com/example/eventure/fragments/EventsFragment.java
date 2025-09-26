@@ -157,7 +157,7 @@ public class EventsFragment extends Fragment {
                     eventAdapter.clearEvents();
                     fetchAllEventsWithPagination(currentPage);
                 }
-                return false;
+                return true;
             }
         });
 
@@ -271,9 +271,8 @@ public class EventsFragment extends Fragment {
                     Log.d("EventsFragment", "Top five events fetched successfully. Count: " + events.size());
 
                     // Update carousel adapter
-                    carouselAdapter = new EventCarouselAdapter(events);
+                    carouselAdapter = new EventCarouselAdapter(events, requireActivity());
                     eventCarousel.setAdapter(carouselAdapter);
-
                     // Apply carousel transformations
                     eventCarousel.setOffscreenPageLimit(3);
                     CompositePageTransformer transformer = new CompositePageTransformer();

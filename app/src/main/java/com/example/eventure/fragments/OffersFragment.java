@@ -311,6 +311,8 @@ public class OffersFragment extends Fragment {
                 } else {
                     Log.e("OffersFragment", "Failed to fetch offers. Response code: " + response.code());
                 }
+                toggleEmptyOffers();
+
             }
 
             @Override
@@ -330,7 +332,7 @@ public class OffersFragment extends Fragment {
                 if (response.isSuccessful() && response.body() != null) {
                     List<OfferDTO> offers = response.body();
 
-                    carouselAdapter = new OfferCarouselAdapter(offers);
+                    carouselAdapter = new OfferCarouselAdapter(offers, requireActivity());
                     offerCarousel.setAdapter(carouselAdapter);
 
                     // Apply carousel transformations
@@ -539,6 +541,8 @@ public class OffersFragment extends Fragment {
             public void onFailure(Call<PagedResponse<OfferDTO>> call, Throwable t) {
                 isLoading = false;
                 Log.e("OffersTag", "Error loading filtered offers: " + t.getMessage());
+                toggleEmptyOffers();
+                updateLoadMoreVisibility();
             }
         });
     }
