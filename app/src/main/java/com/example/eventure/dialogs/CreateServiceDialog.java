@@ -285,6 +285,11 @@ public class CreateServiceDialog extends DialogFragment {
             if (!serviceDiscountInput.getText().toString().isEmpty()) {
                 updatedDiscount = Double.parseDouble(serviceDiscountInput.getText().toString().trim());
             }
+            if (updatedDiscount > updatedPrice) {
+                showSnackbar("Discounted price cannot exceed the original price.");
+                serviceDiscountInput.setError("Must be ≤ original price");
+                return;
+            }
 
             // Duration fields
             int updatedFixedDuration = 0;
