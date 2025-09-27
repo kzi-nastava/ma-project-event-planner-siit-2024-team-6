@@ -1,6 +1,7 @@
 package com.example.eventure.dialogs;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.SpannableString;
@@ -120,6 +121,16 @@ public class OfferDetailsDialog extends DialogFragment {
             getDialog().getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         }
     }
+
+    @Override
+    public void onDismiss(@NonNull DialogInterface dialog) {
+        super.onDismiss(dialog);
+        // Notify parent fragment or activity
+        Bundle result = new Bundle();
+        result.putBoolean("offer_details_closed", true);
+        getParentFragmentManager().setFragmentResult("offer_details_closed", result);
+    }
+
 
     private void checkForImmediateReview(View view){
         if (offer.getType().equals("Product")){
@@ -553,5 +564,6 @@ public class OfferDetailsDialog extends DialogFragment {
 
         return "You got a new review for \"" + offerName + "\": Comment: " + comment + " - Rating: " + stars + " (" + rating + "/5)";
     }
+
 
 }
