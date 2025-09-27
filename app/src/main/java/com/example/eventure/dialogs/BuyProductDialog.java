@@ -140,7 +140,15 @@ public class BuyProductDialog extends DialogFragment{
                         if (response.isSuccessful()) {
                             Snackbar.make(view, "Purchase successful", Snackbar.LENGTH_SHORT).show();
                         } else {
-                            Snackbar.make(view, "Failed to purchase. Error code: " + response.code(), Snackbar.LENGTH_LONG).show();
+                            String serverMsg = extractServerMessage(response);
+                            if (serverMsg != null &&
+                                    serverMsg.toLowerCase(Locale.US).contains("not have enough allocated funds")) {
+                                Snackbar.make(view, "You do not have enough allocated funds to make this purchase.", Snackbar.LENGTH_LONG).show();
+                            } else if (serverMsg != null && !serverMsg.isEmpty()) {
+                                Snackbar.make(view, serverMsg, Snackbar.LENGTH_LONG).show();
+                            } else {
+                                Snackbar.make(view, "Failed to purchase. Error code: " + response.code(), Snackbar.LENGTH_LONG).show();
+                            }
                         }
                     }
 
@@ -186,4 +194,26 @@ public class BuyProductDialog extends DialogFragment{
         }
         return true;
     }
+    private @Nullable String extractServerMessage(Response<?> response) {
+        try {
+            if (response.errorBody() == null) return null;
+            String raw = response.errorBody().string();
+
+            // Try JSON first
+            try {
+                org.json.JSONObject obj = new org.json.JSONObject(raw);
+                if (obj.has("message")) return obj.getString("message");
+                if (obj.has("error")) return obj.getString("error");
+                if (obj.has("detail")) return obj.getString("detail");
+            } catch (org.json.JSONException ignore) {
+                // Not JSON? fall through and show raw
+            }
+
+            // Fallback: return raw text trimmed (server might return plain text)
+            return raw.trim().isEmpty() ? null : raw.trim();
+        } catch (java.io.IOException e) {
+            return null;
+        }
+    }
+
 }
