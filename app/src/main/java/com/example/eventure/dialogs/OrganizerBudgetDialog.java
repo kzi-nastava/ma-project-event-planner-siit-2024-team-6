@@ -178,6 +178,20 @@ public class OrganizerBudgetDialog extends DialogFragment {
             fetchEventCategoriesAndShowRecommendations();
         });
 
+        // Listen when OfferDetailsDialog is CLOSED (no matter what happened inside)
+        getChildFragmentManager().setFragmentResultListener(
+                "offer_details_closed", this, (requestKey, bundle) -> {
+                    // Refresh budget and offers on close
+                    fetchBudget();
+
+                    currentPage = 0;
+                    isLastPage = false;
+                    matchedOffers.clear();
+                    offerAdapter.setOffers(new ArrayList<>()); // optional: clear UI immediately
+                    fetchOffers();
+                }
+        );
+
         if (eventId != -1) fetchBudget();
     }
 
