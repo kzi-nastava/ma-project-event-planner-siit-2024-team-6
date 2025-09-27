@@ -139,6 +139,10 @@ public class BuyProductDialog extends DialogFragment{
                     public void onResponse(Call<Void> call, Response<Void> response) {
                         if (response.isSuccessful()) {
                             Snackbar.make(view, "Purchase successful", Snackbar.LENGTH_SHORT).show();
+                            bookingSuccessful = true;
+                            view.postDelayed(() -> {
+                                dismiss();
+                            }, 1700);
                         } else {
                             String serverMsg = extractServerMessage(response);
                             if (serverMsg != null &&
@@ -171,8 +175,8 @@ public class BuyProductDialog extends DialogFragment{
         super.onStart();
         if (getDialog() != null && getDialog().getWindow() != null) {
             getDialog().getWindow().setLayout(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
             );
         }
     }
