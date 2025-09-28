@@ -21,6 +21,7 @@
                 android:layout_marginBottom="0dp"
                 android:background="@color/blue">
                 <TextView
+                    android:id="@+id/dialog_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/blue"
@@ -46,12 +47,18 @@
                 android:text="Event Types"
                 android:textSize="20sp"
                 android:layout_marginTop="16dp" />
-            <EditText
-                android:id="@+id/event_types_input"
+            <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Enter event types (comma-separated)" />
-
+                android:layout_height="150dp"
+                android:layout_marginTop="8dp">
+                <LinearLayout
+                    android:id="@+id/event_types_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <!-- Checkboxes will be added dynamically here -->
+                </LinearLayout>
+            </ScrollView>
             <TextView
                 android:id="@+id/category_text"
                 android:layout_width="match_parent"
@@ -64,12 +71,12 @@
                 android:id="@+id/service_category_spinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:scrollbarSize="16dp"/>
-            <EditText
-                android:id="@+id/proposed_category_input"
+                android:scrollbarSize="20dp"/>
+            <Button
+                android:id="@+id/propose_category_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Propose a new category (optional)"
+                android:text="Propose a New Category"
                 android:layout_marginTop="8dp" />
 
             <!-- Service Name -->
@@ -114,6 +121,7 @@
                 android:id="@+id/service_specifics_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textSize="17dp"
                 android:hint="Enter specifics" />
 
             <TextView
@@ -131,7 +139,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Discount percentage"
+                android:text="Discount price"
                 android:textSize="20sp"
                 android:layout_marginTop="8dp" />
             <EditText
@@ -148,6 +156,15 @@
                 android:text="Add Pictures"
                 android:textSize="20sp"
                 android:layout_marginTop="16dp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/photos_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_marginBottom="16dp"
+                android:orientation="horizontal"
+                android:scrollbars="horizontal" />
+
             <Button
                 android:id="@+id/add_pictures_button"
                 android:layout_width="wrap_content"
@@ -207,13 +224,19 @@
                 android:id="@+id/fixed_duration_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Enter fixed duration (e.g., 1h)"
+                android:hint="Enter fixed duration (minutes) (e.g., 15)"
                 android:visibility="gone" />
             <EditText
-                android:id="@+id/min_max_duration_input"
+                android:id="@+id/min_duration_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Enter min and max duration (e.g., 1h - 5h)"
+                android:hint="Enter minimal duration (minutes) (e.g., 65)"
+                android:visibility="gone" />
+            <EditText
+                android:id="@+id/max_duration_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter maximal duration (minutes) (e.g., 75)"
                 android:visibility="gone" />
             <TextView
                 android:id="@+id/booking_text"
@@ -270,6 +293,7 @@
                 android:text="Submit"
                 android:layout_marginTop="24dp" />
         </LinearLayout>
+
     </ScrollView>
 
 

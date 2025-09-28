@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_organizer_events"
+    app:startDestination="@id/OrganizerEvents">
+
+    <fragment
+        android:id="@+id/OrganizerEvents"
+        android:name="com.example.eventure.fragments.OrganizerEvents"
+        android:label="Organizer Events"
+        tools:layout="@layout/fragment_organizer_events" />
+</navigation>

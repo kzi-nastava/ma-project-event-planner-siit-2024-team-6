@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools" >
+
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -11,16 +18,36 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Eventure"
-        tools:targetApi="31">
+        android:usesCleartextTraffic="true"
+        tools:targetApi="31" >
+
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true" >
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
         <activity
             android:name=".activities.ProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.LoginActivity"
-            android:exported="false" />
+            android:name=".activities.ProviderPriceListActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".activities.RegistrationActivity"
-            android:exported="false" /> <!-- <activity -->
+            android:name=".activities.ChatActivity"
+            android:exported="false" />
+<!--        <activity-->
+<!--            android:name=".activities.LoginActivity"-->
+<!--            android:exported="false" />-->
+<!--        <activity-->
+<!--            android:name=".activities.RegistrationActivity"-->
+<!--            android:exported="false" /> &lt;!&ndash; <activity &ndash;&gt;-->
         <!-- android:name=".activities.HomeActivity" -->
         <!-- android:label="Eventure" -->
         <!-- android:exported="false"> -->
@@ -30,22 +57,56 @@
         <!-- </activity> -->
         <activity
             android:name=".activities.HomeActivity"
-            android:label="Home"
-            android:exported="false">
+            android:exported="false"
+            android:label="Home" >
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-        <activity android:name=".activities.OffersActivity"
-            android:exported="false"/>
+        <activity android:name=".activities.ProviderProductsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ProviderOffersActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.OrganizerEventsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.AdminCategoriesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.AdminCommentsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.AdminReportsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.AdminEventTypesActivity"
+            android:exported="false" />
         <activity
             android:name=".activities.SplashScreenActivity"
             android:exported="true"
-            android:label="Shop App">
+            android:label="Shop App" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+
+            </intent-filter>
+            <!-- Deep link for quick-registration -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="eventure" android:host="quick-registration" />
+            </intent-filter>
+
+            <!-- Deep link for login -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="eventure" android:host="login" />
             </intent-filter>
 
             <meta-data

@@ -1,16 +1,12 @@
 package com.example.eventure.activities;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -18,13 +14,8 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
-import androidx.viewpager2.widget.CompositePageTransformer;
-import androidx.viewpager2.widget.MarginPageTransformer;
-import androidx.viewpager2.widget.ViewPager2;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -33,15 +24,11 @@ import androidx.navigation.ui.NavigationUI;
 //import com.denzcoskun.imageslider.ImageSlider;
 //import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.eventure.R;
-import com.example.eventure.adapters.EventCarouselAdapter;
-import com.example.eventure.fragments.EventsFragment;
-import com.example.eventure.fragments.PasFragment;
-import com.example.eventure.model.Event;
+import com.example.eventure.clients.ClientUtils;
+import com.example.eventure.clients.NotificationSocketManager;
+import com.example.eventure.utils.MenuUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 //onCreate, onStart, onRestart, onResume, onPause, onStop, onDestroy.
 public class HomeActivity extends AppCompatActivity {
@@ -62,6 +49,7 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_home);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -72,42 +60,69 @@ public class HomeActivity extends AppCompatActivity {
 
         drawer = findViewById(R.id.drawer_home_layout);
         navigationView = findViewById(R.id.nav_view);
+        // menu by role
+        String role = ClientUtils.getAuthService().getRole();
+        MenuUtils.filterMenuByRole(navigationView, role);
+
         navController = Navigation.findNavController(this, R.id.fragment_nav_content_main_home);
 
+        handleDeepLink(getIntent());
 
         String fragmentName = getIntent().getStringExtra("FRAGMENT_NAME");
         if (fragmentName != null) {
-            switch (fragmentName) {
-                case "FAVOURITE_EVENTS":
-                    navController.navigate(R.id.nav_favorite_events); // Navigate to My Offers fragment
-                    break;
-                case "NOTIFICATIONS":
-                    navController.navigate(R.id.nav_notifications); // Navigate to Notifications fragment
-                    break;
-                case "MESSAGES":
-                    navController.navigate(R.id.nav_messages); // Navigate to Messages fragment
-                    break;
-                case "FAVOURITE_SERVICES":
-                    navController.navigate(R.id.nav_favorite_services); // Navigate to My Offers fragment
-                    break;
-                case "FAVOURITE_PRODUCTS":
-                    navController.navigate(R.id.nav_favorite_products); // Navigate to My Offers fragment
-                    break;
-                case "CALENDAR":
-                    navController.navigate(R.id.nav_my_calendar); // Navigate to My Offers fragment
-                    break;
-                default:
-                    // Optionally handle unknown fragment names
-                    break;
-            }
+            drawer.post(() -> {
+                switch (fragmentName) {
+                    case "FAVOURITE_EVENTS":
+                        navController.navigate(R.id.nav_favorite_events);
+                        break;
+                    case "NOTIFICATIONS":
+                        navController.navigate(R.id.nav_notifications);
+                        break;
+                    case "MESSAGES":
+                        navController.navigate(R.id.nav_messages);
+                        break;
+                    case "FAVOURITE_SERVICES":
+                        navController.navigate(R.id.nav_favorite_services);
+                        break;
+                    case "FAVOURITE_PRODUCTS":
+                        navController.navigate(R.id.nav_favorite_products);
+                        break;
+                    case "CALENDAR":
+                        navController.navigate(R.id.nav_my_calendar);
+                        break;
+                    case "CATEGORIES":
+                        navController.navigate(R.id.nav_admin_categories);
+                        break;
+                }
+            });
         }
+
 
         // Setup navigation item selection manually
         navigationView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
-
-            if (id == R.id.nav_my_offers) {
-                Intent intent = new Intent(HomeActivity.this, OffersActivity.class);
+            if (id == R.id.nav_favorite_events) {
+                navController.navigate(R.id.nav_favorite_events);
+                drawer.closeDrawer(GravityCompat.START);
+                return true;
+            }
+            else if (id == R.id.nav_favorite_services) {
+                navController.navigate(R.id.nav_favorite_services);
+                drawer.closeDrawer(GravityCompat.START);
+                return true;
+            }
+            else if (id == R.id.nav_favorite_products) {
+                navController.navigate(R.id.nav_favorite_products);
+                drawer.closeDrawer(GravityCompat.START);
+                return true;
+            }
+            else if (id == R.id.nav_my_calendar) {
+                navController.navigate(R.id.nav_my_calendar);
+                drawer.closeDrawer(GravityCompat.START);
+                return true;
+            }
+            else if (id == R.id.nav_my_offers) {
+                Intent intent = new Intent(HomeActivity.this, ProviderOffersActivity.class);
                 startActivity(intent);
                 drawer.closeDrawer(GravityCompat.START);
                 return true;
@@ -117,7 +132,37 @@ public class HomeActivity extends AppCompatActivity {
                 return true;
             } else if (id == R.id.nav_messages) {
                 navController.navigate(R.id.nav_messages);
+                Intent intent = new Intent(HomeActivity.this, ChatActivity.class);
+                startActivity(intent);
+                return true;
+            } else if (id == R.id.nav_admin_categories) {
+                Intent intent = new Intent(HomeActivity.this, AdminCategoriesActivity.class);
+                startActivity(intent);
                 drawer.closeDrawer(GravityCompat.START);
+                return true;
+            } else if (id == R.id.nav_admin_manage_comments) {
+                Intent intent = new Intent(HomeActivity.this, AdminCommentsActivity.class);
+                startActivity(intent);
+                return true;
+            } else if (id == R.id.nav_admin_manage_reports) {
+                Intent intent = new Intent(HomeActivity.this, AdminReportsActivity.class);
+                startActivity(intent);
+                return true;
+            } else if(id == R.id.nav_price_list){
+                Intent intent = new Intent(HomeActivity.this, ProviderPriceListActivity.class);
+                startActivity(intent);
+                return true;
+            } else if(id == R.id.nav_my_events){
+                Intent intent = new Intent(HomeActivity.this, OrganizerEventsActivity.class);
+                startActivity(intent);
+                return true;
+            }else if(id == R.id.nav_my_products){
+                Intent intent = new Intent(HomeActivity.this, ProviderProductsActivity.class);
+                startActivity(intent);
+                return true;
+            }else if(id == R.id.nav_event_types){
+                Intent intent = new Intent(HomeActivity.this, AdminEventTypesActivity.class);
+                startActivity(intent);
                 return true;
             }
 
@@ -133,6 +178,21 @@ public class HomeActivity extends AppCompatActivity {
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
+
+
+        TextView tvTitle = toolbar.findViewById(R.id.toolbar_title);
+        tvTitle.setOnClickListener(v -> {
+            Intent intent = getIntent();
+            finish();
+            startActivity(intent);
+        });
+
+        //connect to socket if user is already logged in
+        if (ClientUtils.getAuthService().isLoggedIn()) {
+            int userId = ClientUtils.getAuthService().getUserId();
+            NotificationSocketManager.getInstance().connect(getApplicationContext(), userId);
+        }
+
     }
 
     @Override
@@ -169,6 +229,50 @@ public class HomeActivity extends AppCompatActivity {
 //        return true;
 //    };
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleDeepLink(intent);
+    }
+
+    private void handleDeepLink(Intent intent) {
+        if (intent != null && intent.getData() != null) {
+            Uri data = intent.getData();
+
+            final String email = data.getQueryParameter("email");
+            final String eventIdStr = data.getQueryParameter("eventId");
+            final Integer eventId = eventIdStr != null ? tryParseInt(eventIdStr) : null;
+
+
+            String host = data.getHost();
+
+            // Use post to delay navigation until after NavController is ready
+            findViewById(R.id.fragment_nav_content_main_home).post(() -> {
+                if ("quick-registration".equals(host)) {
+                    Bundle bundle = new Bundle();
+                    if (email != null) bundle.putString("email", email);
+                    if (eventId != null) bundle.putInt("eventId", eventId);
+                    navController.navigate(R.id.quickRegisterFragment, bundle);
+                } else if ("login".equals(host)) {
+                    Bundle bundle = new Bundle();
+                    if (email != null) bundle.putString("email", email);
+                    if (eventId != null) bundle.putInt("eventId", eventId);
+                    navController.navigate(R.id.loginFragment, bundle);
+                }
+            });
+        }
+    }
+    private Integer tryParseInt(String str) {
+        try {
+            return Integer.parseInt(str);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
 
     @Override
     protected void onStart() {
@@ -178,7 +282,7 @@ public class HomeActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
         Log.d("ShopApp", "HomeActivity onResume()");
     }

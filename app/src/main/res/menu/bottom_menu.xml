@@ -6,8 +6,8 @@
         android:title="Events" />
 
     <item
-        android:id="@+id/pas_menu"
+        android:id="@+id/offer_menu"
         android:icon="@drawable/pas_icon"
-        android:title="Products" />
+        android:title="Offers" />
 
 </menu>

@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Title Bar -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/blue">
+
+                <TextView
+                    android:id="@+id/dialog_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Create/Edit Event"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/white"
+                    android:gravity="center"
+                    android:padding="8dp" />
+
+                <ImageView
+                    android:id="@+id/close_icon"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="8dp"
+                    android:src="@drawable/close_icon"
+                    android:contentDescription="Close Dialog" />
+            </RelativeLayout>
+
+            <!-- Event Name -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Event Name"
+                android:textSize="18sp"
+                android:layout_marginTop="16dp" />
+            <EditText
+                android:id="@+id/event_name_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter event name" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Event Type"
+                android:textSize="18sp"
+                android:layout_marginTop="16dp" />
+
+            <Spinner
+                android:id="@+id/event_type_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <!-- Description -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Description"
+                android:textSize="18sp"
+                android:layout_marginTop="16dp" />
+            <EditText
+                android:id="@+id/event_description_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter description"
+                android:inputType="textMultiLine"
+                android:minLines="4"
+                android:gravity="top" />
+
+            <!-- Location -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Location"
+                android:textSize="18sp"
+                android:layout_marginTop="16dp" />
+            <EditText
+                android:id="@+id/event_location_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter location" />
+
+            <!-- Date -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Date"
+                android:textSize="18sp"
+                android:layout_marginTop="16dp" />
+            <EditText
+                android:id="@+id/event_date_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Select date and time"
+                android:focusable="false"
+                android:clickable="true" />
+
+            <!-- Participants -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Participants"
+                android:textSize="18sp"
+                android:layout_marginTop="16dp" />
+            <EditText
+                android:id="@+id/event_max_participants_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Maximum participants"
+                android:inputType="number" />
+
+            <!-- Public Checkbox -->
+            <CheckBox
+                android:id="@+id/event_is_public_checkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <!-- Public/Private Selection -->
+            <RadioGroup
+                android:id="@+id/event_visibility_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/event_public_radio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Public"
+                    android:checked="true" />
+
+                <RadioButton
+                    android:id="@+id/event_private_radio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Private" />
+            </RadioGroup>
+
+            <!-- Invitations Section (Visible only if Private is selected) -->
+            <LinearLayout
+                android:id="@+id/invitations_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:layout_marginTop="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Invitations (emails)"
+                    android:textSize="18sp" />
+
+                <EditText
+                    android:id="@+id/invitation_email_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Enter email and press Add" />
+
+                <Button
+                    android:id="@+id/add_invitation_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Add Email" />
+
+                <TextView
+                    android:id="@+id/invitations_list_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textSize="16sp"
+                    android:layout_marginTop="8dp" />
+            </LinearLayout>
+
+
+            <!-- Photos -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Photos"
+                android:textSize="18sp"
+                android:layout_marginTop="16dp" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/photos_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:scrollbars="horizontal" />
+            <Button
+                android:id="@+id/add_pictures_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Photo URL"
+                android:layout_marginTop="8dp" />
+
+            <!-- Submit Button -->
+            <Button
+                android:id="@+id/submit_event_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Submit"
+                android:layout_marginTop="24dp" />
+
+        </LinearLayout>
+
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

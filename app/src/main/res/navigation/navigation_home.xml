@@ -7,7 +7,11 @@
     app:startDestination="@id/events_menu">
 
 <!--    &lt;!&ndash; Профиль &ndash;&gt;-->
-
+    <fragment
+        android:id="@+id/myProfileFragment"
+        android:name="com.example.eventure.fragments.MyProfileFragment"
+        android:label="My Profile"
+        tools:layout="@layout/fragment_my_profile" />
     <fragment
         android:id="@+id/events_menu"
         android:name="com.example.eventure.fragments.EventsFragment"
@@ -15,22 +19,13 @@
         tools:layout="@layout/fragment_events"
         app:popUpToInclusive="true" />
 
+    <!-- Первый фрагмент (nav_profile) — без actions -->
     <fragment
         android:id="@+id/nav_profile"
         android:name="com.example.eventure.fragments.ProfileStartFragment"
-        android:label="profile"
-        app:popUpTo="@+id/events_menu"
-        tools:layout="@layout/fragment_profile_start">
-        <!-- Action to navigate to LoginFragment -->
-        <action
-            android:id="@+id/action_profileStartFragment_to_loginFragment"
-            app:destination="@id/loginFragment" />
+        tools:layout="@layout/fragment_profile_start" />
 
-        <!-- Action to navigate to RegisterFragment -->
-        <action
-            android:id="@+id/action_profileStartFragment_to_registerFragment"
-            app:destination="@id/registerFragment" />
-    </fragment>
+
 
     <fragment
         android:id="@+id/loginFragment"
@@ -43,6 +38,11 @@
         android:name="com.example.eventure.fragments.RegisterFragment"
         android:label="Login"
         tools:layout="@layout/fragment_register" />
+
+    <fragment
+        android:id="@+id/quickRegisterFragment"
+        android:name="com.example.eventure.fragments.QuickRegisterFragment"
+        tools:layout="@layout/fragment_quick_register" />
     <!-- Уведомления -->
     <fragment
         android:id="@+id/nav_notifications"
@@ -51,6 +51,13 @@
         tools:layout="@layout/fragment_notifications"
         app:popUpTo="@+id/events_menu"
         app:popUpToInclusive="true" />
+<!--    <fragment-->
+<!--        android:id="@+id/nav_my_products"-->
+<!--        android:name="com.example.eventure.fragments.NotificationsFragment"-->
+<!--        android:label="notifications"-->
+<!--        tools:layout="@layout/fragment_notifications"-->
+<!--        app:popUpTo="@+id/events_menu"-->
+<!--        app:popUpToInclusive="true" />-->
 
     <!-- Сообщения -->
     <fragment
@@ -99,11 +106,19 @@
 
 
     <fragment
-    android:id="@+id/pas_menu"
-    android:name="com.example.eventure.fragments.PasFragment"
+    android:id="@+id/offer_menu"
+    android:name="com.example.eventure.fragments.OffersFragment"
     android:label="products"
-    tools:layout="@layout/fragment_pas"
+    tools:layout="@layout/fragment_offer"
     app:popUpTo="@+id/events_menu"
     app:popUpToInclusive="true" />
+
+    <fragment
+        android:id="@+id/nav_admin_categories"
+        android:name="com.example.eventure.fragments.AdminCategoryFragment"
+        android:label="categories"
+        tools:layout="@layout/fragment_admin_category"
+        app:popUpTo="@+id/categories_menu"
+        app:popUpToInclusive="true" />
 
 </navigation>

@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     tools:context=".fragments.EventsFragment">
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:id="@+id/parentScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -15,13 +15,64 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+            <!-- Search -->
+            <LinearLayout
+                android:background="@color/blue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@id/toolbar"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
 
+                <androidx.appcompat.widget.SearchView
+                    android:id="@+id/events_search"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:imeOptions="actionSearch"
+                    android:background="@drawable/border_background"
+                    android:backgroundTint="@color/white"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginTop="10dp"
+                    android:theme="@style/Theme.Eventure"
+                    android:layout_marginBottom="8dp"
+                    app:searchIcon="@drawable/search_icon"/>
+            </LinearLayout>
             <!-- Carousel -->
-            <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/eventCarousel"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
-                android:orientation="horizontal" />
+                android:layout_marginBottom="16dp">
+
+                <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/eventCarousel"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal" />
+
+                <!-- Left Arrow -->
+                <ImageButton
+                    android:id="@+id/prevButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:background="@null"
+                    android:src="@drawable/arrow_left_icon"
+                    android:contentDescription="Previous Event" />
+
+                <!-- Right Arrow -->
+                <ImageButton
+                    android:id="@+id/nextButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:background="@null"
+                    android:src="@drawable/arrow_right_icon"
+                    android:contentDescription="Next Event" />
+            </RelativeLayout>
 
             <!-- Header with Title and Filter -->
             <RelativeLayout
@@ -50,30 +101,53 @@
                     android:textSize="20sp"
                     android:textStyle="bold"
                     android:textColor="@android:color/black"
-                    android:layout_toStartOf="@id/filter_icon"
+                    android:layout_toStartOf="@id/events_filter_icon"
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="4dp" />
-
-                <ImageView
-                    android:id="@+id/filter_icon"
+                <!-- Sorting Spinner -->
+                <Spinner
+                    android:id="@+id/sort_spinner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/filter_icon"
-                    android:contentDescription="Filter"
-                    android:layout_alignParentEnd="true"
+                    android:layout_toStartOf="@id/filter_text"
                     android:layout_centerVertical="true"
-                    android:padding="4dp" />
+                    android:layout_marginEnd="12dp" />
+
+                <ImageView
+                    android:id="@+id/events_filter_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:contentDescription="Filter"
+                    android:padding="4dp"
+                    android:src="@drawable/filter_icon" />
             </RelativeLayout>
+            <TextView
+                android:id="@+id/emptyEvents"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="No events found."
+                android:gravity="center"
+                android:visibility="gone"
+                android:textSize="18sp"
+                android:padding="16dp"/>
 
             <!-- RecyclerView for Event Cards -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/eventRecyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="50dp"
+                android:layout_height="match_parent"
                 android:nestedScrollingEnabled="true"
                 android:scrollbars="none" />
-
+            <Button
+                android:id="@+id/loadMoreEvents"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="80dp"
+                android:padding="10dp"
+                android:text="Load More"
+                android:visibility="gone" />
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 </FrameLayout>

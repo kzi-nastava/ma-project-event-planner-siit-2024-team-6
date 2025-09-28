@@ -8,9 +8,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.eventure.R;
+import com.example.eventure.dialogs.EventDetailsDialog;
+import com.example.eventure.dto.EventDTO;
 import com.example.eventure.model.Event;
 
 import java.text.SimpleDateFormat;
@@ -18,13 +22,16 @@ import java.util.List;
 
 public class EventCarouselAdapter extends RecyclerView.Adapter<EventCarouselAdapter.EventViewHolder> {
 
-    private List<Event> events;
+    private List<EventDTO> events;
+    private FragmentActivity activity;
 
-    public EventCarouselAdapter(List<Event> events) {
+
+    public EventCarouselAdapter(List<EventDTO> events, FragmentActivity fragmentActivity) {
         if (events == null) {
             throw new IllegalArgumentException("Event list cannot be null");
         }
         this.events = events;
+        this.activity = fragmentActivity;
     }
 
     @NonNull
@@ -37,7 +44,7 @@ public class EventCarouselAdapter extends RecyclerView.Adapter<EventCarouselAdap
 
     @Override
     public void onBindViewHolder(@NonNull EventViewHolder holder, int eventIndex) {
-        Event event = events.get(eventIndex);
+        EventDTO event = events.get(eventIndex);
         holder.bind(event);
     }
 
@@ -46,33 +53,47 @@ public class EventCarouselAdapter extends RecyclerView.Adapter<EventCarouselAdap
         return events.size();
     }
 
-    public static class EventViewHolder extends RecyclerView.ViewHolder {
+    public class EventViewHolder extends RecyclerView.ViewHolder {
 
         private ImageView eventImage;
         private TextView eventTitle;
         private TextView eventDescription;
+        private TextView viewButton;
+
         public EventViewHolder(@NonNull View itemView) {
             super(itemView);
 
             eventImage = itemView.findViewById(R.id.top_event_image);
             eventTitle = itemView.findViewById(R.id.top_event_title);
             eventDescription = itemView.findViewById(R.id.top_event_description);
+            viewButton = itemView.findViewById(R.id.top_event_view_button);
+
         }
 
-        public void bind(Event event) {
-//            // Loading image
-//            Glide.with(itemView.getContext())
-//                    .load(event.getPhotoURL())
-//                    .into(eventImage);
+        public void bind(EventDTO event) {
+            List<String> photos = event.getPhotos();
 
-            eventImage.setImageResource(event.getPhotoID());
-            //event title
-            eventTitle.setText(event.getTitle());
+            if (photos != null && !photos.isEmpty() && photos.get(0) != null && !photos.get(0).isEmpty()) {
+                String photo = photos.get(0);
+                Glide.with(eventImage.getContext())
+                        .load(photo)
+                        .placeholder(R.drawable.event2)
+                        .error(R.drawable.error_image)
+                        .into(eventImage);
+            } else {
+                eventImage.setImageResource(R.drawable.event2); // или какая-то дефолтная
+            }
 
-            //event location
+            // event title
+            eventTitle.setText(event.getName());
             eventDescription.setText(event.getDescription());
-
+            viewButton.setOnClickListener(v -> {
+                Event fullEvent = new Event(event);
+                EventDetailsDialog dialog = EventDetailsDialog.newInstance(fullEvent);
+                dialog.show(activity.getSupportFragmentManager(), "EventDetailsDialog");
+        });
         }
+
     }
 }
 

@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.OffersActivity">
+    tools:context=".activities.ProviderOffersActivity">
 
     <!-- AppBarLayout and Toolbar   -->
     <com.google.android.material.appbar.AppBarLayout
@@ -67,6 +67,7 @@
                 android:backgroundTint="@color/white"
                 android:theme="@style/Theme.Eventure"
                 android:layout_marginBottom="8dp"
+                app:iconifiedByDefault="false"
                 app:searchIcon="@drawable/search_icon" />
         </LinearLayout>
 
@@ -84,18 +85,6 @@
 
     <include layout="@layout/activity_offers_content" />
 
-    <!-- Bottom Navigation -->
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/offers_bottom_navigation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:background="@color/blue"
-        app:itemIconTint="@color/white"
-        app:itemTextColor="@color/white"
-        app:menu="@menu/offers_bottom_menu"/>
 
     <!-- Floating Action Button -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -107,7 +96,7 @@
         app:backgroundTint="@color/purple"
         app:elevation="8dp"
         app:tint="@color/white"
-        app:layout_constraintBottom_toTopOf="@id/offers_bottom_navigation"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

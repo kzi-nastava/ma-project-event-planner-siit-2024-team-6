@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageButton
+            android:id="@+id/btn_exit"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:src="@drawable/close_icon"
+            android:layout_gravity="end" />
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/event_image_carousel"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="8dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
+
+            <ImageButton
+                android:id="@+id/provider_icon"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/account_circle"
+                android:layout_gravity="start" />
+
+            <ImageButton
+                android:id="@+id/btn_favorite"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/heart_icon"
+                android:layout_gravity="end"
+                android:gravity="end" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/event_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Event Title"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:layout_marginTop="12dp" />
+
+        <TextView
+            android:id="@+id/event_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Event Description"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/event_place"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Place"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/event_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Date"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp" />
+
+        <Button
+            android:id="@+id/btn_join"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Join"
+            android:layout_marginTop="16dp" />
+
+        <Button
+            android:id="@+id/btn_download_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Download Info PDF"
+            android:layout_marginTop="12dp" />
+
+        <Button
+            android:id="@+id/btn_download_agenda"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Download Agenda"
+            android:layout_marginTop="8dp" />
+
+    </LinearLayout>
+</ScrollView>

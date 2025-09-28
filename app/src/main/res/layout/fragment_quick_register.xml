@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/quick_registration_fragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/pink"
+    tools:context=".fragments.QuickRegisterFragment">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="20dp"
+        android:background="@color/pink">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:background="@color/coolWhite">
+
+            <!-- Common fields for all users -->
+            <EditText
+                android:id="@+id/qrName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="First Name"
+                
+                android:textColor="#000000" />
+
+            <EditText
+                android:id="@+id/qrSurname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Last Name"
+                
+                android:textColor="#000000" />
+
+            <EditText
+                android:id="@+id/qrEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Email"
+                
+                android:textColor="#000000" />
+
+            <EditText
+                android:id="@+id/qrPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Password"
+                android:inputType="textPassword"
+                
+                android:textColor="#000000" />
+
+
+            <Button
+                android:id="@+id/btnQuickRegister"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Register"
+                
+                android:textColor="#FFFFFF" />
+        </LinearLayout>
+    </ScrollView>
+
+</FrameLayout>

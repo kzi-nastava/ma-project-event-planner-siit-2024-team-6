@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    android:elevation="6dp"
+    android:padding="12dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/title"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/purple"
+            android:text="Category Suggestion:" />
+
+        <TextView
+            android:id="@+id/suggestionCategoryName"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:layout_width="match_parent"
+            android:layout_margin="5dp"
+            android:layout_height="wrap_content"
+            android:text="Category Name" />
+
+        <TextView
+            android:id="@+id/suggestionCategoryDescription"
+            android:layout_width="match_parent"
+            android:textSize="17sp"
+            android:layout_margin="5dp"
+            android:layout_height="wrap_content"
+            android:text="Category Description" />
+
+        <TextView
+            android:id="@+id/offer"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/purple"
+            android:text="\nFor Offer:" />
+
+        <TextView
+            android:id="@+id/suggestionOfferName"
+            android:textStyle="bold"
+            android:layout_marginTop="8dp"
+            android:textSize="18sp"
+            android:layout_margin="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Offer Name" />
+
+        <TextView
+            android:id="@+id/suggestionOfferDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="17sp"
+            android:layout_margin="5dp"
+            android:text="Offer Description" />
+
+        <LinearLayout
+            android:layout_marginTop="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end">
+
+            <Button
+                android:id="@+id/btnEdit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/purple"
+                android:text="Edit" />
+
+            <Button
+                android:id="@+id/btnApprove"
+                android:layout_marginStart="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/pink"
+                android:text="Approve" />
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

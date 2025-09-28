@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation"
+    app:startDestination="@id/categoryFragment">
+
+    <fragment
+        android:id="@+id/categoryFragment"
+        android:name="com.example.eventure.fragments.AdminCategoryFragment"
+        android:label="categories"
+        tools:layout="@layout/fragment_admin_category"
+        app:popUpToInclusive="true" />
+
+    <fragment
+        android:id="@+id/categorySuggestionsFragment"
+        android:name="com.example.eventure.fragments.CategorySuggestionsFragment"
+        android:label="Category Suggestions"
+        tools:layout="@layout/fragment_admin_category_suggestions" />
+
+</navigation>
